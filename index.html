@@ -593,12 +593,11 @@
       font-weight: 700;
     }
 
-    /* Transfer Card Selector */
+    /* Transfer Card Selector & Info Box */
     .transfer-bar {
       display: none;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
       padding: 8px 20px;
     }
 
@@ -607,7 +606,7 @@
     }
 
     .transfer-select {
-      flex: 1;
+      width: 100%;
       padding: 10px 12px;
       border-radius: 14px;
       border: 1px solid var(--border-color);
@@ -615,6 +614,19 @@
       color: var(--text-primary);
       font-size: 13px;
       font-weight: 600;
+    }
+
+    .transfer-info-box {
+      background: var(--bg-subtle);
+      border-radius: 12px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: none;
+      line-height: 1.4;
+    }
+    .transfer-info-box.visible {
+      display: block;
     }
 
     /* Amount Display */
@@ -837,6 +849,13 @@
       box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
     }
 
+    .ring-avatar.declined {
+      background: var(--danger);
+      color: #ffffff;
+      transform: scale(1.06);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    }
+
     .confirm-title {
       font-size: 18px;
       font-weight: 800;
@@ -919,6 +938,12 @@
     .form-row {
       display: flex;
       gap: 10px;
+      align-items: center;
+    }
+
+    .form-row .form-input, .form-row .form-select {
+      flex: 1;
+      min-width: 0;
     }
 
     .color-swatches {
@@ -991,6 +1016,11 @@
 
     .toast.show {
       transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: var(--danger);
+      color: #fff;
     }
 
     .toast-undo {
@@ -1083,10 +1113,10 @@
     <!-- Category Strip -->
     <div class="cat-strip" id="catStrip"></div>
 
-    <!-- Transfer Destination Card Selector -->
+    <!-- Transfer Destination Card Selector & FX Details -->
     <div class="transfer-bar" id="transferBar">
-      <span style="font-size:12px;font-weight:700;color:var(--text-secondary)">To Card:</span>
       <select class="transfer-select" id="transferToSelect"></select>
+      <div class="transfer-info-box" id="transferInfoBox"></div>
     </div>
 
     <!-- Live Amount Display -->
@@ -1157,7 +1187,7 @@
   <!-- Card Statement Modal (Date Search + PDF Export) -->
   <div class="modal-backdrop" id="statementBackdrop">
     <div class="bottom-sheet" id="statementSheet">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
         <div>
           <h3 id="stmtCardTitle" style="font-size:18px;font-weight:800;">Card Statement</h3>
           <div id="stmtCardBal" style="font-size:13px;font-weight:700;color:var(--emerald);">€0.00</div>
@@ -1172,7 +1202,7 @@
         <input type="date" class="form-input" id="stmtFromDate" title="From Date" />
         <input type="date" class="form-input" id="stmtToDate" title="To Date" />
       </div>
-      <div class="form-row no-print" style="margin-bottom:12px;">
+      <div class="form-row no-print" style="margin-bottom:14px;">
         <input type="text" class="form-input" id="stmtSearchInput" placeholder="Search note or category..." />
         <select class="form-select" id="stmtTypeFilter" style="max-width:115px;">
           <option value="all">All</option>
@@ -1568,6 +1598,7 @@
             sel.appendChild(opt);
           }
         });
+        updateTransferInfo();
       } else {
         transferBar.classList.remove('visible');
       }
@@ -1577,6 +1608,27 @@
       updateAmountDigits();
       document.getElementById('entryOverlay').classList.add('open');
     }
+
+    function updateTransferInfo() {
+      const infoBox = document.getElementById('transferInfoBox');
+      const toCardId = document.getElementById('transferToSelect').value;
+      const fromCard = state.cards[activeCardIndex] || state.cards[0];
+      const toCard = state.cards.find(c => c.id === toCardId);
+
+      if (!toCard || fromCard.currency === toCard.currency) {
+        infoBox.classList.remove('visible');
+        return;
+      }
+
+      const fromRate = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).rateToEur;
+      const toRate = (CURRENCY_META[toCard.currency] || CURRENCY_META.EUR).rateToEur;
+      const exchangeRate = fromRate / toRate;
+      const feePercent = 1.5; // 1.5% international transfer fee
+      infoBox.innerHTML = `💱 <strong>FX Rate:</strong> 1 ${fromCard.currency} = ${exchangeRate.toFixed(4)} ${toCard.currency} &nbsp;|&nbsp; ⚡ <strong>Transfer Fee:</strong> ${feePercent}%`;
+      infoBox.classList.add('visible');
+    }
+
+    document.getElementById('transferToSelect')?.addEventListener('change', updateTransferInfo);
 
     function renderCategoryStrip() {
       const strip = document.getElementById('catStrip');
@@ -1672,7 +1724,7 @@
     function submitTransaction() {
       const amount = parseFloat(amountStr);
       if (!amount || amount <= 0) {
-        showToast('Please enter an amount greater than 0');
+        showToast('Please enter an amount greater than 0', true);
         return;
       }
 
@@ -1680,8 +1732,33 @@
       const cat = state.categories.find(c => c.id === selectedCatId) || state.categories[0];
       const note = document.getElementById('entryNoteInput').value.trim();
 
+      // INSUFFICIENT BALANCE CHECK FOR EXPENSE OR TRANSFER
+      if ((entryMode === 'expense' || entryMode === 'transfer') && Number(card.balance) < amount) {
+        triggerHaptic();
+        const backdrop = document.getElementById('confirmBackdrop');
+        const spinner = document.getElementById('confirmSpinner');
+        const avatar = document.getElementById('confirmAvatar');
+        const title = document.getElementById('confirmTitle');
+        const sub = document.getElementById('confirmSub');
+
+        spinner.style.display = 'none';
+        avatar.className = 'ring-avatar declined';
+        avatar.textContent = '✕';
+        title.textContent = 'Transaction Declined';
+        sub.textContent = `Insufficient balance! Available: ${formatMoney(card.balance, card.currency)}`;
+        backdrop.classList.add('open');
+
+        setTimeout(() => {
+          backdrop.classList.remove('open');
+          avatar.className = 'ring-avatar';
+        }, 2200);
+
+        showToast('Insufficient balance!', true);
+        return;
+      }
+
       if (entryMode === 'transfer' && state.cards.length < 2) {
-        showToast('Create at least 2 cards to transfer');
+        showToast('Create at least 2 cards to transfer', true);
         return;
       }
 
@@ -1692,7 +1769,7 @@
       const sub = document.getElementById('confirmSub');
 
       spinner.style.display = 'block';
-      avatar.classList.remove('done');
+      avatar.className = 'ring-avatar';
       avatar.textContent = entryMode === 'transfer' ? '⇄' : cat.icon;
       title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...';
       sub.textContent = `${formatMoney(amount, card.currency)} • ${card.name}`;
@@ -1707,6 +1784,7 @@
 
         let toCardId = null;
         let convertedAmount = amount;
+        let transferFee = 0;
 
         if (entryMode === 'add') {
           card.balance = Number(card.balance) + amount;
@@ -1715,12 +1793,21 @@
         } else if (entryMode === 'transfer') {
           toCardId = document.getElementById('transferToSelect').value;
           const toCard = state.cards.find(c => c.id === toCardId);
-          card.balance = Math.max(0, Number(card.balance) - amount);
-          if (toCard) {
+          
+          if (toCard && card.currency !== toCard.currency) {
+            // FX conversion + 1.5% fee
+            transferFee = amount * 0.015;
+            const netAmount = amount - transferFee;
             const fromRate = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).rateToEur;
             const toRate = (CURRENCY_META[toCard.currency] || CURRENCY_META.EUR).rateToEur;
-            convertedAmount = (amount * fromRate) / toRate;
+            convertedAmount = (netAmount * fromRate) / toRate;
+            card.balance = Math.max(0, Number(card.balance) - amount);
             toCard.balance = Number(toCard.balance) + convertedAmount;
+          } else if (toCard) {
+            // Same currency transfer (Euro to Euro / USD to USD)
+            card.balance = Math.max(0, Number(card.balance) - amount);
+            toCard.balance = Number(toCard.balance) + amount;
+            convertedAmount = amount;
           }
         }
 
@@ -1729,6 +1816,7 @@
           cardId: card.id,
           toCardId,
           convertedAmount,
+          transferFee,
           type: entryMode,
           categoryId: cat.id,
           categoryName: entryMode === 'transfer' ? 'Card Transfer' : cat.name,
@@ -1893,8 +1981,9 @@
     }
 
     let toastTimer = null;
-    function showToast(msg, withUndo = false) {
+    function showToast(msg, isError = false, withUndo = false) {
       const el = document.getElementById('toastEl');
+      el.classList.toggle('error', isError);
       document.getElementById('toastMsg').textContent = msg;
       document.getElementById('toastUndoBtn').style.display = withUndo ? 'inline-block' : 'none';
       el.classList.add('show');
@@ -1940,7 +2029,6 @@
       document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
       document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
       
-      // Fix cross button reliably with pointerdown/click
       const closeEntryBtn = document.getElementById('closeEntryBtn');
       const closeOverlay = (e) => {
         e.preventDefault();
@@ -1950,7 +2038,6 @@
       closeEntryBtn.addEventListener('click', closeOverlay);
       closeEntryBtn.addEventListener('pointerdown', closeOverlay);
 
-      // Fix keypad buttons with pointerdown / touch start for immediate responsiveness on iPhone
       document.querySelectorAll('#keypadGrid .key-btn').forEach(btn => {
         const key = btn.dataset.key;
         const handlePress = (e) => {
@@ -1964,11 +2051,10 @@
 
       document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
 
-      // Custom Category Events
       document.getElementById('closeCustomCatBtn').addEventListener('click', () => document.getElementById('customCatBackdrop').classList.remove('open'));
       document.getElementById('saveCustomCatBtn').addEventListener('click', () => {
         const name = document.getElementById('newCatName').value.trim();
-        if (!name) return showToast('Enter a category name');
+        if (!name) return showToast('Enter a category name', true);
         const newCat = { id: 'cat_' + Date.now(), name, icon: selectedNewIcon };
         state.categories.push(newCat);
         selectedCatId = newCat.id;
@@ -1978,15 +2064,14 @@
         showToast(`Category "${name}" added`);
       });
 
-      // Statement Events
       document.getElementById('closeStmtBtn').addEventListener('click', () => document.getElementById('statementBackdrop').classList.remove('open'));
       ['stmtFromDate', 'stmtToDate', 'stmtSearchInput', 'stmtTypeFilter'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.addEventListener('input', renderStatementTransactions);
+        if (el && el.tagName === 'SELECT') el.addEventListener('change', renderStatementTransactions);
       });
       document.getElementById('downloadPdfBtn').addEventListener('click', () => window.print());
 
-      // Settings & Backup Events
       document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
       document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsBackdrop').classList.remove('open'));
 
@@ -2001,7 +2086,7 @@
 
       document.getElementById('saveNewCardBtn').addEventListener('click', () => {
         const name = document.getElementById('newCardName').value.trim();
-        if (!name) return showToast('Please enter card name');
+        if (!name) return showToast('Please enter card name', true);
         const digits = document.getElementById('newCardDigits').value.trim() || String(Math.floor(1000 + Math.random() * 9000));
         const currency = document.getElementById('newCardCurrency').value || 'EUR';
         const balance = parseFloat(document.getElementById('newCardBalance').value) || 0;
@@ -2038,7 +2123,7 @@
 
       document.getElementById('restoreBackupBtn').addEventListener('click', () => {
         const raw = document.getElementById('backupImportText').value.trim();
-        if (!raw) return showToast('Paste backup JSON text first');
+        if (!raw) return showToast('Paste backup JSON text first', true);
         try {
           const parsed = JSON.parse(raw);
           if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
@@ -2048,7 +2133,7 @@
           document.getElementById('settingsBackdrop').classList.remove('open');
           showToast('Wallet data restored!');
         } catch (e) {
-          showToast('Invalid JSON backup text');
+          showToast('Invalid JSON backup text', true);
         }
       });
 
