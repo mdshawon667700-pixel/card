@@ -512,7 +512,7 @@
       max-width: 440px;
       margin: 0 auto;
       transform: translateY(100%);
-      transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
+      transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s ease;
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(16px + env(safe-area-inset-bottom));
     }
@@ -1282,28 +1282,9 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v3';
+    const STORAGE_KEY = 'pocketflow_wallet_v4';
 
-    let state = loadState();
-    let activeCardIndex = 0;
-    let entryMode = 'add';
-    let selectedCatId = state.categories[0]?.id || 'food';
-    let amountStr = '0';
-    let selectedGradient = CARD_GRADIENTS[0];
-    let selectedNewIcon = ICON_LIBRARY[0];
-    let lastDeletedTx = null;
-    let statementCardId = null;
-
-    function loadState() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
-            return parsed;
-          }
-        }
-      } catch (e) {}
+    function getDefaultState() {
       return {
         darkMode: false,
         cards: [
@@ -1329,8 +1310,33 @@
       };
     }
 
+    let state = loadState();
+    let activeCardIndex = 0;
+    let entryMode = 'add';
+    let selectedCatId = state.categories[0]?.id || 'food';
+    let amountStr = '0';
+    let selectedGradient = CARD_GRADIENTS[0];
+    let selectedNewIcon = ICON_LIBRARY[0];
+    let lastDeletedTx = null;
+    let statementCardId = null;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+      return getDefaultState();
+    }
+
     function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
     }
 
     function triggerHaptic() {
@@ -1351,7 +1357,8 @@
       const isDark = !!state.darkMode;
       document.documentElement.classList.toggle('dark', isDark);
       document.body.classList.toggle('dark', isDark);
-      document.getElementById('themeIconSpan').textContent = isDark ? '☀️' : '🌙';
+      const iconSpan = document.getElementById('themeIconSpan');
+      if (iconSpan) iconSpan.textContent = isDark ? '☀️' : '🌙';
       const metaTheme = document.getElementById('metaThemeColor');
       if (metaTheme) {
         metaTheme.setAttribute('content', isDark ? '#0f1218' : '#f5f6f8');
@@ -1361,6 +1368,8 @@
     function updateHeaderTotals() {
       let totalEur = 0;
       let totalBdt = 0;
+
+      if (!state.cards || !Array.isArray(state.cards)) return;
 
       state.cards.forEach(c => {
         const bal = Number(c.balance) || 0;
@@ -1379,8 +1388,14 @@
     function renderCards() {
       const carousel = document.getElementById('cardsCarousel');
       const dots = document.getElementById('cardDots');
+      if (!carousel || !dots) return;
+
       carousel.innerHTML = '';
       dots.innerHTML = '';
+
+      if (!state.cards || state.cards.length === 0) {
+        state.cards = getDefaultState().cards;
+      }
 
       if (activeCardIndex >= state.cards.length) activeCardIndex = Math.max(0, state.cards.length - 1);
 
@@ -1415,6 +1430,7 @@
     }
 
     function updateHeroForActiveCard() {
+      if (!state.cards || state.cards.length === 0) return;
       const card = state.cards[activeCardIndex] || state.cards[0];
       if (!card) return;
       document.getElementById('activeCardLabel').textContent = `${card.name} ••${card.digits}`;
@@ -1426,26 +1442,30 @@
 
     function renderTransactions() {
       const list = document.getElementById('txList');
+      if (!list) return;
       list.innerHTML = '';
 
+      if (!state.cards || state.cards.length === 0) return;
       const activeCard = state.cards[activeCardIndex] || state.cards[0];
       const now = new Date();
       let monthIn = 0;
       let monthOut = 0;
 
-      state.transactions.forEach(tx => {
-        const d = new Date(tx.date);
-        if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() && tx.cardId === activeCard.id) {
-          if (tx.type === 'add') monthIn += Number(tx.amount);
-          if (tx.type === 'expense') monthOut += Number(tx.amount);
-        }
-      });
+      if (Array.isArray(state.transactions)) {
+        state.transactions.forEach(tx => {
+          const d = new Date(tx.date);
+          if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() && tx.cardId === activeCard.id) {
+            if (tx.type === 'add') monthIn += Number(tx.amount);
+            if (tx.type === 'expense') monthOut += Number(tx.amount);
+          }
+        });
+      }
 
       const sym = (CURRENCY_META[activeCard.currency] || CURRENCY_META.EUR).symbol;
       document.getElementById('monthInVal').textContent = `+${sym}${monthIn.toFixed(0)}`;
       document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(0)}`;
 
-      if (state.transactions.length === 0) {
+      if (!state.transactions || state.transactions.length === 0) {
         list.innerHTML = `<div class="empty-state">No transactions yet. Tap <strong>+ Add</strong> or <strong>− Expense</strong> above to record your first entry.</div>`;
         return;
       }
@@ -1555,6 +1575,7 @@
 
     function renderCategoryStrip() {
       const strip = document.getElementById('catStrip');
+      if (!strip) return;
       strip.innerHTML = '';
 
       state.categories.forEach(cat => {
@@ -1586,6 +1607,7 @@
       const presets = currency === 'BDT' || currency === 'JPY' ? [100, 500, 1000, 2000, 5000] : [10, 20, 50, 100, 250];
       const sym = (CURRENCY_META[currency] || CURRENCY_META.EUR).symbol;
       const row = document.getElementById('presetsRow');
+      if (!row) return;
       row.innerHTML = '';
       presets.forEach(val => {
         const chip = document.createElement('button');
@@ -1602,6 +1624,7 @@
 
     function updateAmountDigits() {
       const container = document.getElementById('entryAmountDigits');
+      if (!container) return;
       container.innerHTML = '';
       for (const ch of amountStr) {
         const span = document.createElement('span');
@@ -1626,6 +1649,7 @@
 
     function spawnConfetti() {
       const stage = document.getElementById('confirmStage');
+      if (!stage) return;
       const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
       for (let i = 0; i < 16; i++) {
         const p = document.createElement('div');
@@ -1762,6 +1786,7 @@
 
     function renderStatementTransactions() {
       const list = document.getElementById('stmtTxList');
+      if (!list) return;
       list.innerHTML = '';
       const card = state.cards.find(c => c.id === statementCardId);
       if (!card) return;
@@ -1771,7 +1796,7 @@
       const query = document.getElementById('stmtSearchInput').value.trim().toLowerCase();
       const typeFilter = document.getElementById('stmtTypeFilter').value;
 
-      const filtered = state.transactions.filter(tx => {
+      const filtered = (state.transactions || []).filter(tx => {
         if (tx.cardId !== card.id && tx.toCardId !== card.id) return false;
         if (typeFilter !== 'all' && tx.type !== typeFilter) return false;
         const txDay = tx.date.slice(0, 10);
@@ -1821,6 +1846,7 @@
 
     function renderSettingsCards() {
       const box = document.getElementById('settingsCardsList');
+      if (!box) return;
       box.innerHTML = '';
       state.cards.forEach(card => {
         const row = document.createElement('div');
@@ -1847,6 +1873,7 @@
 
     function renderSwatches() {
       const box = document.getElementById('cardColorSwatches');
+      if (!box) return;
       box.innerHTML = '';
       CARD_GRADIENTS.forEach(grad => {
         const s = document.createElement('div');
@@ -1881,127 +1908,137 @@
       renderTransactions();
     }
 
-    // Event Listeners
-    document.getElementById('themeToggleBtn').addEventListener('click', () => {
-      triggerHaptic();
-      state.darkMode = !state.darkMode;
-      saveState();
-      applyTheme();
-    });
-
-    document.getElementById('cardsCarousel').addEventListener('scroll', (e) => {
-      const el = e.target;
-      const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 340;
-      const idx = Math.round(el.scrollLeft / cardWidth);
-      if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
-        activeCardIndex = idx;
-        updateHeroForActiveCard();
-        renderTransactions();
-      }
-    });
-
-    document.getElementById('openAddBtn').addEventListener('click', () => openEntryOverlay('add'));
-    document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
-    document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
-    document.getElementById('closeEntryBtn').addEventListener('click', () => document.getElementById('entryOverlay').classList.remove('open'));
-
-    document.querySelectorAll('#keypadGrid .key-btn').forEach(btn => {
-      btn.addEventListener('click', () => handleKeyInput(btn.dataset.key));
-    });
-
-    document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
-
-    // Custom Category Events
-    document.getElementById('closeCustomCatBtn').addEventListener('click', () => document.getElementById('customCatBackdrop').classList.remove('open'));
-    document.getElementById('saveCustomCatBtn').addEventListener('click', () => {
-      const name = document.getElementById('newCatName').value.trim();
-      if (!name) return showToast('Enter a category name');
-      const newCat = { id: 'cat_' + Date.now(), name, icon: selectedNewIcon };
-      state.categories.push(newCat);
-      selectedCatId = newCat.id;
-      saveState();
-      renderCategoryStrip();
-      document.getElementById('customCatBackdrop').classList.remove('open');
-      showToast(`Category "${name}" added`);
-    });
-
-    // Statement Events
-    document.getElementById('closeStmtBtn').addEventListener('click', () => document.getElementById('statementBackdrop').classList.remove('open'));
-    ['stmtFromDate', 'stmtToDate', 'stmtSearchInput', 'stmtTypeFilter'].forEach(id => {
-      document.getElementById(id).addEventListener('input', renderStatementTransactions);
-    });
-    document.getElementById('downloadPdfBtn').addEventListener('click', () => window.print());
-
-    // Settings & Backup Events
-    document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
-    document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsBackdrop').classList.remove('open'));
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById('cardsTab').style.display = btn.dataset.tab === 'cardsTab' ? 'block' : 'none';
-        document.getElementById('backupTab').style.display = btn.dataset.tab === 'backupTab' ? 'block' : 'none';
-      });
-    });
-
-    document.getElementById('saveNewCardBtn').addEventListener('click', () => {
-      const name = document.getElementById('newCardName').value.trim();
-      if (!name) return showToast('Please enter card name');
-      const digits = document.getElementById('newCardDigits').value.trim() || String(Math.floor(1000 + Math.random() * 9000));
-      const currency = document.getElementById('newCardCurrency').value || 'EUR';
-      const balance = parseFloat(document.getElementById('newCardBalance').value) || 0;
-
-      state.cards.push({
-        id: 'card_' + Date.now(),
-        name,
-        digits,
-        currency,
-        balance,
-        gradient: selectedGradient
-      });
-
-      document.getElementById('newCardName').value = '';
-      document.getElementById('newCardDigits').value = '';
-      document.getElementById('newCardBalance').value = '';
-      saveState();
-      renderSettingsCards();
-      refreshAll();
-      showToast('New card added');
-    });
-
-    document.getElementById('copyBackupBtn').addEventListener('click', async () => {
-      const text = document.getElementById('backupExportText').value;
-      try {
-        await navigator.clipboard.writeText(text);
-        showToast('Backup JSON copied to clipboard!');
-      } catch (e) {
-        document.getElementById('backupExportText').select();
-        document.execCommand('copy');
-        showToast('Backup JSON copied!');
-      }
-    });
-
-    document.getElementById('restoreBackupBtn').addEventListener('click', () => {
-      const raw = document.getElementById('backupImportText').value.trim();
-      if (!raw) return showToast('Paste backup JSON text first');
-      try {
-        const parsed = JSON.parse(raw);
-        if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
-        state = parsed;
+    // Event Listeners Setup
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        triggerHaptic();
+        state.darkMode = !state.darkMode;
         saveState();
-        refreshAll();
-        document.getElementById('settingsBackdrop').classList.remove('open');
-        showToast('Wallet data restored!');
-      } catch (e) {
-        showToast('Invalid JSON backup text');
+        applyTheme();
+      });
+
+      const carouselEl = document.getElementById('cardsCarousel');
+      if (carouselEl) {
+        carouselEl.addEventListener('scroll', (e) => {
+          const el = e.target;
+          const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 340;
+          const idx = Math.round(el.scrollLeft / cardWidth);
+          if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
+            activeCardIndex = idx;
+            updateHeroForActiveCard();
+            renderTransactions();
+          }
+        });
       }
+
+      document.getElementById('openAddBtn').addEventListener('click', () => openEntryOverlay('add'));
+      document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
+      document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
+      document.getElementById('closeEntryBtn').addEventListener('click', () => document.getElementById('entryOverlay').classList.remove('open'));
+
+      document.querySelectorAll('#keypadGrid .key-btn').forEach(btn => {
+        btn.addEventListener('click', () => handleKeyInput(btn.dataset.key));
+      });
+
+      document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
+
+      // Custom Category Events
+      document.getElementById('closeCustomCatBtn').addEventListener('click', () => document.getElementById('customCatBackdrop').classList.remove('open'));
+      document.getElementById('saveCustomCatBtn').addEventListener('click', () => {
+        const name = document.getElementById('newCatName').value.trim();
+        if (!name) return showToast('Enter a category name');
+        const newCat = { id: 'cat_' + Date.now(), name, icon: selectedNewIcon };
+        state.categories.push(newCat);
+        selectedCatId = newCat.id;
+        saveState();
+        renderCategoryStrip();
+        document.getElementById('customCatBackdrop').classList.remove('open');
+        showToast(`Category "${name}" added`);
+      });
+
+      // Statement Events
+      document.getElementById('closeStmtBtn').addEventListener('click', () => document.getElementById('statementBackdrop').classList.remove('open'));
+      ['stmtFromDate', 'stmtToDate', 'stmtSearchInput', 'stmtTypeFilter'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', renderStatementTransactions);
+      });
+      document.getElementById('downloadPdfBtn').addEventListener('click', () => window.print());
+
+      // Settings & Backup Events
+      document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+      document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsBackdrop').classList.remove('open'));
+
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          document.getElementById('cardsTab').style.display = btn.dataset.tab === 'cardsTab' ? 'block' : 'none';
+          document.getElementById('backupTab').style.display = btn.dataset.tab === 'backupTab' ? 'block' : 'none';
+        });
+      });
+
+      document.getElementById('saveNewCardBtn').addEventListener('click', () => {
+        const name = document.getElementById('newCardName').value.trim();
+        if (!name) return showToast('Please enter card name');
+        const digits = document.getElementById('newCardDigits').value.trim() || String(Math.floor(1000 + Math.random() * 9000));
+        const currency = document.getElementById('newCardCurrency').value || 'EUR';
+        const balance = parseFloat(document.getElementById('newCardBalance').value) || 0;
+
+        state.cards.push({
+          id: 'card_' + Date.now(),
+          name,
+          digits,
+          currency,
+          balance,
+          gradient: selectedGradient
+        });
+
+        document.getElementById('newCardName').value = '';
+        document.getElementById('newCardDigits').value = '';
+        document.getElementById('newCardBalance').value = '';
+        saveState();
+        renderSettingsCards();
+        refreshAll();
+        showToast('New card added');
+      });
+
+      document.getElementById('copyBackupBtn').addEventListener('click', async () => {
+        const text = document.getElementById('backupExportText').value;
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Backup JSON copied to clipboard!');
+        } catch (e) {
+          document.getElementById('backupExportText').select();
+          document.execCommand('copy');
+          showToast('Backup JSON copied!');
+        }
+      });
+
+      document.getElementById('restoreBackupBtn').addEventListener('click', () => {
+        const raw = document.getElementById('backupImportText').value.trim();
+        if (!raw) return showToast('Paste backup JSON text first');
+        try {
+          const parsed = JSON.parse(raw);
+          if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
+          state = parsed;
+          saveState();
+          refreshAll();
+          document.getElementById('settingsBackdrop').classList.remove('open');
+          showToast('Wallet data restored!');
+        } catch (e) {
+          showToast('Invalid JSON backup text');
+        }
+      });
+
+      document.getElementById('toastUndoBtn').addEventListener('click', undoLastDelete);
+
+      refreshAll();
     });
 
-    document.getElementById('toastUndoBtn').addEventListener('click', undoLastDelete);
-
-    // Initialize
-    refreshAll();
+    // Immediate fallback execution if DOM is already loaded
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      refreshAll();
+    }
   </script>
 </body>
 </html>
