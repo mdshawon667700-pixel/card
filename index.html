@@ -59,6 +59,7 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
@@ -506,13 +507,13 @@
       position: fixed;
       inset: 0;
       background-color: var(--bg-app);
-      z-index: 50;
+      z-index: 100;
       display: flex;
       flex-direction: column;
       max-width: 440px;
       margin: 0 auto;
       transform: translateY(100%);
-      transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s ease;
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s ease;
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(16px + env(safe-area-inset-bottom));
     }
@@ -526,6 +527,8 @@
       align-items: center;
       justify-content: space-between;
       padding: 14px 20px;
+      position: relative;
+      z-index: 102;
     }
 
     .overlay-title {
@@ -724,10 +727,12 @@
       cursor: pointer;
       box-shadow: var(--shadow-sm);
       transition: transform 0.12s ease, var(--theme-transition);
+      -webkit-user-select: none;
+      user-select: none;
     }
 
-    .key-btn:active {
-      transform: scale(0.93);
+    .key-btn:active, .key-btn.pressed {
+      transform: scale(0.92);
       background: var(--bg-subtle);
     }
 
@@ -756,7 +761,7 @@
       background: rgba(8, 10, 15, 0.55);
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
-      z-index: 80;
+      z-index: 150;
       display: none;
       align-items: flex-end;
       justify-content: center;
@@ -980,7 +985,7 @@
       align-items: center;
       gap: 12px;
       box-shadow: var(--shadow-lg);
-      z-index: 120;
+      z-index: 200;
       transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
@@ -1070,7 +1075,7 @@
   <!-- Fullscreen Add / Expense / Transfer Screen -->
   <div class="overlay-screen" id="entryOverlay">
     <div class="overlay-top">
-      <button class="icon-btn" id="closeEntryBtn">✕</button>
+      <button class="icon-btn" id="closeEntryBtn" aria-label="Close">✕</button>
       <span class="overlay-title" id="entryModeTitle">Add Money</span>
       <span style="width:38px"></span>
     </div>
@@ -1934,10 +1939,27 @@
       document.getElementById('openAddBtn').addEventListener('click', () => openEntryOverlay('add'));
       document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
       document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
-      document.getElementById('closeEntryBtn').addEventListener('click', () => document.getElementById('entryOverlay').classList.remove('open'));
+      
+      // Fix cross button reliably with pointerdown/click
+      const closeEntryBtn = document.getElementById('closeEntryBtn');
+      const closeOverlay = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('entryOverlay').classList.remove('open');
+      };
+      closeEntryBtn.addEventListener('click', closeOverlay);
+      closeEntryBtn.addEventListener('pointerdown', closeOverlay);
 
+      // Fix keypad buttons with pointerdown / touch start for immediate responsiveness on iPhone
       document.querySelectorAll('#keypadGrid .key-btn').forEach(btn => {
-        btn.addEventListener('click', () => handleKeyInput(btn.dataset.key));
+        const key = btn.dataset.key;
+        const handlePress = (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleKeyInput(key);
+        };
+        btn.addEventListener('click', handlePress);
+        btn.addEventListener('pointerdown', handlePress);
       });
 
       document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
@@ -2035,7 +2057,6 @@
       refreshAll();
     });
 
-    // Immediate fallback execution if DOM is already loaded
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
       refreshAll();
     }
