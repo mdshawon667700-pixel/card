@@ -2,25 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="PocketFlow" />
+  <meta name="theme-color" id="metaThemeColor" content="#f5f6f8" />
   <title>PocketFlow — Personal Card & Expense Wallet</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-app: #f7f8fa;
+      --bg-app: #f5f6f8;
       --bg-card: #ffffff;
-      --bg-subtle: #eff1f5;
-      --bg-input: #f2f4f7;
-      --text-primary: #111827;
-      --text-secondary: #6b7280;
-      --text-muted: #9ca3af;
-      --border-color: #e5e7eb;
-      --accent-dark: #111827;
+      --bg-subtle: #eceef2;
+      --bg-input: #f0f2f5;
+      --text-primary: #14171f;
+      --text-secondary: #687082;
+      --text-muted: #98a0b0;
+      --border-color: rgba(20, 23, 31, 0.08);
+      --accent-dark: #14171f;
       --accent-dark-text: #ffffff;
       --emerald: #10b981;
       --emerald-bg: rgba(16, 185, 129, 0.12);
@@ -28,25 +29,29 @@
       --danger-bg: rgba(239, 68, 68, 0.12);
       --blue: #3b82f6;
       --blue-bg: rgba(59, 130, 246, 0.12);
-      --shadow-sm: 0 2px 8px rgba(17, 24, 39, 0.04);
-      --shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
-      --shadow-lg: 0 16px 40px rgba(17, 24, 39, 0.16);
+      --shadow-sm: 0 2px 10px rgba(17, 24, 39, 0.04);
+      --shadow-md: 0 10px 28px rgba(17, 24, 39, 0.08);
+      --shadow-lg: 0 20px 48px rgba(17, 24, 39, 0.14);
+      --theme-transition: background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                          color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                          border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+                          box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    body.dark {
-      --bg-app: #0b0e14;
-      --bg-card: #151a23;
-      --bg-subtle: #1e2532;
-      --bg-input: #1a202c;
-      --text-primary: #f9fafb;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
-      --border-color: #262e3d;
-      --accent-dark: #f9fafb;
-      --accent-dark-text: #111827;
-      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
-      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
-      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+    html.dark, body.dark {
+      --bg-app: #0f1218;
+      --bg-card: #181c26;
+      --bg-subtle: #212734;
+      --bg-input: #1d222e;
+      --text-primary: #eef1f6;
+      --text-secondary: #929bae;
+      --text-muted: #626b7e;
+      --border-color: rgba(255, 255, 255, 0.07);
+      --accent-dark: #eef1f6;
+      --accent-dark-text: #0f1218;
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.22);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.34);
+      --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.48);
     }
 
     * {
@@ -57,25 +62,32 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
-    body {
-      background: var(--bg-app);
+    html, body {
+      background-color: var(--bg-app);
       color: var(--text-primary);
       min-height: 100vh;
+      min-height: -webkit-fill-available;
+      width: 100%;
+      overflow-x: hidden;
+      transition: var(--theme-transition);
+    }
+
+    body {
       display: flex;
       justify-content: center;
-      overflow-x: hidden;
-      transition: background 0.25s ease, color 0.25s ease;
     }
 
     .app-shell {
       width: 100%;
       max-width: 440px;
       min-height: 100vh;
-      background: var(--bg-app);
+      min-height: -webkit-fill-available;
+      background-color: var(--bg-app);
       position: relative;
       display: flex;
       flex-direction: column;
-      padding-bottom: 32px;
+      padding-bottom: calc(32px + env(safe-area-inset-bottom));
+      transition: var(--theme-transition);
     }
 
     /* Header */
@@ -95,7 +107,7 @@
 
     .wallet-heading-row {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       gap: 8px;
       flex-wrap: wrap;
     }
@@ -111,11 +123,12 @@
       align-items: center;
       gap: 6px;
       background: var(--bg-subtle);
-      padding: 3px 8px;
+      padding: 4px 10px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 600;
       color: var(--text-secondary);
+      transition: var(--theme-transition);
     }
 
     .mini-totals span.val-eur {
@@ -146,33 +159,43 @@
       justify-content: center;
       cursor: pointer;
       box-shadow: var(--shadow-sm);
-      transition: transform 0.15s ease, background 0.2s ease;
+      transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
     }
 
     .icon-btn:active {
-      transform: scale(0.92);
+      transform: scale(0.9);
+    }
+
+    .theme-icon-spin {
+      display: inline-block;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body.dark .theme-icon-spin {
+      transform: rotate(180deg);
     }
 
     /* Active Card Hero Balance */
     .hero-section {
-      padding: 10px 20px 14px;
+      padding: 12px 20px 16px;
       text-align: center;
     }
 
     .hero-label {
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 11.5px;
+      font-weight: 700;
       color: var(--text-secondary);
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.08em;
     }
 
     .hero-balance {
-      font-size: 40px;
+      font-size: 42px;
       font-weight: 800;
       letter-spacing: -0.04em;
-      margin: 4px 0 14px;
+      margin: 4px 0 16px;
       font-variant-numeric: tabular-nums;
+      transition: color 0.3s ease;
     }
 
     .action-row {
@@ -192,7 +215,7 @@
       font-weight: 700;
       border: none;
       cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
+      transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
     }
 
     .pill-btn:active {
@@ -227,7 +250,7 @@
       gap: 14px;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      padding: 6px 20px 12px;
+      padding: 6px 20px 14px;
       scrollbar-width: none;
     }
 
@@ -238,8 +261,8 @@
     .wallet-card {
       flex: 0 0 calc(100% - 24px);
       max-width: 360px;
-      height: 184px;
-      border-radius: 24px;
+      height: 186px;
+      border-radius: 26px;
       padding: 20px 22px;
       color: #ffffff;
       scroll-snap-align: center;
@@ -249,16 +272,16 @@
       justify-content: space-between;
       box-shadow: var(--shadow-md);
       cursor: pointer;
-      transition: transform 0.22s ease, box-shadow 0.25s ease;
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
       overflow: hidden;
     }
 
     .wallet-card:active {
-      transform: scale(0.98);
+      transform: scale(0.975);
     }
 
     .wallet-card.glow-success {
-      box-shadow: 0 0 0 3px var(--emerald), 0 12px 32px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 0 0 3px var(--emerald), 0 14px 36px rgba(16, 185, 129, 0.32);
     }
 
     .wallet-card::after {
@@ -266,10 +289,10 @@
       position: absolute;
       top: -40%;
       right: -20%;
-      width: 190px;
-      height: 190px;
+      width: 195px;
+      height: 195px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.07);
       pointer-events: none;
     }
 
@@ -287,7 +310,7 @@
     }
 
     .card-currency-pill {
-      background: rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.16);
       backdrop-filter: blur(8px);
       padding: 4px 10px;
       border-radius: 999px;
@@ -307,7 +330,7 @@
     }
 
     .card-bal-val {
-      font-size: 28px;
+      font-size: 29px;
       font-weight: 800;
       letter-spacing: -0.03em;
       font-variant-numeric: tabular-nums;
@@ -333,13 +356,15 @@
       width: 6px;
       height: 6px;
       border-radius: 999px;
-      background: var(--border-color);
-      transition: all 0.25s ease;
+      background: var(--text-muted);
+      opacity: 0.35;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .dot.active {
       width: 18px;
       background: var(--text-primary);
+      opacity: 1;
     }
 
     /* Monthly Summary & Activity */
@@ -347,7 +372,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 20px 8px;
+      padding: 14px 20px 10px;
     }
 
     .section-title {
@@ -361,10 +386,11 @@
       gap: 10px;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      padding: 4px 10px;
+      padding: 4px 11px;
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
+      transition: var(--theme-transition);
     }
 
     .month-in {
@@ -385,15 +411,15 @@
     .tx-item {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: 18px;
-      padding: 12px 14px;
+      border-radius: 20px;
+      padding: 13px 15px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       box-shadow: var(--shadow-sm);
       cursor: pointer;
-      animation: slideUpFade 0.32s ease backwards;
-      transition: transform 0.15s ease;
+      animation: slideUpFade 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+      transition: transform 0.16s ease, var(--theme-transition);
     }
 
     .tx-item:active {
@@ -426,6 +452,7 @@
       justify-content: center;
       font-size: 20px;
       background: var(--bg-subtle);
+      transition: var(--theme-transition);
     }
 
     .tx-meta {
@@ -464,27 +491,28 @@
 
     .empty-state {
       text-align: center;
-      padding: 34px 20px;
+      padding: 36px 20px;
       color: var(--text-secondary);
       font-size: 13px;
+      line-height: 1.5;
       background: var(--bg-card);
       border: 1px dashed var(--border-color);
-      border-radius: 20px;
-      margin: 4px 20px;
+      border-radius: 22px;
+      transition: var(--theme-transition);
     }
 
     /* Fullscreen Slide-up Entry Overlay */
     .overlay-screen {
       position: fixed;
       inset: 0;
-      background: var(--bg-app);
+      background-color: var(--bg-app);
       z-index: 50;
       display: flex;
       flex-direction: column;
       max-width: 440px;
       margin: 0 auto;
       transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(16px + env(safe-area-inset-bottom));
     }
@@ -538,7 +566,7 @@
       justify-content: center;
       font-size: 24px;
       box-shadow: var(--shadow-sm);
-      transition: transform 0.18s ease, border-color 0.2s ease, background 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, var(--theme-transition);
     }
 
     .cat-item.selected .cat-circle {
@@ -614,7 +642,7 @@
 
     .digit-pop {
       display: inline-block;
-      animation: digitPop 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: digitPop 0.18s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     @keyframes digitPop {
@@ -642,13 +670,14 @@
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       border-radius: 999px;
-      padding: 8px 16px;
+      padding: 9px 16px;
       font-size: 13px;
       color: var(--text-primary);
       text-align: center;
-      width: 75%;
-      max-width: 260px;
+      width: 78%;
+      max-width: 270px;
       outline: none;
+      transition: var(--theme-transition);
     }
 
     /* Preset Pills */
@@ -669,11 +698,11 @@
       font-weight: 700;
       color: var(--text-primary);
       cursor: pointer;
-      transition: transform 0.12s ease;
+      transition: transform 0.14s ease, var(--theme-transition);
     }
 
     .preset-chip:active {
-      transform: scale(0.93);
+      transform: scale(0.92);
     }
 
     /* Numeric Keypad */
@@ -686,7 +715,7 @@
 
     .key-btn {
       height: 54px;
-      border-radius: 16px;
+      border-radius: 18px;
       border: none;
       background: var(--bg-card);
       color: var(--text-primary);
@@ -694,7 +723,7 @@
       font-weight: 700;
       cursor: pointer;
       box-shadow: var(--shadow-sm);
-      transition: transform 0.1s ease, background 0.15s ease;
+      transition: transform 0.12s ease, var(--theme-transition);
     }
 
     .key-btn:active {
@@ -713,7 +742,7 @@
       font-weight: 800;
       cursor: pointer;
       box-shadow: var(--shadow-md);
-      transition: transform 0.15s ease, opacity 0.2s ease;
+      transition: transform 0.16s ease, var(--theme-transition);
     }
 
     .send-cta:active {
@@ -724,8 +753,9 @@
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.48);
-      backdrop-filter: blur(4px);
+      background: rgba(8, 10, 15, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       z-index: 80;
       display: none;
       align-items: flex-end;
@@ -740,12 +770,13 @@
       width: 100%;
       max-width: 440px;
       background: var(--bg-card);
-      border-radius: 28px 28px 0 0;
+      border-radius: 30px 30px 0 0;
       padding: 24px 22px calc(28px + env(safe-area-inset-bottom));
       box-shadow: var(--shadow-lg);
-      animation: sheetRise 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      animation: sheetRise 0.32s cubic-bezier(0.22, 1, 0.36, 1);
       max-height: 88vh;
       overflow-y: auto;
+      transition: var(--theme-transition);
     }
 
     @keyframes sheetRise {
@@ -791,7 +822,7 @@
       align-items: center;
       justify-content: center;
       font-size: 30px;
-      transition: all 0.3s ease;
+      transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .ring-avatar.done {
@@ -847,6 +878,7 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
+      transition: var(--theme-transition);
     }
 
     .tab-btn.active {
@@ -870,12 +902,13 @@
     .form-input, .form-select, .form-textarea {
       width: 100%;
       padding: 11px 13px;
-      border-radius: 13px;
+      border-radius: 14px;
       border: 1px solid var(--border-color);
       background: var(--bg-input);
       color: var(--text-primary);
       font-size: 14px;
       outline: none;
+      transition: var(--theme-transition);
     }
 
     .form-row {
@@ -895,11 +928,12 @@
       border-radius: 50%;
       cursor: pointer;
       border: 2.5px solid transparent;
+      transition: transform 0.15s ease;
     }
 
     .swatch.active {
       border-color: var(--text-primary);
-      transform: scale(1.1);
+      transform: scale(1.12);
     }
 
     .icon-grid {
@@ -921,6 +955,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      transition: transform 0.15s ease, var(--theme-transition);
     }
 
     .icon-choice.active {
@@ -932,7 +967,7 @@
     /* Toast */
     .toast {
       position: fixed;
-      bottom: 24px;
+      bottom: calc(24px + env(safe-area-inset-bottom));
       left: 50%;
       transform: translateX(-50%) translateY(100px);
       background: var(--accent-dark);
@@ -946,7 +981,7 @@
       gap: 12px;
       box-shadow: var(--shadow-lg);
       z-index: 120;
-      transition: transform 0.25s ease;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .toast.show {
@@ -997,7 +1032,9 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">🌙</button>
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
+          <span class="theme-icon-spin" id="themeIconSpan">🌙</span>
+        </button>
         <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
       </div>
     </header>
@@ -1219,7 +1256,7 @@
     };
 
     const CARD_GRADIENTS = [
-      'linear-gradient(135deg, #111827 0%, #1f2937 100%)',
+      'linear-gradient(135deg, #1b2230 0%, #273043 100%)',
       'linear-gradient(135deg, #064e3b 0%, #047857 100%)',
       'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)',
       'linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%)',
@@ -1249,7 +1286,7 @@
 
     let state = loadState();
     let activeCardIndex = 0;
-    let entryMode = 'add'; // 'add' | 'expense' | 'transfer'
+    let entryMode = 'add';
     let selectedCatId = state.categories[0]?.id || 'food';
     let amountStr = '0';
     let selectedGradient = CARD_GRADIENTS[0];
@@ -1311,8 +1348,14 @@
     }
 
     function applyTheme() {
-      document.body.classList.toggle('dark', !!state.darkMode);
-      document.getElementById('themeToggleBtn').textContent = state.darkMode ? '☀️' : '🌙';
+      const isDark = !!state.darkMode;
+      document.documentElement.classList.toggle('dark', isDark);
+      document.body.classList.toggle('dark', isDark);
+      document.getElementById('themeIconSpan').textContent = isDark ? '☀️' : '🌙';
+      const metaTheme = document.getElementById('metaThemeColor');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', isDark ? '#0f1218' : '#f5f6f8');
+      }
     }
 
     function updateHeaderTotals() {
@@ -1437,7 +1480,6 @@
       const tx = state.transactions[idx];
       if (!confirm(`Delete "${tx.categoryName}" (${formatMoney(tx.amount, tx.currency)})?`)) return;
 
-      // Revert balance
       const card = state.cards.find(c => c.id === tx.cardId);
       if (card) {
         if (tx.type === 'add') card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
@@ -1530,7 +1572,6 @@
         strip.appendChild(item);
       });
 
-      // Custom Category Button
       const customItem = document.createElement('div');
       customItem.className = 'cat-item';
       customItem.innerHTML = `
@@ -1615,7 +1656,6 @@
         return;
       }
 
-      // Show animated confirmation bottom sheet
       const backdrop = document.getElementById('confirmBackdrop');
       const spinner = document.getElementById('confirmSpinner');
       const avatar = document.getElementById('confirmAvatar');
@@ -1843,6 +1883,7 @@
 
     // Event Listeners
     document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      triggerHaptic();
       state.darkMode = !state.darkMode;
       saveState();
       applyTheme();
@@ -1957,10 +1998,4 @@
       }
     });
 
-    document.getElementById('toastUndoBtn').addEventListener('click', undoLastDelete);
-
-    // Initialize
-    refreshAll();
-  </script>
-</body>
-</html>
+    document.getElementById('toastUndoBtn').addEventListener('click', und
