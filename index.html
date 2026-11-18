@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="PocketFlow" />
+  <title>PocketFlow — Personal Card & Expense Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-app: #f7f8fa;
+      --bg-card: #ffffff;
+      --bg-subtle: #eff1f5;
+      --bg-input: #f2f4f7;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --text-muted: #9ca3af;
+      --border-color: #e5e7eb;
+      --accent-dark: #111827;
+      --accent-dark-text: #ffffff;
+      --emerald: #10b981;
+      --emerald-bg: rgba(16, 185, 129, 0.12);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.12);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59, 130, 246, 0.12);
+      --shadow-sm: 0 2px 8px rgba(17, 24, 39, 0.04);
+      --shadow-md: 0 8px 24px rgba(17, 24, 39, 0.08);
+      --shadow-lg: 0 16px 40px rgba(17, 24, 39, 0.16);
+    }
+
+    body.dark {
+      --bg-app: #0b0e14;
+      --bg-card: #151a23;
+      --bg-subtle: #1e2532;
+      --bg-input: #1a202c;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border-color: #262e3d;
+      --accent-dark: #f9fafb;
+      --accent-dark-text: #111827;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: var(--bg-app);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      overflow-x: hidden;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      background: var(--bg-app);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 32px;
+    }
+
+    /* Header */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(14px + env(safe-area-inset-top)) 20px 10px;
+      gap: 8px;
+    }
+
+    .wallet-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .wallet-heading-row {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .wallet-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .mini-totals {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-subtle);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .mini-totals span.val-eur {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .mini-totals span.val-bdt {
+      color: var(--emerald);
+      font-weight: 700;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.15s ease, background 0.2s ease;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Active Card Hero Balance */
+    .hero-section {
+      padding: 10px 20px 14px;
+      text-align: center;
+    }
+
+    .hero-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .hero-balance {
+      font-size: 40px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      margin: 4px 0 14px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .pill-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .pill-btn:active {
+      transform: scale(0.94);
+    }
+
+    .pill-add {
+      background: var(--accent-dark);
+      color: var(--accent-dark-text);
+      box-shadow: var(--shadow-md);
+    }
+
+    .pill-expense {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pill-transfer {
+      background: var(--bg-subtle);
+      color: var(--text-primary);
+    }
+
+    /* Cards Carousel */
+    .cards-wrapper {
+      padding: 6px 0 8px;
+    }
+
+    .cards-carousel {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 6px 20px 12px;
+      scrollbar-width: none;
+    }
+
+    .cards-carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .wallet-card {
+      flex: 0 0 calc(100% - 24px);
+      max-width: 360px;
+      height: 184px;
+      border-radius: 24px;
+      padding: 20px 22px;
+      color: #ffffff;
+      scroll-snap-align: center;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: var(--shadow-md);
+      cursor: pointer;
+      transition: transform 0.22s ease, box-shadow 0.25s ease;
+      overflow: hidden;
+    }
+
+    .wallet-card:active {
+      transform: scale(0.98);
+    }
+
+    .wallet-card.glow-success {
+      box-shadow: 0 0 0 3px var(--emerald), 0 12px 32px rgba(16, 185, 129, 0.35);
+    }
+
+    .wallet-card::after {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .card-name {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .card-currency-pill {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .card-mid {
+      z-index: 1;
+    }
+
+    .card-bal-label {
+      font-size: 11px;
+      opacity: 0.78;
+      margin-bottom: 2px;
+    }
+
+    .card-bal-val {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .card-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      opacity: 0.88;
+      z-index: 1;
+    }
+
+    .card-dots {
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--border-color);
+      transition: all 0.25s ease;
+    }
+
+    .dot.active {
+      width: 18px;
+      background: var(--text-primary);
+    }
+
+    /* Monthly Summary & Activity */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px 8px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .month-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .month-in {
+      color: var(--emerald);
+    }
+
+    .month-out {
+      color: var(--danger);
+    }
+
+    .tx-list {
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tx-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      animation: slideUpFade 0.32s ease backwards;
+      transition: transform 0.15s ease;
+    }
+
+    .tx-item:active {
+      transform: scale(0.98);
+    }
+
+    @keyframes slideUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tx-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tx-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: var(--bg-subtle);
+    }
+
+    .tx-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tx-cat {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tx-sub {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+    }
+
+    .tx-amount {
+      font-size: 15px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tx-amount.add {
+      color: var(--emerald);
+    }
+
+    .tx-amount.expense {
+      color: var(--text-primary);
+    }
+
+    .tx-amount.transfer {
+      color: var(--blue);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 34px 20px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      background: var(--bg-card);
+      border: 1px dashed var(--border-color);
+      border-radius: 20px;
+      margin: 4px 20px;
+    }
+
+    /* Fullscreen Slide-up Entry Overlay */
+    .overlay-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg-app);
+      z-index: 50;
+      display: flex;
+      flex-direction: column;
+      max-width: 440px;
+      margin: 0 auto;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    }
+
+    .overlay-screen.open {
+      transform: translateY(0);
+    }
+
+    .overlay-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+    }
+
+    .overlay-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    /* Category Bar */
+    .cat-strip {
+      display: flex;
+      gap: 14px;
+      overflow-x: auto;
+      padding: 10px 20px 14px;
+      scrollbar-width: none;
+    }
+
+    .cat-strip::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 0 0 auto;
+      cursor: pointer;
+    }
+
+    .cat-circle {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.18s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .cat-item.selected .cat-circle {
+      border-color: var(--text-primary);
+      transform: scale(1.08);
+      background: var(--bg-subtle);
+    }
+
+    .cat-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      max-width: 64px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .cat-item.selected .cat-label {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    /* Transfer Card Selector */
+    .transfer-bar {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px 20px;
+    }
+
+    .transfer-bar.visible {
+      display: flex;
+    }
+
+    .transfer-select {
+      flex: 1;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Amount Display */
+    .amount-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 20px;
+    }
+
+    .amount-display {
+      font-size: 52px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .amount-sym {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .digit-pop {
+      display: inline-block;
+      animation: digitPop 0.16s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes digitPop {
+      0% { transform: scale(0.75); opacity: 0.4; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .cursor-blink {
+      display: inline-block;
+      width: 2.5px;
+      height: 40px;
+      background: var(--emerald);
+      border-radius: 2px;
+      margin-left: 2px;
+      animation: blink 1s infinite;
+    }
+
+    @keyframes blink {
+      0%, 49% { opacity: 1; }
+      50%, 100% { opacity: 0; }
+    }
+
+    .note-input {
+      margin-top: 12px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: var(--text-primary);
+      text-align: center;
+      width: 75%;
+      max-width: 260px;
+      outline: none;
+    }
+
+    /* Preset Pills */
+    .presets-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 8px 16px 14px;
+      flex-wrap: wrap;
+    }
+
+    .preset-chip {
+      padding: 7px 14px;
+      border-radius: 999px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: transform 0.12s ease;
+    }
+
+    .preset-chip:active {
+      transform: scale(0.93);
+    }
+
+    /* Numeric Keypad */
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 0 20px 14px;
+    }
+
+    .key-btn {
+      height: 54px;
+      border-radius: 16px;
+      border: none;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 22px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.1s ease, background 0.15s ease;
+    }
+
+    .key-btn:active {
+      transform: scale(0.93);
+      background: var(--bg-subtle);
+    }
+
+    .send-cta {
+      margin: 0 20px;
+      height: 54px;
+      border-radius: 18px;
+      border: none;
+      background: var(--accent-dark);
+      color: var(--accent-dark-text);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      transition: transform 0.15s ease, opacity 0.2s ease;
+    }
+
+    .send-cta:active {
+      transform: scale(0.97);
+    }
+
+    /* Confirmation Bottom Sheet */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.48);
+      backdrop-filter: blur(4px);
+      z-index: 80;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .bottom-sheet {
+      width: 100%;
+      max-width: 440px;
+      background: var(--bg-card);
+      border-radius: 28px 28px 0 0;
+      padding: 24px 22px calc(28px + env(safe-area-inset-bottom));
+      box-shadow: var(--shadow-lg);
+      animation: sheetRise 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    @keyframes sheetRise {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .confirm-stage {
+      text-align: center;
+      padding: 18px 10px;
+      position: relative;
+    }
+
+    .ring-wrapper {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 16px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .spinner-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3.5px solid var(--bg-subtle);
+      border-top-color: var(--emerald);
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .ring-avatar {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      transition: all 0.3s ease;
+    }
+
+    .ring-avatar.done {
+      background: var(--emerald);
+      color: #ffffff;
+      transform: scale(1.06);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
+
+    .confirm-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .confirm-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      top: 48px;
+      left: 50%;
+      pointer-events: none;
+      animation: confettiFly 0.75s ease-out forwards;
+    }
+
+    @keyframes confettiFly {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) rotate(240deg) scale(0.4); opacity: 0; }
+    }
+
+    /* Settings & Statement Controls */
+    .tabs-bar {
+      display: flex;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 13px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .color-swatches {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2.5px solid transparent;
+    }
+
+    .swatch.active {
+      border-color: var(--text-primary);
+      transform: scale(1.1);
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      max-height: 170px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .icon-choice {
+      height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-input);
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .icon-choice.active {
+      border-color: var(--text-primary);
+      background: var(--bg-subtle);
+      transform: scale(1.06);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent-dark);
+      color: var(--accent-dark-text);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      z-index: 120;
+      transition: transform 0.25s ease;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-undo {
+      background: var(--emerald);
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Print / PDF Statement Styles */
+    @media print {
+      body * { visibility: hidden; }
+      #statementSheet, #statementSheet * { visibility: visible; }
+      #statementSheet {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        background: #ffffff !important;
+        color: #111827 !important;
+      }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="top-bar">
+      <div class="wallet-title-group">
+        <div class="wallet-heading-row">
+          <h1 class="wallet-title">Wallet</h1>
+          <div class="mini-totals" id="miniTotalsBadge">
+            <span class="val-eur" id="totalEurMini">€0.00</span>
+            <span>•</span>
+            <span class="val-bdt" id="totalBdtMini">৳0</span>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">🌙</button>
+        <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
+      </div>
+    </header>
+
+    <!-- Active Card Hero Balance -->
+    <section class="hero-section">
+      <div class="hero-label" id="activeCardLabel">MAIN CARD</div>
+      <div class="hero-balance" id="heroBalanceDisplay">€0.00</div>
+      <div class="action-row">
+        <button class="pill-btn pill-add" id="openAddBtn">+ Add</button>
+        <button class="pill-btn pill-expense" id="openExpenseBtn">− Expense</button>
+        <button class="pill-btn pill-transfer" id="openTransferBtn">⇄ Transfer</button>
+      </div>
+    </section>
+
+    <!-- Cards Carousel -->
+    <section class="cards-wrapper">
+      <div class="cards-carousel" id="cardsCarousel"></div>
+      <div class="card-dots" id="cardDots"></div>
+    </section>
+
+    <!-- Recent Activity -->
+    <div class="section-header">
+      <span class="section-title">Recent Activity</span>
+      <div class="month-pill">
+        <span class="month-in" id="monthInVal">+€0</span>
+        <span class="month-out" id="monthOutVal">−€0</span>
+      </div>
+    </div>
+    <div class="tx-list" id="txList"></div>
+  </div>
+
+  <!-- Fullscreen Add / Expense / Transfer Screen -->
+  <div class="overlay-screen" id="entryOverlay">
+    <div class="overlay-top">
+      <button class="icon-btn" id="closeEntryBtn">✕</button>
+      <span class="overlay-title" id="entryModeTitle">Add Money</span>
+      <span style="width:38px"></span>
+    </div>
+
+    <!-- Category Strip -->
+    <div class="cat-strip" id="catStrip"></div>
+
+    <!-- Transfer Destination Card Selector -->
+    <div class="transfer-bar" id="transferBar">
+      <span style="font-size:12px;font-weight:700;color:var(--text-secondary)">To Card:</span>
+      <select class="transfer-select" id="transferToSelect"></select>
+    </div>
+
+    <!-- Live Amount Display -->
+    <div class="amount-stage">
+      <div class="amount-display">
+        <span class="amount-sym" id="entryCurrencySym">€</span>
+        <span id="entryAmountDigits">0</span>
+        <span class="cursor-blink"></span>
+      </div>
+      <input type="text" class="note-input" id="entryNoteInput" placeholder="Add a note (optional)..." />
+    </div>
+
+    <!-- Quick Preset Pills -->
+    <div class="presets-row" id="presetsRow"></div>
+
+    <!-- Keypad -->
+    <div class="keypad" id="keypadGrid">
+      <button class="key-btn" data-key="1">1</button>
+      <button class="key-btn" data-key="2">2</button>
+      <button class="key-btn" data-key="3">3</button>
+      <button class="key-btn" data-key="4">4</button>
+      <button class="key-btn" data-key="5">5</button>
+      <button class="key-btn" data-key="6">6</button>
+      <button class="key-btn" data-key="7">7</button>
+      <button class="key-btn" data-key="8">8</button>
+      <button class="key-btn" data-key="9">9</button>
+      <button class="key-btn" data-key=".">.</button>
+      <button class="key-btn" data-key="0">0</button>
+      <button class="key-btn" data-key="back">⌫</button>
+    </div>
+
+    <button class="send-cta" id="submitTxBtn">Send</button>
+  </div>
+
+  <!-- Confirmation Animation Bottom Sheet -->
+  <div class="modal-backdrop" id="confirmBackdrop">
+    <div class="bottom-sheet">
+      <div class="confirm-stage" id="confirmStage">
+        <div class="ring-wrapper">
+          <div class="spinner-ring" id="confirmSpinner"></div>
+          <div class="ring-avatar" id="confirmAvatar">💸</div>
+        </div>
+        <div class="confirm-title" id="confirmTitle">Processing...</div>
+        <div class="confirm-sub" id="confirmSub">Updating card balance</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Category Bottom Sheet -->
+  <div class="modal-backdrop" id="customCatBackdrop">
+    <div class="bottom-sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3 style="font-size:18px;font-weight:800;">New Category</h3>
+        <button class="icon-btn" id="closeCustomCatBtn">✕</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category Name</label>
+        <input type="text" class="form-input" id="newCatName" placeholder="e.g., Coffee, Metro, Remittance..." />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pick an Icon</label>
+        <div class="icon-grid" id="iconPickerGrid"></div>
+      </div>
+      <button class="send-cta" style="width:100%;margin:10px 0 0;" id="saveCustomCatBtn">Create Category</button>
+    </div>
+  </div>
+
+  <!-- Card Statement Modal (Date Search + PDF Export) -->
+  <div class="modal-backdrop" id="statementBackdrop">
+    <div class="bottom-sheet" id="statementSheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div>
+          <h3 id="stmtCardTitle" style="font-size:18px;font-weight:800;">Card Statement</h3>
+          <div id="stmtCardBal" style="font-size:13px;font-weight:700;color:var(--emerald);">€0.00</div>
+        </div>
+        <div class="no-print" style="display:flex;gap:8px;">
+          <button class="pill-btn pill-add" style="padding:8px 12px;font-size:12px;" id="downloadPdfBtn">📄 PDF</button>
+          <button class="icon-btn" id="closeStmtBtn">✕</button>
+        </div>
+      </div>
+
+      <div class="form-row no-print" style="margin-bottom:10px;">
+        <input type="date" class="form-input" id="stmtFromDate" title="From Date" />
+        <input type="date" class="form-input" id="stmtToDate" title="To Date" />
+      </div>
+      <div class="form-row no-print" style="margin-bottom:12px;">
+        <input type="text" class="form-input" id="stmtSearchInput" placeholder="Search note or category..." />
+        <select class="form-select" id="stmtTypeFilter" style="max-width:115px;">
+          <option value="all">All</option>
+          <option value="add">Added</option>
+          <option value="expense">Expense</option>
+          <option value="transfer">Transfer</option>
+        </select>
+      </div>
+
+      <div id="stmtTxList" style="display:flex;flex-direction:column;gap:8px;max-height:46vh;overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- Settings & Backup Modal -->
+  <div class="modal-backdrop" id="settingsBackdrop">
+    <div class="bottom-sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3 style="font-size:18px;font-weight:800;">Wallet Settings</h3>
+        <button class="icon-btn" id="closeSettingsBtn">✕</button>
+      </div>
+
+      <div class="tabs-bar">
+        <button class="tab-btn active" data-tab="cardsTab">My Cards</button>
+        <button class="tab-btn" data-tab="backupTab">Backup (Copy/Paste)</button>
+      </div>
+
+      <!-- Cards Tab -->
+      <div id="cardsTab">
+        <div id="settingsCardsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
+        <div style="background:var(--bg-subtle);padding:14px;border-radius:18px;">
+          <div style="font-size:14px;font-weight:800;margin-bottom:10px;">+ Add New Card</div>
+          <div class="form-group">
+            <input type="text" class="form-input" id="newCardName" placeholder="Card Name (e.g., Postepay, Credem, Cash)" />
+          </div>
+          <div class="form-row form-group">
+            <input type="text" class="form-input" id="newCardDigits" maxlength="4" placeholder="Last 4 digits (4568)" />
+            <select class="form-select" id="newCardCurrency">
+              <option value="EUR" selected>EUR (€) — Euro</option>
+              <option value="USD">USD ($) — Dollar</option>
+              <option value="BDT">BDT (৳) — Taka</option>
+              <option value="JPY">JPY (¥) — Yen</option>
+              <option value="GBP">GBP (£) — Pound</option>
+              <option value="CHF">CHF — Swiss Franc</option>
+            </select>
+          </div>
+          <div class="form-row form-group" style="align-items:center;">
+            <input type="number" class="form-input" id="newCardBalance" placeholder="Initial Balance (0)" step="any" />
+            <div class="color-swatches" id="cardColorSwatches"></div>
+          </div>
+          <button class="send-cta" style="width:100%;margin:6px 0 0;" id="saveNewCardBtn">Save Card</button>
+        </div>
+      </div>
+
+      <!-- Backup Tab -->
+      <div id="backupTab" style="display:none;">
+        <div class="form-group">
+          <label class="form-label">1. Copy Backup Text (Save in WhatsApp or Apple Notes)</label>
+          <textarea class="form-textarea" id="backupExportText" rows="4" readonly></textarea>
+          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn">Copy Backup Text</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
+        <div class="form-group">
+          <label class="form-label">2. Restore Data (Paste Backup JSON Text Here)</label>
+          <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste your saved backup JSON here..."></textarea>
+          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn">Restore Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toastEl">
+    <span id="toastMsg">Done</span>
+    <button class="toast-undo" id="toastUndoBtn" style="display:none;">Undo</button>
+  </div>
+
+  <script>
+    const CURRENCY_META = {
+      EUR: { symbol: '€', rateToEur: 1 },
+      USD: { symbol: '$', rateToEur: 0.92 },
+      BDT: { symbol: '৳', rateToEur: 0.0077 },
+      JPY: { symbol: '¥', rateToEur: 0.0061 },
+      GBP: { symbol: '£', rateToEur: 1.17 },
+      CHF: { symbol: 'CHF ', rateToEur: 1.06 }
+    };
+
+    const CARD_GRADIENTS = [
+      'linear-gradient(135deg, #111827 0%, #1f2937 100%)',
+      'linear-gradient(135deg, #064e3b 0%, #047857 100%)',
+      'linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)',
+      'linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%)',
+      'linear-gradient(135deg, #7c2d12 0%, #b45309 100%)'
+    ];
+
+    const ICON_LIBRARY = [
+      '🎯', '⛽', '🏋️', '🍕', '✈️', '🏠',
+      '📱', '🎓', '💇', '🐾', '🏥', '🎉',
+      '🛒', '☕', '🍽️', '🚆', '📶', '💸',
+      '🎁', '👕', '✂️', '💊', '💡', '🏦',
+      '💰', '📦', '🎬', '🛡️', '🧾', '🌍'
+    ];
+
+    const DEFAULT_CATEGORIES = [
+      { id: 'food', name: 'Food', icon: '🍔' },
+      { id: 'coffee', name: 'Coffee', icon: '☕' },
+      { id: 'grocery', name: 'Grocery', icon: '🛒' },
+      { id: 'transport', name: 'Metro', icon: '🚆' },
+      { id: 'shopping', name: 'Shopping', icon: '🛍️' },
+      { id: 'bills', name: 'Bills', icon: '⚡' },
+      { id: 'remit', name: 'Remit', icon: '💸' },
+      { id: 'salary', name: 'Salary', icon: '💰' }
+    ];
+
+    const STORAGE_KEY = 'pocketflow_wallet_v3';
+
+    let state = loadState();
+    let activeCardIndex = 0;
+    let entryMode = 'add'; // 'add' | 'expense' | 'transfer'
+    let selectedCatId = state.categories[0]?.id || 'food';
+    let amountStr = '0';
+    let selectedGradient = CARD_GRADIENTS[0];
+    let selectedNewIcon = ICON_LIBRARY[0];
+    let lastDeletedTx = null;
+    let statementCardId = null;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+      return {
+        darkMode: false,
+        cards: [
+          {
+            id: 'card_1',
+            name: 'Main Euro Card',
+            digits: '4568',
+            currency: 'EUR',
+            balance: 0,
+            gradient: CARD_GRADIENTS[0]
+          },
+          {
+            id: 'card_2',
+            name: 'BDT Wallet',
+            digits: '8824',
+            currency: 'BDT',
+            balance: 0,
+            gradient: CARD_GRADIENTS[1]
+          }
+        ],
+        categories: [...DEFAULT_CATEGORIES],
+        transactions: []
+      };
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function triggerHaptic() {
+      if (navigator.vibrate) navigator.vibrate(12);
+    }
+
+    function formatMoney(amount, currencyCode) {
+      const meta = CURRENCY_META[currencyCode] || CURRENCY_META.EUR;
+      const num = Number(amount) || 0;
+      const decimals = currencyCode === 'JPY' ? 0 : 2;
+      return `${meta.symbol}${num.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      })}`;
+    }
+
+    function applyTheme() {
+      document.body.classList.toggle('dark', !!state.darkMode);
+      document.getElementById('themeToggleBtn').textContent = state.darkMode ? '☀️' : '🌙';
+    }
+
+    function updateHeaderTotals() {
+      let totalEur = 0;
+      let totalBdt = 0;
+
+      state.cards.forEach(c => {
+        const bal = Number(c.balance) || 0;
+        if (c.currency === 'BDT') {
+          totalBdt += bal;
+        } else {
+          const rate = (CURRENCY_META[c.currency] || CURRENCY_META.EUR).rateToEur;
+          totalEur += bal * rate;
+        }
+      });
+
+      document.getElementById('totalEurMini').textContent = `€${totalEur.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('totalBdtMini').textContent = `৳${totalBdt.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+    }
+
+    function renderCards() {
+      const carousel = document.getElementById('cardsCarousel');
+      const dots = document.getElementById('cardDots');
+      carousel.innerHTML = '';
+      dots.innerHTML = '';
+
+      if (activeCardIndex >= state.cards.length) activeCardIndex = Math.max(0, state.cards.length - 1);
+
+      state.cards.forEach((card, idx) => {
+        const el = document.createElement('div');
+        el.className = 'wallet-card';
+        el.style.background = card.gradient || CARD_GRADIENTS[0];
+        el.dataset.cardId = card.id;
+        el.innerHTML = `
+          <div class="card-top">
+            <span class="card-name">${card.name}</span>
+            <span class="card-currency-pill">${card.currency}</span>
+          </div>
+          <div class="card-mid">
+            <div class="card-bal-label">Available Balance</div>
+            <div class="card-bal-val">${formatMoney(card.balance, card.currency)}</div>
+          </div>
+          <div class="card-bottom">
+            <span>•••• ${card.digits || '0000'}</span>
+            <span style="font-size:11px;opacity:0.85;">Tap for statement →</span>
+          </div>
+        `;
+        el.addEventListener('click', () => openStatementModal(card.id));
+        carousel.appendChild(el);
+
+        const dot = document.createElement('div');
+        dot.className = 'dot' + (idx === activeCardIndex ? ' active' : '');
+        dots.appendChild(dot);
+      });
+
+      updateHeroForActiveCard();
+    }
+
+    function updateHeroForActiveCard() {
+      const card = state.cards[activeCardIndex] || state.cards[0];
+      if (!card) return;
+      document.getElementById('activeCardLabel').textContent = `${card.name} ••${card.digits}`;
+      document.getElementById('heroBalanceDisplay').textContent = formatMoney(card.balance, card.currency);
+      document.querySelectorAll('#cardDots .dot').forEach((d, i) => {
+        d.classList.toggle('active', i === activeCardIndex);
+      });
+    }
+
+    function renderTransactions() {
+      const list = document.getElementById('txList');
+      list.innerHTML = '';
+
+      const activeCard = state.cards[activeCardIndex] || state.cards[0];
+      const now = new Date();
+      let monthIn = 0;
+      let monthOut = 0;
+
+      state.transactions.forEach(tx => {
+        const d = new Date(tx.date);
+        if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear() && tx.cardId === activeCard.id) {
+          if (tx.type === 'add') monthIn += Number(tx.amount);
+          if (tx.type === 'expense') monthOut += Number(tx.amount);
+        }
+      });
+
+      const sym = (CURRENCY_META[activeCard.currency] || CURRENCY_META.EUR).symbol;
+      document.getElementById('monthInVal').textContent = `+${sym}${monthIn.toFixed(0)}`;
+      document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(0)}`;
+
+      if (state.transactions.length === 0) {
+        list.innerHTML = `<div class="empty-state">No transactions yet. Tap <strong>+ Add</strong> or <strong>− Expense</strong> above to record your first entry.</div>`;
+        return;
+      }
+
+      state.transactions.slice(0, 25).forEach((tx, index) => {
+        const card = state.cards.find(c => c.id === tx.cardId) || activeCard;
+        const cat = state.categories.find(c => c.id === tx.categoryId) || { name: tx.categoryName || 'Entry', icon: tx.icon || '💳' };
+        const dateStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        const prefix = tx.type === 'add' ? '+' : tx.type === 'transfer' ? '⇄ ' : '−';
+
+        const row = document.createElement('div');
+        row.className = 'tx-item';
+        row.style.animationDelay = `${index * 0.03}s`;
+        row.innerHTML = `
+          <div class="tx-left">
+            <div class="tx-avatar">${cat.icon}</div>
+            <div class="tx-meta">
+              <div class="tx-cat">${cat.name}${tx.note ? ` · <span style="font-weight:500;color:var(--text-secondary)">${tx.note}</span>` : ''}</div>
+              <div class="tx-sub">${card.name} • ${dateStr}</div>
+            </div>
+          </div>
+          <div class="tx-amount ${tx.type}">${prefix}${formatMoney(tx.amount, tx.currency || card.currency)}</div>
+        `;
+        row.addEventListener('click', () => deleteTransactionWithUndo(tx.id));
+        list.appendChild(row);
+      });
+    }
+
+    function deleteTransactionWithUndo(txId) {
+      const idx = state.transactions.findIndex(t => t.id === txId);
+      if (idx === -1) return;
+      const tx = state.transactions[idx];
+      if (!confirm(`Delete "${tx.categoryName}" (${formatMoney(tx.amount, tx.currency)})?`)) return;
+
+      // Revert balance
+      const card = state.cards.find(c => c.id === tx.cardId);
+      if (card) {
+        if (tx.type === 'add') card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
+        if (tx.type === 'expense' || tx.type === 'transfer') card.balance = Number(card.balance) + Number(tx.amount);
+      }
+      if (tx.type === 'transfer' && tx.toCardId) {
+        const toCard = state.cards.find(c => c.id === tx.toCardId);
+        if (toCard) toCard.balance = Math.max(0, Number(toCard.balance) - Number(tx.convertedAmount || tx.amount));
+      }
+
+      lastDeletedTx = tx;
+      state.transactions.splice(idx, 1);
+      saveState();
+      refreshAll();
+      showToast('Transaction deleted', true);
+    }
+
+    function undoLastDelete() {
+      if (!lastDeletedTx) return;
+      const tx = lastDeletedTx;
+      const card = state.cards.find(c => c.id === tx.cardId);
+      if (card) {
+        if (tx.type === 'add') card.balance = Number(card.balance) + Number(tx.amount);
+        if (tx.type === 'expense' || tx.type === 'transfer') card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
+      }
+      if (tx.type === 'transfer' && tx.toCardId) {
+        const toCard = state.cards.find(c => c.id === tx.toCardId);
+        if (toCard) toCard.balance = Number(toCard.balance) + Number(tx.convertedAmount || tx.amount);
+      }
+      state.transactions.unshift(tx);
+      lastDeletedTx = null;
+      saveState();
+      refreshAll();
+      hideToast();
+    }
+
+    function openEntryOverlay(mode) {
+      triggerHaptic();
+      entryMode = mode;
+      amountStr = '0';
+      document.getElementById('entryNoteInput').value = '';
+
+      const card = state.cards[activeCardIndex] || state.cards[0];
+      const sym = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).symbol;
+      document.getElementById('entryCurrencySym').textContent = sym;
+
+      const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer Between Cards' };
+      document.getElementById('entryModeTitle').textContent = titleMap[mode];
+      document.getElementById('submitTxBtn').textContent = mode === 'add' ? 'Add to Card' : mode === 'expense' ? 'Send Expense' : 'Transfer Now';
+
+      const transferBar = document.getElementById('transferBar');
+      if (mode === 'transfer' && state.cards.length > 1) {
+        transferBar.classList.add('visible');
+        const sel = document.getElementById('transferToSelect');
+        sel.innerHTML = '';
+        state.cards.forEach((c, idx) => {
+          if (idx !== activeCardIndex) {
+            const opt = document.createElement('option');
+            opt.value = c.id;
+            opt.textContent = `${c.name} (${c.currency})`;
+            sel.appendChild(opt);
+          }
+        });
+      } else {
+        transferBar.classList.remove('visible');
+      }
+
+      renderCategoryStrip();
+      renderPresets(card.currency);
+      updateAmountDigits();
+      document.getElementById('entryOverlay').classList.add('open');
+    }
+
+    function renderCategoryStrip() {
+      const strip = document.getElementById('catStrip');
+      strip.innerHTML = '';
+
+      state.categories.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'cat-item' + (cat.id === selectedCatId ? ' selected' : '');
+        item.innerHTML = `
+          <div class="cat-circle">${cat.icon}</div>
+          <span class="cat-label">${cat.name}</span>
+        `;
+        item.addEventListener('click', () => {
+          triggerHaptic();
+          selectedCatId = cat.id;
+          renderCategoryStrip();
+        });
+        strip.appendChild(item);
+      });
+
+      // Custom Category Button
+      const customItem = document.createElement('div');
+      customItem.className = 'cat-item';
+      customItem.innerHTML = `
+        <div class="cat-circle" style="font-weight:800;">+</div>
+        <span class="cat-label">Custom</span>
+      `;
+      customItem.addEventListener('click', openCustomCatSheet);
+      strip.appendChild(customItem);
+    }
+
+    function renderPresets(currency) {
+      const presets = currency === 'BDT' || currency === 'JPY' ? [100, 500, 1000, 2000, 5000] : [10, 20, 50, 100, 250];
+      const sym = (CURRENCY_META[currency] || CURRENCY_META.EUR).symbol;
+      const row = document.getElementById('presetsRow');
+      row.innerHTML = '';
+      presets.forEach(val => {
+        const chip = document.createElement('button');
+        chip.className = 'preset-chip';
+        chip.textContent = `${sym}${val}`;
+        chip.addEventListener('click', () => {
+          triggerHaptic();
+          amountStr = String(val);
+          updateAmountDigits();
+        });
+        row.appendChild(chip);
+      });
+    }
+
+    function updateAmountDigits() {
+      const container = document.getElementById('entryAmountDigits');
+      container.innerHTML = '';
+      for (const ch of amountStr) {
+        const span = document.createElement('span');
+        span.className = 'digit-pop';
+        span.textContent = ch;
+        container.appendChild(span);
+      }
+    }
+
+    function handleKeyInput(key) {
+      triggerHaptic();
+      if (key === 'back') {
+        amountStr = amountStr.length > 1 ? amountStr.slice(0, -1) : '0';
+      } else if (key === '.') {
+        if (!amountStr.includes('.')) amountStr += '.';
+      } else {
+        if (amountStr === '0') amountStr = key;
+        else if (amountStr.length < 10) amountStr += key;
+      }
+      updateAmountDigits();
+    }
+
+    function spawnConfetti() {
+      const stage = document.getElementById('confirmStage');
+      const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+      for (let i = 0; i < 16; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        const angle = (Math.PI * 2 * i) / 16;
+        const dist = 55 + Math.random() * 45;
+        p.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+        p.style.setProperty('--ty', `${Math.sin(angle) * dist - 15}px`);
+        p.style.background = colors[i % colors.length];
+        stage.appendChild(p);
+        setTimeout(() => p.remove(), 800);
+      }
+    }
+
+    function submitTransaction() {
+      const amount = parseFloat(amountStr);
+      if (!amount || amount <= 0) {
+        showToast('Please enter an amount greater than 0');
+        return;
+      }
+
+      const card = state.cards[activeCardIndex] || state.cards[0];
+      const cat = state.categories.find(c => c.id === selectedCatId) || state.categories[0];
+      const note = document.getElementById('entryNoteInput').value.trim();
+
+      if (entryMode === 'transfer' && state.cards.length < 2) {
+        showToast('Create at least 2 cards to transfer');
+        return;
+      }
+
+      // Show animated confirmation bottom sheet
+      const backdrop = document.getElementById('confirmBackdrop');
+      const spinner = document.getElementById('confirmSpinner');
+      const avatar = document.getElementById('confirmAvatar');
+      const title = document.getElementById('confirmTitle');
+      const sub = document.getElementById('confirmSub');
+
+      spinner.style.display = 'block';
+      avatar.classList.remove('done');
+      avatar.textContent = entryMode === 'transfer' ? '⇄' : cat.icon;
+      title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...';
+      sub.textContent = `${formatMoney(amount, card.currency)} • ${card.name}`;
+      backdrop.classList.add('open');
+
+      setTimeout(() => {
+        triggerHaptic();
+        spinner.style.display = 'none';
+        avatar.classList.add('done');
+        avatar.textContent = '✓';
+        spawnConfetti();
+
+        let toCardId = null;
+        let convertedAmount = amount;
+
+        if (entryMode === 'add') {
+          card.balance = Number(card.balance) + amount;
+        } else if (entryMode === 'expense') {
+          card.balance = Math.max(0, Number(card.balance) - amount);
+        } else if (entryMode === 'transfer') {
+          toCardId = document.getElementById('transferToSelect').value;
+          const toCard = state.cards.find(c => c.id === toCardId);
+          card.balance = Math.max(0, Number(card.balance) - amount);
+          if (toCard) {
+            const fromRate = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).rateToEur;
+            const toRate = (CURRENCY_META[toCard.currency] || CURRENCY_META.EUR).rateToEur;
+            convertedAmount = (amount * fromRate) / toRate;
+            toCard.balance = Number(toCard.balance) + convertedAmount;
+          }
+        }
+
+        state.transactions.unshift({
+          id: 'tx_' + Date.now(),
+          cardId: card.id,
+          toCardId,
+          convertedAmount,
+          type: entryMode,
+          categoryId: cat.id,
+          categoryName: entryMode === 'transfer' ? 'Card Transfer' : cat.name,
+          icon: entryMode === 'transfer' ? '⇄' : cat.icon,
+          amount,
+          currency: card.currency,
+          note,
+          date: new Date().toISOString()
+        });
+
+        saveState();
+        title.textContent = 'Completed!';
+        sub.textContent = `New Balance: ${formatMoney(card.balance, card.currency)}`;
+
+        setTimeout(() => {
+          backdrop.classList.remove('open');
+          document.getElementById('entryOverlay').classList.remove('open');
+          refreshAll();
+
+          const cardEl = document.querySelector(`.wallet-card[data-card-id="${card.id}"]`);
+          if (cardEl) {
+            cardEl.classList.add('glow-success');
+            setTimeout(() => cardEl.classList.remove('glow-success'), 1100);
+          }
+        }, 700);
+      }, 650);
+    }
+
+    function openCustomCatSheet() {
+      document.getElementById('newCatName').value = '';
+      const grid = document.getElementById('iconPickerGrid');
+      grid.innerHTML = '';
+      ICON_LIBRARY.forEach(ico => {
+        const btn = document.createElement('div');
+        btn.className = 'icon-choice' + (ico === selectedNewIcon ? ' active' : '');
+        btn.textContent = ico;
+        btn.addEventListener('click', () => {
+          selectedNewIcon = ico;
+          document.querySelectorAll('.icon-choice').forEach(el => el.classList.remove('active'));
+          btn.classList.add('active');
+        });
+        grid.appendChild(btn);
+      });
+      document.getElementById('customCatBackdrop').classList.add('open');
+    }
+
+    function openStatementModal(cardId) {
+      statementCardId = cardId;
+      const card = state.cards.find(c => c.id === cardId);
+      if (!card) return;
+      document.getElementById('stmtCardTitle').textContent = `${card.name} (••${card.digits})`;
+      document.getElementById('stmtCardBal').textContent = `Current Balance: ${formatMoney(card.balance, card.currency)}`;
+      document.getElementById('stmtFromDate').value = '';
+      document.getElementById('stmtToDate').value = '';
+      document.getElementById('stmtSearchInput').value = '';
+      document.getElementById('stmtTypeFilter').value = 'all';
+      renderStatementTransactions();
+      document.getElementById('statementBackdrop').classList.add('open');
+    }
+
+    function renderStatementTransactions() {
+      const list = document.getElementById('stmtTxList');
+      list.innerHTML = '';
+      const card = state.cards.find(c => c.id === statementCardId);
+      if (!card) return;
+
+      const fromDate = document.getElementById('stmtFromDate').value;
+      const toDate = document.getElementById('stmtToDate').value;
+      const query = document.getElementById('stmtSearchInput').value.trim().toLowerCase();
+      const typeFilter = document.getElementById('stmtTypeFilter').value;
+
+      const filtered = state.transactions.filter(tx => {
+        if (tx.cardId !== card.id && tx.toCardId !== card.id) return false;
+        if (typeFilter !== 'all' && tx.type !== typeFilter) return false;
+        const txDay = tx.date.slice(0, 10);
+        if (fromDate && txDay < fromDate) return false;
+        if (toDate && txDay > toDate) return false;
+        if (query) {
+          const hay = `${tx.categoryName} ${tx.note || ''}`.toLowerCase();
+          if (!hay.includes(query)) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-secondary);font-size:13px;">No matching transactions found.</div>`;
+        return;
+      }
+
+      filtered.forEach(tx => {
+        const isIncomingTransfer = tx.type === 'transfer' && tx.toCardId === card.id;
+        const displayAmt = isIncomingTransfer ? (tx.convertedAmount || tx.amount) : tx.amount;
+        const prefix = tx.type === 'add' || isIncomingTransfer ? '+' : '−';
+        const dStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+
+        const item = document.createElement('div');
+        item.className = 'tx-item';
+        item.innerHTML = `
+          <div class="tx-left">
+            <div class="tx-avatar">${tx.icon || '💳'}</div>
+            <div class="tx-meta">
+              <div class="tx-cat">${tx.categoryName}${tx.note ? ` · ${tx.note}` : ''}</div>
+              <div class="tx-sub">${dStr}</div>
+            </div>
+          </div>
+          <div class="tx-amount ${isIncomingTransfer ? 'add' : tx.type}">${prefix}${formatMoney(displayAmt, card.currency)}</div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function openSettingsModal() {
+      renderSettingsCards();
+      renderSwatches();
+      document.getElementById('backupExportText').value = JSON.stringify(state);
+      document.getElementById('backupImportText').value = '';
+      document.getElementById('settingsBackdrop').classList.add('open');
+    }
+
+    function renderSettingsCards() {
+      const box = document.getElementById('settingsCardsList');
+      box.innerHTML = '';
+      state.cards.forEach(card => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--bg-input);border-radius:14px;';
+        row.innerHTML = `
+          <div>
+            <div style="font-size:14px;font-weight:700;">${card.name} ••${card.digits}</div>
+            <div style="font-size:12px;color:var(--emerald);font-weight:700;">${formatMoney(card.balance, card.currency)} (${card.currency})</div>
+          </div>
+          ${state.cards.length > 1 ? `<button class="pill-btn" style="background:var(--danger-bg);color:var(--danger);padding:6px 12px;font-size:12px;" data-del="${card.id}">Remove</button>` : ''}
+        `;
+        const delBtn = row.querySelector('[data-del]');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => {
+            state.cards = state.cards.filter(c => c.id !== card.id);
+            saveState();
+            renderSettingsCards();
+            refreshAll();
+          });
+        }
+        box.appendChild(row);
+      });
+    }
+
+    function renderSwatches() {
+      const box = document.getElementById('cardColorSwatches');
+      box.innerHTML = '';
+      CARD_GRADIENTS.forEach(grad => {
+        const s = document.createElement('div');
+        s.className = 'swatch' + (grad === selectedGradient ? ' active' : '');
+        s.style.background = grad;
+        s.addEventListener('click', () => {
+          selectedGradient = grad;
+          renderSwatches();
+        });
+        box.appendChild(s);
+      });
+    }
+
+    let toastTimer = null;
+    function showToast(msg, withUndo = false) {
+      const el = document.getElementById('toastEl');
+      document.getElementById('toastMsg').textContent = msg;
+      document.getElementById('toastUndoBtn').style.display = withUndo ? 'inline-block' : 'none';
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(hideToast, 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('toastEl').classList.remove('show');
+    }
+
+    function refreshAll() {
+      applyTheme();
+      updateHeaderTotals();
+      renderCards();
+      renderTransactions();
+    }
+
+    // Event Listeners
+    document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      state.darkMode = !state.darkMode;
+      saveState();
+      applyTheme();
+    });
+
+    document.getElementById('cardsCarousel').addEventListener('scroll', (e) => {
+      const el = e.target;
+      const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 340;
+      const idx = Math.round(el.scrollLeft / cardWidth);
+      if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
+        activeCardIndex = idx;
+        updateHeroForActiveCard();
+        renderTransactions();
+      }
+    });
+
+    document.getElementById('openAddBtn').addEventListener('click', () => openEntryOverlay('add'));
+    document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
+    document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
+    document.getElementById('closeEntryBtn').addEventListener('click', () => document.getElementById('entryOverlay').classList.remove('open'));
+
+    document.querySelectorAll('#keypadGrid .key-btn').forEach(btn => {
+      btn.addEventListener('click', () => handleKeyInput(btn.dataset.key));
+    });
+
+    document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
+
+    // Custom Category Events
+    document.getElementById('closeCustomCatBtn').addEventListener('click', () => document.getElementById('customCatBackdrop').classList.remove('open'));
+    document.getElementById('saveCustomCatBtn').addEventListener('click', () => {
+      const name = document.getElementById('newCatName').value.trim();
+      if (!name) return showToast('Enter a category name');
+      const newCat = { id: 'cat_' + Date.now(), name, icon: selectedNewIcon };
+      state.categories.push(newCat);
+      selectedCatId = newCat.id;
+      saveState();
+      renderCategoryStrip();
+      document.getElementById('customCatBackdrop').classList.remove('open');
+      showToast(`Category "${name}" added`);
+    });
+
+    // Statement Events
+    document.getElementById('closeStmtBtn').addEventListener('click', () => document.getElementById('statementBackdrop').classList.remove('open'));
+    ['stmtFromDate', 'stmtToDate', 'stmtSearchInput', 'stmtTypeFilter'].forEach(id => {
+      document.getElementById(id).addEventListener('input', renderStatementTransactions);
+    });
+    document.getElementById('downloadPdfBtn').addEventListener('click', () => window.print());
+
+    // Settings & Backup Events
+    document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
+    document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsBackdrop').classList.remove('open'));
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('cardsTab').style.display = btn.dataset.tab === 'cardsTab' ? 'block' : 'none';
+        document.getElementById('backupTab').style.display = btn.dataset.tab === 'backupTab' ? 'block' : 'none';
+      });
+    });
+
+    document.getElementById('saveNewCardBtn').addEventListener('click', () => {
+      const name = document.getElementById('newCardName').value.trim();
+      if (!name) return showToast('Please enter card name');
+      const digits = document.getElementById('newCardDigits').value.trim() || String(Math.floor(1000 + Math.random() * 9000));
+      const currency = document.getElementById('newCardCurrency').value || 'EUR';
+      const balance = parseFloat(document.getElementById('newCardBalance').value) || 0;
+
+      state.cards.push({
+        id: 'card_' + Date.now(),
+        name,
+        digits,
+        currency,
+        balance,
+        gradient: selectedGradient
+      });
+
+      document.getElementById('newCardName').value = '';
+      document.getElementById('newCardDigits').value = '';
+      document.getElementById('newCardBalance').value = '';
+      saveState();
+      renderSettingsCards();
+      refreshAll();
+      showToast('New card added');
+    });
+
+    document.getElementById('copyBackupBtn').addEventListener('click', async () => {
+      const text = document.getElementById('backupExportText').value;
+      try {
+        await navigator.clipboard.writeText(text);
+        showToast('Backup JSON copied to clipboard!');
+      } catch (e) {
+        document.getElementById('backupExportText').select();
+        document.execCommand('copy');
+        showToast('Backup JSON copied!');
+      }
+    });
+
+    document.getElementById('restoreBackupBtn').addEventListener('click', () => {
+      const raw = document.getElementById('backupImportText').value.trim();
+      if (!raw) return showToast('Paste backup JSON text first');
+      try {
+        const parsed = JSON.parse(raw);
+        if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
+        state = parsed;
+        saveState();
+        refreshAll();
+        document.getElementById('settingsBackdrop').classList.remove('open');
+        showToast('Wallet data restored!');
+      } catch (e) {
+        showToast('Invalid JSON backup text');
+      }
+    });
+
+    document.getElementById('toastUndoBtn').addEventListener('click', undoLastDelete);
+
+    // Initialize
+    refreshAll();
+  </script>
+</body>
+</html>
