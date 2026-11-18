@@ -91,7 +91,7 @@
       transition: var(--theme-transition);
     }
 
-    /* Header */
+    /* Top Header */
     .top-bar {
       display: flex;
       align-items: center;
@@ -176,7 +176,7 @@
       transform: rotate(180deg);
     }
 
-    /* Hero Balance */
+    /* Active Card Hero Balance */
     .hero-section {
       padding: 12px 20px 16px;
       text-align: center;
@@ -368,7 +368,7 @@
       opacity: 1;
     }
 
-    /* Recent Activity & Filter */
+    /* Monthly Summary & Activity */
     .section-header {
       display: flex;
       align-items: center;
@@ -419,8 +419,13 @@
       transition: var(--theme-transition);
     }
 
-    .month-in { color: var(--emerald); }
-    .month-out { color: var(--danger); }
+    .month-in {
+      color: var(--emerald);
+    }
+
+    .month-out {
+      color: var(--danger);
+    }
 
     .tx-list {
       padding: 0 20px;
@@ -439,10 +444,24 @@
       justify-content: space-between;
       box-shadow: var(--shadow-sm);
       cursor: pointer;
+      animation: slideUpFade 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
       transition: transform 0.16s ease, var(--theme-transition);
     }
 
-    .tx-item:active { transform: scale(0.98); }
+    .tx-item:active {
+      transform: scale(0.98);
+    }
+
+    @keyframes slideUpFade {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     .tx-left {
       display: flex;
@@ -459,6 +478,7 @@
       justify-content: center;
       font-size: 20px;
       background: var(--bg-subtle);
+      transition: var(--theme-transition);
     }
 
     .tx-meta {
@@ -467,24 +487,47 @@
       gap: 2px;
     }
 
-    .tx-cat { font-size: 14px; font-weight: 700; }
-    .tx-sub { font-size: 11.5px; color: var(--text-secondary); }
-    .tx-amount { font-size: 15px; font-weight: 800; font-variant-numeric: tabular-nums; }
-    .tx-amount.add { color: var(--emerald); }
-    .tx-amount.expense { color: var(--text-primary); }
-    .tx-amount.transfer { color: var(--blue); }
+    .tx-cat {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tx-sub {
+      font-size: 11.5px;
+      color: var(--text-secondary);
+    }
+
+    .tx-amount {
+      font-size: 15px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tx-amount.add {
+      color: var(--emerald);
+    }
+
+    .tx-amount.expense {
+      color: var(--text-primary);
+    }
+
+    .tx-amount.transfer {
+      color: var(--blue);
+    }
 
     .empty-state {
       text-align: center;
       padding: 36px 20px;
       color: var(--text-secondary);
       font-size: 13px;
+      line-height: 1.5;
       background: var(--bg-card);
       border: 1px dashed var(--border-color);
       border-radius: 22px;
+      transition: var(--theme-transition);
     }
 
-    /* Fullscreen Overlay */
+    /* Fullscreen Slide-up Entry Overlay */
     .overlay-screen {
       position: fixed;
       inset: 0;
@@ -498,9 +541,12 @@
       transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s ease;
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(24px + env(safe-area-inset-bottom));
+      overflow-y: auto;
     }
 
-    .overlay-screen.open { transform: translateY(0); }
+    .overlay-screen.open {
+      transform: translateY(0);
+    }
 
     .overlay-top {
       display: flex;
@@ -511,9 +557,12 @@
       z-index: 102;
     }
 
-    .overlay-title { font-size: 16px; font-weight: 700; }
+    .overlay-title {
+      font-size: 16px;
+      font-weight: 700;
+    }
 
-    /* Category Strip */
+    /* Category Bar */
     .cat-strip {
       display: flex;
       gap: 14px;
@@ -521,7 +570,10 @@
       padding: 10px 20px 14px;
       scrollbar-width: none;
     }
-    .cat-strip::-webkit-scrollbar { display: none; }
+
+    .cat-strip::-webkit-scrollbar {
+      display: none;
+    }
 
     .cat-item {
       display: flex;
@@ -543,6 +595,7 @@
       justify-content: center;
       font-size: 24px;
       box-shadow: var(--shadow-sm);
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s ease, var(--theme-transition);
     }
 
     .cat-item.selected .cat-circle {
@@ -561,16 +614,22 @@
       white-space: nowrap;
     }
 
-    /* Transfer specific controls */
+    .cat-item.selected .cat-label {
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    /* Transfer Manual Exchange Rate & Charge Mode Controls */
     .transfer-bar {
       display: none;
       flex-direction: column;
       gap: 10px;
       padding: 6px 20px 12px;
-      overflow-y: auto;
-      max-height: 55vh;
     }
-    .transfer-bar.visible { display: flex; }
+
+    .transfer-bar.visible {
+      display: flex;
+    }
 
     .transfer-box-card {
       background: var(--bg-card);
@@ -594,17 +653,6 @@
       min-width: 0;
     }
 
-    .form-input, .form-select, .form-textarea {
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-input);
-      color: var(--text-primary);
-      font-size: 13.5px;
-      outline: none;
-    }
-
     .fx-summary-box {
       background: var(--bg-subtle);
       border-radius: 14px;
@@ -616,9 +664,8 @@
       color: var(--text-secondary);
     }
 
-    /* Native Amount Stage */
+    /* Native Amount Input Stage */
     .amount-stage {
-      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -637,9 +684,20 @@
       width: 100%;
       max-width: 320px;
       box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease, var(--theme-transition);
     }
 
-    .native-sym { font-size: 32px; font-weight: 700; color: var(--text-secondary); margin-right: 4px; }
+    .native-amount-wrapper:focus-within {
+      border-color: var(--emerald);
+    }
+
+    .native-sym {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-right: 4px;
+    }
+
     .native-amount-input {
       font-size: 42px;
       font-weight: 800;
@@ -665,8 +723,10 @@
       width: 85%;
       max-width: 290px;
       outline: none;
+      transition: var(--theme-transition);
     }
 
+    /* Preset Pills */
     .presets-row {
       display: flex;
       justify-content: center;
@@ -684,10 +744,15 @@
       font-weight: 700;
       color: var(--text-primary);
       cursor: pointer;
+      transition: transform 0.14s ease, var(--theme-transition);
+    }
+
+    .preset-chip:active {
+      transform: scale(0.92);
     }
 
     .send-cta {
-      margin: 0 20px;
+      margin: 10px 20px 20px;
       height: 54px;
       border-radius: 18px;
       border: none;
@@ -697,20 +762,29 @@
       font-weight: 800;
       cursor: pointer;
       box-shadow: var(--shadow-md);
+      transition: transform 0.16s ease, var(--theme-transition);
     }
 
-    /* Modals & Toasts */
+    .send-cta:active {
+      transform: scale(0.97);
+    }
+
+    /* Confirmation Bottom Sheet */
     .modal-backdrop {
       position: fixed;
       inset: 0;
       background: rgba(8, 10, 15, 0.55);
       backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
       z-index: 150;
       display: none;
       align-items: flex-end;
       justify-content: center;
     }
-    .modal-backdrop.open { display: flex; }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
 
     .bottom-sheet {
       width: 100%;
@@ -719,51 +793,271 @@
       border-radius: 30px 30px 0 0;
       padding: 24px 22px calc(28px + env(safe-area-inset-bottom));
       box-shadow: var(--shadow-lg);
+      animation: sheetRise 0.32s cubic-bezier(0.22, 1, 0.36, 1);
       max-height: 88vh;
       overflow-y: auto;
+      transition: var(--theme-transition);
     }
 
-    .confirm-stage { text-align: center; padding: 18px 10px; position: relative; }
-    .ring-wrapper { width: 84px; height: 84px; margin: 0 auto 16px; position: relative; display: flex; align-items: center; justify-content: center; }
-    .spinner-ring { position: absolute; inset: 0; border-radius: 50%; border: 3.5px solid var(--bg-subtle); border-top-color: var(--emerald); animation: spin 0.75s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes sheetRise {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    .confirm-stage {
+      text-align: center;
+      padding: 18px 10px;
+      position: relative;
+    }
+
+    .ring-wrapper {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 16px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .spinner-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3.5px solid var(--bg-subtle);
+      border-top-color: var(--emerald);
+      animation: spin 0.75s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
 
     .ring-avatar {
-      width: 68px; height: 68px; border-radius: 50%; background: var(--bg-subtle); display: flex; align-items: center; justify-content: center; font-size: 30px;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      transition: all 0.32s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .ring-avatar.done { background: var(--emerald); color: #fff; }
-    .ring-avatar.declined { background: var(--danger); color: #fff; }
 
-    .tabs-bar { display: flex; background: var(--bg-subtle); padding: 4px; border-radius: 14px; margin-bottom: 16px; }
-    .tab-btn { flex: 1; padding: 8px; border: none; border-radius: 10px; background: transparent; color: var(--text-secondary); font-size: 13px; font-weight: 700; cursor: pointer; }
-    .tab-btn.active { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow-sm); }
+    .ring-avatar.done {
+      background: var(--emerald);
+      color: #ffffff;
+      transform: scale(1.06);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
+    }
 
-    .form-group { margin-bottom: 12px; }
-    .form-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-secondary); margin-bottom: 5px; }
+    .ring-avatar.declined {
+      background: var(--danger);
+      color: #ffffff;
+      transform: scale(1.06);
+      box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    }
 
-    .icon-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; max-height: 170px; overflow-y: auto; padding: 4px; }
-    .icon-choice { height: 44px; border-radius: 12px; border: 1.5px solid var(--border-color); background: var(--bg-input); font-size: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-    .icon-choice.active { border-color: var(--text-primary); background: var(--bg-subtle); }
+    .confirm-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
 
+    .confirm-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      top: 48px;
+      left: 50%;
+      pointer-events: none;
+      animation: confettiFly 0.75s ease-out forwards;
+    }
+
+    @keyframes confettiFly {
+      0% { transform: translate(0, 0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--tx), var(--ty)) rotate(240deg) scale(0.4); opacity: 0; }
+    }
+
+    /* Settings & Statement Controls */
+    .tabs-bar {
+      display: flex;
+      background: var(--bg-subtle);
+      padding: 4px;
+      border-radius: 14px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--theme-transition);
+    }
+
+    .tab-btn.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 11px 13px;
+      border-radius: 14px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: var(--theme-transition);
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .form-row .form-input, .form-row .form-select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .color-swatches {
+      display: flex;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .swatch {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2.5px solid transparent;
+      transition: transform 0.15s ease;
+    }
+
+    .swatch.active {
+      border-color: var(--text-primary);
+      transform: scale(1.12);
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      max-height: 170px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .icon-choice {
+      height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-color);
+      background: var(--bg-input);
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s ease, var(--theme-transition);
+    }
+
+    .icon-choice.active {
+      border-color: var(--text-primary);
+      background: var(--bg-subtle);
+      transform: scale(1.06);
+    }
+
+    /* Toast */
     .toast {
-      position: fixed; bottom: calc(24px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%) translateY(100px);
-      background: var(--accent-dark); color: var(--accent-dark-text); padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700;
-      display: flex; align-items: center; gap: 12px; box-shadow: var(--shadow-lg); z-index: 200; transition: transform 0.28s ease;
+      position: fixed;
+      bottom: calc(24px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--accent-dark);
+      color: var(--accent-dark-text);
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: var(--shadow-lg);
+      z-index: 200;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-    .toast.error { background: var(--danger); color: #fff; }
-    .toast-undo { background: var(--emerald); color: #fff; border: none; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; cursor: pointer; }
 
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast.error {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .toast-undo {
+      background: var(--emerald);
+      color: #fff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* Print / PDF Statement Styles */
     @media print {
       body * { visibility: hidden; }
       #statementSheet, #statementSheet * { visibility: visible; }
-      #statementSheet { position: absolute; left: 0; top: 0; width: 100%; background: #fff !important; color: #111 !important; }
+      #statementSheet {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        box-shadow: none;
+        background: #ffffff !important;
+        color: #111827 !important;
+      }
       .no-print { display: none !important; }
     }
   </style>
 </head>
 <body>
   <div class="app-shell">
+    <!-- Top Header -->
     <header class="top-bar">
       <div class="wallet-title-group">
         <div class="wallet-heading-row">
@@ -776,13 +1070,14 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode">
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
           <span class="theme-icon-spin" id="themeIconSpan">🌙</span>
         </button>
-        <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+        <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
       </div>
     </header>
 
+    <!-- Active Card Hero Balance -->
     <section class="hero-section">
       <div class="hero-label" id="activeCardLabel">MAIN CARD</div>
       <div class="hero-balance" id="heroBalanceDisplay">€0.00</div>
@@ -793,11 +1088,13 @@
       </div>
     </section>
 
+    <!-- Cards Carousel -->
     <section class="cards-wrapper">
       <div class="cards-carousel" id="cardsCarousel"></div>
       <div class="card-dots" id="cardDots"></div>
     </section>
 
+    <!-- Recent Activity & Filter -->
     <div class="section-header">
       <span class="section-title">Recent Activity</span>
       <div class="month-pill">
@@ -813,14 +1110,15 @@
     <div class="tx-list" id="txList"></div>
   </div>
 
-  <!-- Entry Overlay -->
+  <!-- Fullscreen Add / Expense / Transfer Screen -->
   <div class="overlay-screen" id="entryOverlay">
     <div class="overlay-top">
-      <button class="icon-btn" id="closeEntryBtn">✕</button>
+      <button class="icon-btn" id="closeEntryBtn" aria-label="Close">✕</button>
       <span class="overlay-title" id="entryModeTitle">Add Money</span>
       <span style="width:38px"></span>
     </div>
 
+    <!-- Category Strip -->
     <div class="cat-strip" id="catStrip"></div>
 
     <!-- Transfer Manual Exchange Rate & Charge Mode Bar -->
@@ -828,21 +1126,21 @@
       <div class="transfer-box-card">
         <div class="transfer-row">
           <div>
-            <label class="form-label">To Card</label>
-            <select class="transfer-select" id="transferToSelect"></select>
+            <label class="form-label">To Card (Receiver)</label>
+            <select class="form-select" id="transferToSelect"></select>
           </div>
           <div>
             <label class="form-label">Charge Type</label>
-            <select class="transfer-select" id="chargeModeSelect">
-              <option value="deduct_from_amount">Inclusive (50€ মোট যার ভেতর চার্জ)</option>
-              <option value="add_to_amount">Exclusive (50€ + চার্জ আলাদা)</option>
+            <select class="form-select" id="chargeModeSelect">
+              <option value="deduct_from_amount">Inclusive (৫০€ মোট যার ভেতর চার্জ)</option>
+              <option value="add_to_amount">Exclusive (৫০€ + চার্জ আলাদা)</option>
             </select>
           </div>
         </div>
 
         <div class="transfer-row">
           <div>
-            <label class="form-label">Manual Rate (1 EUR = ?)</label>
+            <label class="form-label">Exchange Rate (1 EUR = ?)</label>
             <input type="number" step="any" class="form-input" id="manualRateInput" value="130" placeholder="130" />
           </div>
           <div>
@@ -859,8 +1157,8 @@
       </div>
     </div>
 
-    <!-- Amount Stage -->
-    <div class="amount-stage" id="amountStageBox">
+    <!-- Native Amount Stage using iPhone default keyboard -->
+    <div class="amount-stage">
       <div class="native-amount-wrapper">
         <span class="native-sym" id="entryCurrencySym">€</span>
         <input type="number" step="any" inputmode="decimal" class="native-amount-input" id="nativeAmountInput" placeholder="0" autofocus />
@@ -868,11 +1166,13 @@
       <input type="text" class="note-input" id="entryNoteInput" placeholder="Add a note (optional)..." />
     </div>
 
+    <!-- Quick Preset Pills -->
     <div class="presets-row" id="presetsRow"></div>
+
     <button class="send-cta" id="submitTxBtn">Send</button>
   </div>
 
-  <!-- Confirmation Sheet -->
+  <!-- Confirmation Animation Bottom Sheet -->
   <div class="modal-backdrop" id="confirmBackdrop">
     <div class="bottom-sheet">
       <div class="confirm-stage" id="confirmStage">
@@ -895,7 +1195,7 @@
       </div>
       <div class="form-group">
         <label class="form-label">Category Name</label>
-        <input type="text" class="form-input" id="newCatName" placeholder="e.g., Coffee, Metro..." />
+        <input type="text" class="form-input" id="newCatName" placeholder="e.g., Coffee, Metro, Remittance..." />
       </div>
       <div class="form-group">
         <label class="form-label">Pick an Icon</label>
@@ -905,7 +1205,7 @@
     </div>
   </div>
 
-  <!-- Statement Modal -->
+  <!-- Card Statement Modal (Date Search + PDF Export) -->
   <div class="modal-backdrop" id="statementBackdrop">
     <div class="bottom-sheet" id="statementSheet">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -942,7 +1242,7 @@
     </div>
   </div>
 
-  <!-- Settings Modal -->
+  <!-- Settings & Backup Modal -->
   <div class="modal-backdrop" id="settingsBackdrop">
     <div class="bottom-sheet">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
@@ -955,50 +1255,57 @@
         <button class="tab-btn" data-tab="backupTab">Backup & Reset</button>
       </div>
 
+      <!-- Cards Tab -->
       <div id="cardsTab">
         <div id="settingsCardsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
+
         <div style="background:var(--bg-subtle);padding:14px;border-radius:18px;">
           <div style="font-size:14px;font-weight:800;margin-bottom:10px;">+ Add New Card</div>
-          <div class="form-group"><input type="text" class="form-input" id="newCardName" placeholder="Card Name (e.g., Postepay, BDT Wallet)" /></div>
-          <div class="transfer-row form-group">
-            <input type="text" class="form-input" id="newCardDigits" maxlength="4" placeholder="Last 4 digits" />
+          <div class="form-group">
+            <input type="text" class="form-input" id="newCardName" placeholder="Card Name (e.g., Postepay, Credem, Cash)" />
+          </div>
+          <div class="form-row form-group">
+            <input type="text" class="form-input" id="newCardDigits" maxlength="4" placeholder="Last 4 digits (4568)" />
             <select class="form-select" id="newCardCurrency">
-              <option value="EUR" selected>EUR (€)</option>
-              <option value="USD">USD ($)</option>
-              <option value="BDT">BDT (৳)</option>
-              <option value="JPY">JPY (¥)</option>
-              <option value="GBP">GBP (£)</option>
+              <option value="EUR" selected>EUR (€) — Euro</option>
+              <option value="USD">USD ($) — Dollar</option>
+              <option value="BDT">BDT (৳) — Taka</option>
+              <option value="JPY">JPY (¥) — Yen</option>
+              <option value="GBP">GBP (£) — Pound</option>
+              <option value="CHF">CHF — Swiss Franc</option>
             </select>
           </div>
-          <div class="transfer-row form-group" style="align-items:center;">
-            <input type="number" class="form-input" id="newCardBalance" placeholder="Initial Balance" step="any" />
-            <div class="color-swatches" id="cardColorSwatches" style="display:flex;gap:6px;"></div>
+          <div class="form-row form-group" style="align-items:center;">
+            <input type="number" class="form-input" id="newCardBalance" placeholder="Initial Balance (0)" step="any" />
+            <div class="color-swatches" id="cardColorSwatches"></div>
           </div>
           <button class="send-cta" style="width:100%;margin:6px 0 0;" id="saveNewCardBtn">Save Card</button>
         </div>
       </div>
 
+      <!-- Backup Tab -->
       <div id="backupTab" style="display:none;">
         <div class="form-group">
-          <label class="form-label">1. Copy Backup Text</label>
+          <label class="form-label">1. Copy Backup Text (Save in WhatsApp or Apple Notes)</label>
           <textarea class="form-textarea" id="backupExportText" rows="4" readonly></textarea>
-          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn">Copy Backup</button>
+          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn">Copy Backup Text</button>
         </div>
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
         <div class="form-group">
-          <label class="form-label">2. Restore Data</label>
-          <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste JSON here..."></textarea>
-          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn">Restore</button>
+          <label class="form-label">2. Restore Data (Paste Backup JSON Text Here)</label>
+          <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste your saved backup JSON here..."></textarea>
+          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn">Restore Data</button>
         </div>
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
         <div class="form-group">
           <label class="form-label" style="color:var(--danger);">Danger Zone</label>
-          <button class="send-cta" style="width:100%;height:44px;font-size:14px;background:var(--danger-bg);color:var(--danger);" id="resetWalletBtn">⚠️ Reset All Data</button>
+          <button class="send-cta" style="width:100%;height:44px;font-size:14px;background:var(--danger-bg);color:var(--danger);" id="resetWalletBtn">⚠️ Reset All Wallet Data</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Toast Notification -->
   <div class="toast" id="toastEl">
     <span id="toastMsg">Done</span>
     <button class="toast-undo" id="toastUndoBtn" style="display:none;">Undo</button>
@@ -1022,7 +1329,13 @@
       'linear-gradient(135deg, #7c2d12 0%, #b45309 100%)'
     ];
 
-    const ICON_LIBRARY = ['🎯', '⛽', '🏋️', '🍕', '✈️', '🏠', '📱', '🎓', '💇', '🐾', '🏥', '🎉', '🛒', '☕', '🍽️', '🚆', '📶', '💸', '🎁', '👕', '✂️', '💊', '💡', '🏦', '💰', '📦', '🎬', '🛡️', '🧾', '🌍'];
+    const ICON_LIBRARY = [
+      '🎯', '⛽', '🏋️', '🍕', '✈️', '🏠',
+      '📱', '🎓', '💇', '🐾', '🏥', '🎉',
+      '🛒', '☕', '🍽️', '🚆', '📶', '💸',
+      '🎁', '👕', '✂️', '💊', '💡', '🏦',
+      '💰', '📦', '🎬', '🛡️', '🧾', '🌍'
+    ];
 
     const DEFAULT_CATEGORIES = [
       { id: 'food', name: 'Food', icon: '🍔' },
@@ -1041,8 +1354,22 @@
       return {
         darkMode: false,
         cards: [
-          { id: 'card_1', name: 'Main Euro Card', digits: '4568', currency: 'EUR', balance: 500, gradient: CARD_GRADIENTS[0] },
-          { id: 'card_2', name: 'BDT Wallet', digits: '8824', currency: 'BDT', balance: 0, gradient: CARD_GRADIENTS[1] }
+          {
+            id: 'card_1',
+            name: 'Main Euro Card',
+            digits: '4568',
+            currency: 'EUR',
+            balance: 500,
+            gradient: CARD_GRADIENTS[0]
+          },
+          {
+            id: 'card_2',
+            name: 'BDT Wallet',
+            digits: '8824',
+            currency: 'BDT',
+            balance: 0,
+            gradient: CARD_GRADIENTS[1]
+          }
         ],
         categories: [...DEFAULT_CATEGORIES],
         transactions: []
@@ -1064,48 +1391,77 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) return parsed;
+          if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
+            return parsed;
+          }
         }
       } catch (e) {}
       return getDefaultState();
     }
 
     function saveState() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {}
     }
 
-    function triggerHaptic() { if (navigator.vibrate) navigator.vibrate(12); }
+    function triggerHaptic() {
+      if (navigator.vibrate) navigator.vibrate(12);
+    }
 
     function formatMoney(amount, currencyCode) {
       const meta = CURRENCY_META[currencyCode] || CURRENCY_META.EUR;
       const num = Number(amount) || 0;
-      const decimals = currencyCode === 'JPY' ? 0 : 2;
-      return `${meta.symbol}${num.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}`;
+      const decimals = currencyCode === 'JPY' || currencyCode === 'BDT' ? 0 : 2;
+      return `${meta.symbol}${num.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      })}`;
     }
 
     function applyTheme() {
       const isDark = !!state.darkMode;
       document.documentElement.classList.toggle('dark', isDark);
       document.body.classList.toggle('dark', isDark);
-      document.getElementById('themeIconSpan').textContent = isDark ? '☀️' : '🌙';
-      document.getElementById('metaThemeColor').setAttribute('content', isDark ? '#0f1218' : '#f5f6f8');
+      const iconSpan = document.getElementById('themeIconSpan');
+      if (iconSpan) iconSpan.textContent = isDark ? '☀️' : '🌙';
+      const metaTheme = document.getElementById('metaThemeColor');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', isDark ? '#0f1218' : '#f5f6f8');
+      }
     }
 
     function updateHeaderTotals() {
-      let totalEur = 0, totalBdt = 0;
+      let totalEur = 0;
+      let totalBdt = 0;
+
+      if (!state.cards || !Array.isArray(state.cards)) return;
+
       state.cards.forEach(c => {
         const bal = Number(c.balance) || 0;
-        if (c.currency === 'BDT') totalBdt += bal;
-        else totalEur += bal * (CURRENCY_META[c.currency] || CURRENCY_META.EUR).rateToEur;
+        if (c.currency === 'BDT') {
+          totalBdt += bal;
+        } else {
+          const rate = (CURRENCY_META[c.currency] || CURRENCY_META.EUR).rateToEur;
+          totalEur += bal * rate;
+        }
       });
-      document.getElementById('totalEurMini').textContent = `€${totalEur.toFixed(2)}`;
-      document.getElementById('totalBdtMini').textContent = `৳${totalBdt.toFixed(0)}`;
+
+      document.getElementById('totalEurMini').textContent = `€${totalEur.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('totalBdtMini').textContent = `৳${totalBdt.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
     }
 
     function renderCards() {
       const carousel = document.getElementById('cardsCarousel');
       const dots = document.getElementById('cardDots');
-      carousel.innerHTML = ''; dots.innerHTML = '';
+      if (!carousel || !dots) return;
+
+      carousel.innerHTML = '';
+      dots.innerHTML = '';
+
+      if (!state.cards || state.cards.length === 0) {
+        state.cards = getDefaultState().cards;
+      }
 
       if (activeCardIndex >= state.cards.length) activeCardIndex = Math.max(0, state.cards.length - 1);
 
@@ -1115,9 +1471,18 @@
         el.style.background = card.gradient || CARD_GRADIENTS[0];
         el.dataset.cardId = card.id;
         el.innerHTML = `
-          <div class="card-top"><span class="card-name">${card.name}</span><span class="card-currency-pill">${card.currency}</span></div>
-          <div class="card-mid"><div class="card-bal-label">Available Balance</div><div class="card-bal-val">${formatMoney(card.balance, card.currency)}</div></div>
-          <div class="card-bottom"><span>•••• ${card.digits || '0000'}</span><span style="font-size:11px;opacity:0.85;">Tap for statement →</span></div>
+          <div class="card-top">
+            <span class="card-name">${card.name}</span>
+            <span class="card-currency-pill">${card.currency}</span>
+          </div>
+          <div class="card-mid">
+            <div class="card-bal-label">Available Balance</div>
+            <div class="card-bal-val">${formatMoney(card.balance, card.currency)}</div>
+          </div>
+          <div class="card-bottom">
+            <span>•••• ${card.digits || '0000'}</span>
+            <span style="font-size:11px;opacity:0.85;">Tap for statement →</span>
+          </div>
         `;
         el.addEventListener('click', () => openStatementModal(card.id));
         carousel.appendChild(el);
@@ -1126,24 +1491,32 @@
         dot.className = 'dot' + (idx === activeCardIndex ? ' active' : '');
         dots.appendChild(dot);
       });
+
       updateHeroForActiveCard();
     }
 
     function updateHeroForActiveCard() {
+      if (!state.cards || state.cards.length === 0) return;
       const card = state.cards[activeCardIndex] || state.cards[0];
       if (!card) return;
       document.getElementById('activeCardLabel').textContent = `${card.name} ••${card.digits}`;
       document.getElementById('heroBalanceDisplay').textContent = formatMoney(card.balance, card.currency);
       document.getElementById('selectedCardFilterBtn').textContent = `${card.name} Only`;
-      document.querySelectorAll('#cardDots .dot').forEach((d, i) => d.classList.toggle('active', i === activeCardIndex));
+      document.querySelectorAll('#cardDots .dot').forEach((d, i) => {
+        d.classList.toggle('active', i === activeCardIndex);
+      });
     }
 
     function renderTransactions() {
       const list = document.getElementById('txList');
+      if (!list) return;
       list.innerHTML = '';
+
+      if (!state.cards || state.cards.length === 0) return;
       const activeCard = state.cards[activeCardIndex] || state.cards[0];
       const now = new Date();
-      let monthIn = 0, monthOut = 0;
+      let monthIn = 0;
+      let monthOut = 0;
 
       const filteredTxs = (state.transactions || []).filter(tx => {
         if (homeActivityFilter === 'selected') return tx.cardId === activeCard.id || tx.toCardId === activeCard.id;
@@ -1153,8 +1526,10 @@
       filteredTxs.forEach(tx => {
         const d = new Date(tx.date);
         if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-          if (tx.type === 'add') monthIn += Number(tx.amount);
-          if (tx.type === 'expense') monthOut += Number(tx.amount);
+          if (tx.cardId === activeCard.id) {
+            if (tx.type === 'add') monthIn += Number(tx.amount);
+            if (tx.type === 'expense' || tx.type === 'transfer') monthOut += Number(tx.totalDeducted || tx.amount);
+          }
         }
       });
 
@@ -1163,18 +1538,35 @@
       document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(0)}`;
 
       if (filteredTxs.length === 0) {
-        list.innerHTML = `<div class="empty-state">No transactions found.</div>`;
+        list.innerHTML = `<div class="empty-state">No transactions found. Tap <strong>+ Add</strong> or <strong>− Expense</strong> above.</div>`;
         return;
       }
 
-      filteredTxs.slice(0, 25).forEach((tx, idx) => {
+      filteredTxs.slice(0, 25).forEach((tx, index) => {
         const card = state.cards.find(c => c.id === tx.cardId) || activeCard;
         const cat = state.categories.find(c => c.id === tx.categoryId) || { name: tx.categoryName || 'Entry', icon: tx.icon || '💳' };
         const dateStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-        const prefix = tx.type === 'add' ? '+' : tx.type === 'transfer' ? '⇄ ' : '−';
+        
+        let displayAmtStr = '';
+        let prefix = '';
+        let amountClass = tx.type;
+
+        if (tx.type === 'add') {
+          prefix = '+';
+          displayAmtStr = formatMoney(tx.amount, card.currency);
+        } else if (tx.type === 'expense') {
+          prefix = '−';
+          displayAmtStr = formatMoney(tx.amount, card.currency);
+        } else if (tx.type === 'transfer') {
+          const toCard = state.cards.find(c => c.id === tx.toCardId);
+          prefix = '⇄ ';
+          displayAmtStr = `${formatMoney(tx.totalDeducted || tx.amount, card.currency)} ➔ ${formatMoney(tx.convertedAmount, toCard ? toCard.currency : 'BDT')}`;
+          amountClass = 'transfer';
+        }
 
         const row = document.createElement('div');
         row.className = 'tx-item';
+        row.style.animationDelay = `${index * 0.03}s`;
         row.innerHTML = `
           <div class="tx-left">
             <div class="tx-avatar">${cat.icon}</div>
@@ -1183,7 +1575,7 @@
               <div class="tx-sub">${card.name} • ${dateStr}</div>
             </div>
           </div>
-          <div class="tx-amount ${tx.type}">${prefix}${formatMoney(tx.amount, tx.currency || card.currency)}</div>
+          <div class="tx-amount ${amountClass}" style="font-size:13.5px;">${prefix}${displayAmtStr}</div>
         `;
         row.addEventListener('click', () => deleteTransactionWithUndo(tx.id));
         list.appendChild(row);
@@ -1194,22 +1586,27 @@
       const idx = state.transactions.findIndex(t => t.id === txId);
       if (idx === -1) return;
       const tx = state.transactions[idx];
-      if (!confirm(`Delete "${tx.categoryName}" (${formatMoney(tx.amount, tx.currency)})?`)) return;
+      if (!confirm(`Delete transaction "${tx.categoryName}"?`)) return;
 
       const card = state.cards.find(c => c.id === tx.cardId);
       if (card) {
-        if (tx.type === 'add') card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
-        if (tx.type === 'expense' || tx.type === 'transfer') card.balance = Number(card.balance) + Number(tx.totalDeducted || tx.amount);
-      }
-      if (tx.type === 'transfer' && tx.toCardId) {
-        const toCard = state.cards.find(c => c.id === tx.toCardId);
-        if (toCard) toCard.balance = Math.max(0, Number(toCard.balance) - Number(tx.convertedAmount || tx.amount));
+        if (tx.type === 'add') {
+          card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
+        } else if (tx.type === 'expense') {
+          card.balance = Number(card.balance) + Number(tx.amount);
+        } else if (tx.type === 'transfer') {
+          card.balance = Number(card.balance) + Number(tx.totalDeducted);
+          const toCard = state.cards.find(c => c.id === tx.toCardId);
+          if (toCard) {
+            toCard.balance = Math.max(0, Number(toCard.balance) - Number(tx.convertedAmount));
+          }
+        }
       }
 
       state.transactions.splice(idx, 1);
       saveState();
       refreshAll();
-      showToast('Transaction deleted', true);
+      showToast('Transaction deleted and balances reversed', true);
     }
 
     function openEntryOverlay(mode) {
@@ -1219,7 +1616,8 @@
       document.getElementById('entryNoteInput').value = '';
 
       const card = state.cards[activeCardIndex] || state.cards[0];
-      document.getElementById('entryCurrencySym').textContent = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).symbol;
+      const sym = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).symbol;
+      document.getElementById('entryCurrencySym').textContent = sym;
 
       const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer / Remittance' };
       document.getElementById('entryModeTitle').textContent = titleMap[mode];
@@ -1234,7 +1632,7 @@
           if (idx !== activeCardIndex) {
             const opt = document.createElement('option');
             opt.value = c.id;
-            opt.textContent = `${c.name} (${c.currency})`;
+            opt.textContent = `${c.name} (${c.currency}) — Balance: ${formatMoney(c.balance, c.currency)}`;
             sel.appendChild(opt);
           }
         });
@@ -1246,7 +1644,11 @@
       renderCategoryStrip();
       renderPresets(card.currency);
       document.getElementById('entryOverlay').classList.add('open');
-      setTimeout(() => document.getElementById('nativeAmountInput')?.focus(), 300);
+      
+      setTimeout(() => {
+        const amtInput = document.getElementById('nativeAmountInput');
+        if (amtInput) amtInput.focus();
+      }, 300);
     }
 
     function updateTransferLiveCalculation() {
@@ -1255,27 +1657,31 @@
       const fee = parseFloat(document.getElementById('manualFeeInput').value) || 0;
       const chargeMode = document.getElementById('chargeModeSelect').value;
       const summaryBox = document.getElementById('transferFxSummary');
+      const fromCard = state.cards[activeCardIndex] || state.cards[0];
+      const toCardId = document.getElementById('transferToSelect').value;
+      const toCard = state.cards.find(c => c.id === toCardId) || state.cards.find((c, i) => i !== activeCardIndex);
+      const toCurr = toCard ? toCard.currency : 'BDT';
+      const toSym = (CURRENCY_META[toCurr] || CURRENCY_META.BDT).symbol;
+      const fromSym = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).symbol;
 
-      let netPrincipalEur = amount;
-      let totalDeductedEur = amount;
+      let netPrincipal = amount;
+      let totalDeducted = amount;
       let targetReceived = 0;
 
       if (chargeMode === 'deduct_from_amount') {
-        // Inclusive: 50 total, fee is inside
-        netPrincipalEur = Math.max(0, amount - fee);
-        totalDeductedEur = amount;
-        targetReceived = netPrincipalEur * rate;
+        netPrincipal = Math.max(0, amount - fee);
+        totalDeducted = amount;
+        targetReceived = netPrincipal * rate;
       } else {
-        // Exclusive: 50 + fee
-        netPrincipalEur = amount;
-        totalDeductedEur = amount + fee;
-        targetReceived = netPrincipalEur * rate;
+        netPrincipal = amount;
+        totalDeducted = amount + fee;
+        targetReceived = netPrincipal * rate;
       }
 
       summaryBox.innerHTML = `
-        <div>💱 <strong>Exchange Rate:</strong> 1 EUR = ${rate} BDT</div>
-        <div>💸 <strong>Total Deducted from Card:</strong> €${totalDeductedEur.toFixed(2)} (${chargeMode === 'deduct_from_amount' ? 'Inclusive' : 'Exclusive'} Fee: €${fee.toFixed(2)})</div>
-        <div>🎯 <strong>Receiver Gets:</strong> ৳${targetReceived.toLocaleString('en-US', {maximumFractionDigits:0})}</div>
+        <div>💱 <strong>Exchange Rate:</strong> 1 ${fromCard.currency} = ${rate} ${toCurr}</div>
+        <div>💸 <strong>Total Deducted from ${fromCard.name}:</strong> ${fromSym}${totalDeducted.toFixed(2)} (${chargeMode === 'deduct_from_amount' ? 'Inclusive' : 'Exclusive'} Fee: ${fromSym}${fee.toFixed(2)})</div>
+        <div>🎯 <strong>${toCard ? toCard.name : 'Receiver'} Gets:</strong> ${toSym}${targetReceived.toLocaleString('en-US', {maximumFractionDigits:0})}</div>
       `;
     }
 
@@ -1283,29 +1689,43 @@
     document.getElementById('manualRateInput')?.addEventListener('input', updateTransferLiveCalculation);
     document.getElementById('manualFeeInput')?.addEventListener('input', updateTransferLiveCalculation);
     document.getElementById('chargeModeSelect')?.addEventListener('change', updateTransferLiveCalculation);
+    document.getElementById('transferToSelect')?.addEventListener('change', updateTransferLiveCalculation);
 
     function renderCategoryStrip() {
       const strip = document.getElementById('catStrip');
+      if (!strip) return;
       strip.innerHTML = '';
+
       state.categories.forEach(cat => {
         const item = document.createElement('div');
         item.className = 'cat-item' + (cat.id === selectedCatId ? ' selected' : '');
-        item.innerHTML = `<div class="cat-circle">${cat.icon}</div><span class="cat-label">${cat.name}</span>`;
-        item.addEventListener('click', () => { triggerHaptic(); selectedCatId = cat.id; renderCategoryStrip(); });
+        item.innerHTML = `
+          <div class="cat-circle">${cat.icon}</div>
+          <span class="cat-label">${cat.name}</span>
+        `;
+        item.addEventListener('click', () => {
+          triggerHaptic();
+          selectedCatId = cat.id;
+          renderCategoryStrip();
+        });
         strip.appendChild(item);
       });
 
       const customItem = document.createElement('div');
       customItem.className = 'cat-item';
-      customItem.innerHTML = `<div class="cat-circle" style="font-weight:800;">+</div><span class="cat-label">Custom</span>`;
+      customItem.innerHTML = `
+        <div class="cat-circle" style="font-weight:800;">+</div>
+        <span class="cat-label">Custom</span>
+      `;
       customItem.addEventListener('click', openCustomCatSheet);
       strip.appendChild(customItem);
     }
 
     function renderPresets(currency) {
-      const presets = currency === 'BDT' || currency === 'JPY' ? [100, 500, 1000, 5000] : [10, 50, 100, 250, 500];
+      const presets = currency === 'BDT' || currency === 'JPY' ? [100, 500, 1000, 2000, 5000] : [10, 20, 50, 100, 250];
       const sym = (CURRENCY_META[currency] || CURRENCY_META.EUR).symbol;
       const row = document.getElementById('presetsRow');
+      if (!row) return;
       row.innerHTML = '';
       presets.forEach(val => {
         const chip = document.createElement('button');
@@ -1318,6 +1738,23 @@
         });
         row.appendChild(chip);
       });
+    }
+
+    function spawnConfetti() {
+      const stage = document.getElementById('confirmStage');
+      if (!stage) return;
+      const colors = ['#10b981', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+      for (let i = 0; i < 16; i++) {
+        const p = document.createElement('div');
+        p.className = 'confetti-piece';
+        const angle = (Math.PI * 2 * i) / 16;
+        const dist = 55 + Math.random() * 45;
+        p.style.setProperty('--tx', `${Math.cos(angle) * dist}px`);
+        p.style.setProperty('--ty', `${Math.sin(angle) * dist - 15}px`);
+        p.style.background = colors[i % colors.length];
+        stage.appendChild(p);
+        setTimeout(() => p.remove(), 800);
+      }
     }
 
     function submitTransaction() {
@@ -1344,17 +1781,42 @@
         const chargeMode = document.getElementById('chargeModeSelect').value;
 
         if (chargeMode === 'deduct_from_amount') {
-          const netEur = Math.max(0, amount - transferFee);
+          const netSource = Math.max(0, amount - transferFee);
           totalDeducted = amount;
-          convertedAmount = netEur * rate;
+          convertedAmount = netSource * rate;
         } else {
           totalDeducted = amount + transferFee;
           convertedAmount = amount * rate;
         }
       }
 
+      // INSUFFICIENT BALANCE CHECK
       if ((entryMode === 'expense' || entryMode === 'transfer') && Number(card.balance) < totalDeducted) {
+        triggerHaptic();
+        const backdrop = document.getElementById('confirmBackdrop');
+        const spinner = document.getElementById('confirmSpinner');
+        const avatar = document.getElementById('confirmAvatar');
+        const title = document.getElementById('confirmTitle');
+        const sub = document.getElementById('confirmSub');
+
+        spinner.style.display = 'none';
+        avatar.className = 'ring-avatar declined';
+        avatar.textContent = '✕';
+        title.textContent = 'Transaction Declined';
+        sub.textContent = `Insufficient balance! Available: ${formatMoney(card.balance, card.currency)}`;
+        backdrop.classList.add('open');
+
+        setTimeout(() => {
+          backdrop.classList.remove('open');
+          avatar.className = 'ring-avatar';
+        }, 2200);
+
         showToast('Insufficient balance!', true);
+        return;
+      }
+
+      if (entryMode === 'transfer' && state.cards.length < 2) {
+        showToast('Create at least 2 cards to transfer', true);
         return;
       }
 
@@ -1367,7 +1829,7 @@
       spinner.style.display = 'block';
       avatar.className = 'ring-avatar';
       avatar.textContent = entryMode === 'transfer' ? '⇄' : cat.icon;
-      title.textContent = 'Processing...';
+      title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring Remittance...';
       sub.textContent = `${formatMoney(totalDeducted, card.currency)} • ${card.name}`;
       backdrop.classList.add('open');
 
@@ -1376,6 +1838,7 @@
         spinner.style.display = 'none';
         avatar.classList.add('done');
         avatar.textContent = '✓';
+        spawnConfetti();
 
         if (entryMode === 'add') {
           card.balance = Number(card.balance) + amount;
@@ -1384,21 +1847,24 @@
         } else if (entryMode === 'transfer') {
           card.balance = Math.max(0, Number(card.balance) - totalDeducted);
           const toCard = state.cards.find(c => c.id === toCardId);
-          if (toCard) toCard.balance = Number(toCard.balance) + convertedAmount;
+          if (toCard) {
+            toCard.balance = Number(toCard.balance) + convertedAmount;
+          }
         }
 
         state.transactions.unshift({
           id: 'tx_' + Date.now(),
           cardId: card.id,
           toCardId,
+          sourceAmount: amount,
           convertedAmount,
           transferFee,
           totalDeducted,
           type: entryMode,
           categoryId: cat.id,
-          categoryName: entryMode === 'transfer' ? 'Remittance / Transfer' : cat.name,
+          categoryName: entryMode === 'transfer' ? 'Remittance Transfer' : cat.name,
           icon: entryMode === 'transfer' ? '⇄' : cat.icon,
-          amount,
+          amount: entryMode === 'transfer' ? totalDeducted : amount,
           currency: card.currency,
           note,
           date: new Date().toISOString()
@@ -1412,6 +1878,12 @@
           backdrop.classList.remove('open');
           document.getElementById('entryOverlay').classList.remove('open');
           refreshAll();
+
+          const cardEl = document.querySelector(`.wallet-card[data-card-id="${card.id}"]`);
+          if (cardEl) {
+            cardEl.classList.add('glow-success');
+            setTimeout(() => cardEl.classList.remove('glow-success'), 1100);
+          }
         }, 700);
       }, 650);
     }
@@ -1450,6 +1922,7 @@
 
     function renderStatementTransactions() {
       const list = document.getElementById('stmtTxList');
+      if (!list) return;
       list.innerHTML = '';
       const card = state.cards.find(c => c.id === statementCardId);
       if (!card) return;
@@ -1465,7 +1938,10 @@
         const txDay = tx.date.slice(0, 10);
         if (fromDate && txDay < fromDate) return false;
         if (toDate && txDay > toDate) return false;
-        if (query && !`${tx.categoryName} ${tx.note || ''}`.toLowerCase().includes(query)) return false;
+        if (query) {
+          const hay = `${tx.categoryName} ${tx.note || ''}`.toLowerCase();
+          if (!hay.includes(query)) return false;
+        }
         return true;
       });
 
@@ -1486,7 +1962,7 @@
 
       filtered.forEach(tx => {
         const isIncoming = tx.type === 'transfer' && tx.toCardId === card.id;
-        const amt = isIncoming ? tx.convertedAmount : (tx.totalDeducted || tx.amount);
+        const displayAmt = isIncoming ? formatMoney(tx.convertedAmount, card.currency) : formatMoney(tx.totalDeducted || tx.amount, card.currency);
         const prefix = tx.type === 'add' || isIncoming ? '+' : '−';
         const dStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
 
@@ -1500,7 +1976,7 @@
               <div class="tx-sub">${dStr}</div>
             </div>
           </div>
-          <div class="tx-amount ${isIncoming ? 'add' : tx.type}">${prefix}${formatMoney(amt, card.currency)}</div>
+          <div class="tx-amount ${isIncoming ? 'add' : tx.type}">${prefix}${displayAmt}</div>
         `;
         list.appendChild(item);
       });
@@ -1510,35 +1986,49 @@
       renderSettingsCards();
       renderSwatches();
       document.getElementById('backupExportText').value = JSON.stringify(state);
+      document.getElementById('backupImportText').value = '';
       document.getElementById('settingsBackdrop').classList.add('open');
     }
 
     function renderSettingsCards() {
       const box = document.getElementById('settingsCardsList');
+      if (!box) return;
       box.innerHTML = '';
       state.cards.forEach(card => {
         const row = document.createElement('div');
         row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--bg-input);border-radius:14px;';
         row.innerHTML = `
-          <div><div style="font-size:14px;font-weight:700;">${card.name} ••${card.digits}</div><div style="font-size:12px;color:var(--emerald);font-weight:700;">${formatMoney(card.balance, card.currency)} (${card.currency})</div></div>
+          <div>
+            <div style="font-size:14px;font-weight:700;">${card.name} ••${card.digits}</div>
+            <div style="font-size:12px;color:var(--emerald);font-weight:700;">${formatMoney(card.balance, card.currency)} (${card.currency})</div>
+          </div>
           ${state.cards.length > 1 ? `<button class="pill-btn" style="background:var(--danger-bg);color:var(--danger);padding:6px 12px;font-size:12px;" data-del="${card.id}">Remove</button>` : ''}
         `;
-        row.querySelector('[data-del]')?.addEventListener('click', () => {
-          state.cards = state.cards.filter(c => c.id !== card.id);
-          saveState(); renderSettingsCards(); refreshAll();
-        });
+        const delBtn = row.querySelector('[data-del]');
+        if (delBtn) {
+          delBtn.addEventListener('click', () => {
+            state.cards = state.cards.filter(c => c.id !== card.id);
+            saveState();
+            renderSettingsCards();
+            refreshAll();
+          });
+        }
         box.appendChild(row);
       });
     }
 
     function renderSwatches() {
       const box = document.getElementById('cardColorSwatches');
+      if (!box) return;
       box.innerHTML = '';
       CARD_GRADIENTS.forEach(grad => {
         const s = document.createElement('div');
         s.className = 'swatch' + (grad === selectedGradient ? ' active' : '');
-        s.style.cssText = `width:30px;height:30px;border-radius:50%;cursor:pointer;background:${grad};border:2.5px solid ${grad === selectedGradient ? 'var(--text-primary)' : 'transparent'};`;
-        s.addEventListener('click', () => { selectedGradient = grad; renderSwatches(); });
+        s.style.background = grad;
+        s.addEventListener('click', () => {
+          selectedGradient = grad;
+          renderSwatches();
+        });
         box.appendChild(s);
       });
     }
@@ -1551,7 +2041,11 @@
       document.getElementById('toastUndoBtn').style.display = withUndo ? 'inline-block' : 'none';
       el.classList.add('show');
       clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => el.classList.remove('show'), 4000);
+      toastTimer = setTimeout(hideToast, 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('toastEl').classList.remove('show');
     }
 
     function refreshAll() {
@@ -1561,9 +2055,15 @@
       renderTransactions();
     }
 
+    // Event Listeners Setup
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('themeToggleBtn').addEventListener('click', () => { state.darkMode = !state.darkMode; saveState(); applyTheme(); });
-      
+      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+        triggerHaptic();
+        state.darkMode = !state.darkMode;
+        saveState();
+        applyTheme();
+      });
+
       document.querySelectorAll('.filter-tab').forEach(btn => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
@@ -1573,28 +2073,53 @@
         });
       });
 
+      const carouselEl = document.getElementById('cardsCarousel');
+      if (carouselEl) {
+        carouselEl.addEventListener('scroll', (e) => {
+          const el = e.target;
+          const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 340;
+          const idx = Math.round(el.scrollLeft / cardWidth);
+          if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
+            activeCardIndex = idx;
+            updateHeroForActiveCard();
+            renderTransactions();
+          }
+        });
+      }
+
       document.getElementById('openAddBtn').addEventListener('click', () => openEntryOverlay('add'));
       document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
       document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
-      document.getElementById('closeEntryBtn').addEventListener('click', () => document.getElementById('entryOverlay').classList.remove('open'));
+      
+      const closeEntryBtn = document.getElementById('closeEntryBtn');
+      const closeOverlay = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('entryOverlay').classList.remove('open');
+      };
+      closeEntryBtn.addEventListener('click', closeOverlay);
+      closeEntryBtn.addEventListener('pointerdown', closeOverlay);
+
       document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
 
       document.getElementById('closeCustomCatBtn').addEventListener('click', () => document.getElementById('customCatBackdrop').classList.remove('open'));
       document.getElementById('saveCustomCatBtn').addEventListener('click', () => {
         const name = document.getElementById('newCatName').value.trim();
-        if (!name) return showToast('Enter name', true);
+        if (!name) return showToast('Enter a category name', true);
         const newCat = { id: 'cat_' + Date.now(), name, icon: selectedNewIcon };
         state.categories.push(newCat);
         selectedCatId = newCat.id;
-        saveState(); renderCategoryStrip();
+        saveState();
+        renderCategoryStrip();
         document.getElementById('customCatBackdrop').classList.remove('open');
-        showToast(`Category added`);
+        showToast(`Category "${name}" added`);
       });
 
       document.getElementById('closeStmtBtn').addEventListener('click', () => document.getElementById('statementBackdrop').classList.remove('open'));
       ['stmtFromDate', 'stmtToDate', 'stmtSearchInput', 'stmtTypeFilter'].forEach(id => {
-        document.getElementById(id)?.addEventListener('input', renderStatementTransactions);
-        document.getElementById(id)?.addEventListener('change', renderStatementTransactions);
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', renderStatementTransactions);
+        if (el && el.tagName === 'SELECT') el.addEventListener('change', renderStatementTransactions);
       });
       document.getElementById('downloadPdfBtn').addEventListener('click', () => window.print());
 
@@ -1612,44 +2137,77 @@
 
       document.getElementById('saveNewCardBtn').addEventListener('click', () => {
         const name = document.getElementById('newCardName').value.trim();
-        if (!name) return showToast('Enter card name', true);
+        if (!name) return showToast('Please enter card name', true);
+        const digits = document.getElementById('newCardDigits').value.trim() || String(Math.floor(1000 + Math.random() * 9000));
+        const currency = document.getElementById('newCardCurrency').value || 'EUR';
+        const balance = parseFloat(document.getElementById('newCardBalance').value) || 0;
+
         state.cards.push({
           id: 'card_' + Date.now(),
           name,
-          digits: document.getElementById('newCardDigits').value.trim() || '9999',
-          currency: document.getElementById('newCardCurrency').value,
-          balance: parseFloat(document.getElementById('newCardBalance').value) || 0,
+          digits,
+          currency,
+          balance,
           gradient: selectedGradient
         });
-        saveState(); renderSettingsCards(); refreshAll();
-        showToast('Card added');
+
+        document.getElementById('newCardName').value = '';
+        document.getElementById('newCardDigits').value = '';
+        document.getElementById('newCardBalance').value = '';
+        saveState();
+        renderSettingsCards();
+        refreshAll();
+        showToast('New card added');
       });
 
+      // RESET WALLET DATA BUTTON
       document.getElementById('resetWalletBtn').addEventListener('click', () => {
-        if (!confirm('Reset wallet?')) return;
+        if (!confirm('Are you sure you want to reset all wallet data? This will clear all cards and transactions permanently.')) return;
         localStorage.removeItem(STORAGE_KEY);
         state = getDefaultState();
-        saveState(); refreshAll();
+        activeCardIndex = 0;
+        saveState();
+        refreshAll();
         document.getElementById('settingsBackdrop').classList.remove('open');
-        showToast('Reset complete', true);
+        showToast('Wallet reset to default', true);
       });
 
       document.getElementById('copyBackupBtn').addEventListener('click', async () => {
-        await navigator.clipboard.writeText(document.getElementById('backupExportText').value);
-        showToast('Copied to clipboard!');
+        const text = document.getElementById('backupExportText').value;
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast('Backup JSON copied to clipboard!');
+        } catch (e) {
+          document.getElementById('backupExportText').select();
+          document.execCommand('copy');
+          showToast('Backup JSON copied!');
+        }
       });
 
       document.getElementById('restoreBackupBtn').addEventListener('click', () => {
+        const raw = document.getElementById('backupImportText').value.trim();
+        if (!raw) return showToast('Paste backup JSON text first', true);
         try {
-          state = JSON.parse(document.getElementById('backupImportText').value);
-          saveState(); refreshAll();
+          const parsed = JSON.parse(raw);
+          if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
+          state = parsed;
+          saveState();
+          refreshAll();
           document.getElementById('settingsBackdrop').classList.remove('open');
-          showToast('Restored successfully!');
-        } catch(e) { showToast('Invalid JSON', true); }
+          showToast('Wallet data restored!');
+        } catch (e) {
+          showToast('Invalid JSON backup text', true);
+        }
       });
+
+      document.getElementById('toastUndoBtn').addEventListener('click', undoLastDelete);
 
       refreshAll();
     });
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      refreshAll();
+    }
   </script>
 </body>
 </html>
