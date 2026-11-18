@@ -1121,7 +1121,7 @@
     <!-- Category Strip -->
     <div class="cat-strip" id="catStrip"></div>
 
-    <!-- Transfer Manual Exchange Rate & Charge Mode Bar -->
+    <!-- Transfer Manual Exchange Rate & Charge Mode Bar (Only visible on cross-currency transfers) -->
     <div class="transfer-bar" id="transferBar">
       <div class="transfer-box-card">
         <div class="transfer-row">
@@ -1129,30 +1129,28 @@
             <label class="form-label">To Card (Receiver)</label>
             <select class="form-select" id="transferToSelect"></select>
           </div>
-          <div>
+          <div id="chargeModeContainer">
             <label class="form-label">Charge Type</label>
             <select class="form-select" id="chargeModeSelect">
-              <option value="deduct_from_amount">Inclusive (৫০€ মোট যার ভেতর চার্জ)</option>
-              <option value="add_to_amount">Exclusive (৫০€ + চার্জ আলাদা)</option>
+              <option value="deduct_from_amount">Inclusive (মোট অ্যামাউন্টের ভেতর চার্জ)</option>
+              <option value="add_to_amount">Exclusive (অ্যামাউন্ট + আলাদা চার্জ)</option>
             </select>
           </div>
         </div>
 
-        <div class="transfer-row">
+        <div class="transfer-row" id="fxRateFieldsContainer">
           <div>
-            <label class="form-label">Exchange Rate (1 EUR = ?)</label>
+            <label class="form-label" id="fxRateLabel">Exchange Rate (1 EUR = ?)</label>
             <input type="number" step="any" class="form-input" id="manualRateInput" value="130" placeholder="130" />
           </div>
           <div>
-            <label class="form-label">Service Charge (€)</label>
+            <label class="form-label">Service Charge</label>
             <input type="number" step="any" class="form-input" id="manualFeeInput" value="2" placeholder="2.00" />
           </div>
         </div>
 
         <div class="fx-summary-box" id="transferFxSummary">
-          <div>💱 <strong>Exchange Rate:</strong> 1 EUR = 130 BDT</div>
-          <div>💸 <strong>Total Deducted from Card:</strong> €50.00</div>
-          <div>🎯 <strong>Receiver Gets:</strong> ৳6,240.00</div>
+          <div>💱 <strong>Direct Transfer:</strong> Sender & Receiver amount is identical.</div>
         </div>
       </div>
     </div>
@@ -1348,7 +1346,7 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v5';
+    const STORAGE_KEY = 'pocketflow_wallet_v6';
 
     function getDefaultState() {
       return {
@@ -1364,10 +1362,10 @@
           },
           {
             id: 'card_2',
-            name: 'BDT Wallet',
+            name: 'EUR Cash',
             digits: '8824',
-            currency: 'BDT',
-            balance: 0,
+            currency: 'EUR',
+            balance: 200,
             gradient: CARD_GRADIENTS[1]
           }
         ],
@@ -1383,7 +1381,6 @@
     let selectedCatId = state.categories[0]?.id || 'food';
     let selectedGradient = CARD_GRADIENTS[0];
     let selectedNewIcon = ICON_LIBRARY[0];
-    let lastDeletedTx = null;
     let statementCardId = null;
 
     function loadState() {
@@ -1560,7 +1557,7 @@
         } else if (tx.type === 'transfer') {
           const toCard = state.cards.find(c => c.id === tx.toCardId);
           prefix = '⇄ ';
-          displayAmtStr = `${formatMoney(tx.totalDeducted || tx.amount, card.currency)} ➔ ${formatMoney(tx.convertedAmount, toCard ? toCard.currency : 'BDT')}`;
+          displayAmtStr = `${formatMoney(tx.totalDeducted || tx.amount, card.currency)} ➔ ${formatMoney(tx.convertedAmount, toCard ? toCard.currency : card.currency)}`;
           amountClass = 'transfer';
         }
 
@@ -1619,7 +1616,7 @@
       const sym = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).symbol;
       document.getElementById('entryCurrencySym').textContent = sym;
 
-      const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer / Remittance' };
+      const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer Between Cards' };
       document.getElementById('entryModeTitle').textContent = titleMap[mode];
       document.getElementById('submitTxBtn').textContent = mode === 'add' ? 'Add to Card' : mode === 'expense' ? 'Send Expense' : 'Complete Transfer';
 
@@ -1653,36 +1650,58 @@
 
     function updateTransferLiveCalculation() {
       const amount = parseFloat(document.getElementById('nativeAmountInput').value) || 0;
-      const rate = parseFloat(document.getElementById('manualRateInput').value) || 130;
-      const fee = parseFloat(document.getElementById('manualFeeInput').value) || 0;
-      const chargeMode = document.getElementById('chargeModeSelect').value;
-      const summaryBox = document.getElementById('transferFxSummary');
       const fromCard = state.cards[activeCardIndex] || state.cards[0];
       const toCardId = document.getElementById('transferToSelect').value;
       const toCard = state.cards.find(c => c.id === toCardId) || state.cards.find((c, i) => i !== activeCardIndex);
-      const toCurr = toCard ? toCard.currency : 'BDT';
-      const toSym = (CURRENCY_META[toCurr] || CURRENCY_META.BDT).symbol;
-      const fromSym = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).symbol;
+      const summaryBox = document.getElementById('transferFxSummary');
+      const fxFieldsContainer = document.getElementById('fxRateFieldsContainer');
+      const chargeModeContainer = document.getElementById('chargeModeContainer');
 
-      let netPrincipal = amount;
-      let totalDeducted = amount;
-      let targetReceived = 0;
+      const isSameCurrency = toCard && fromCard.currency === toCard.currency;
 
-      if (chargeMode === 'deduct_from_amount') {
-        netPrincipal = Math.max(0, amount - fee);
-        totalDeducted = amount;
-        targetReceived = netPrincipal * rate;
+      if (isSameCurrency) {
+        // Same currency transfer (e.g. EUR to EUR): No exchange rate needed, direct transfer
+        fxFieldsContainer.style.display = 'none';
+        chargeModeContainer.style.display = 'none';
+        const sym = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).symbol;
+        summaryBox.innerHTML = `
+          <div>🔄 <strong>Direct Transfer (${fromCard.currency} to ${fromCard.currency}):</strong> No exchange rate or conversion fee.</div>
+          <div>🎯 <strong>${toCard.name} will receive:</strong> ${sym}${amount.toFixed(2)} exact.</div>
+        `;
       } else {
-        netPrincipal = amount;
-        totalDeducted = amount + fee;
-        targetReceived = netPrincipal * rate;
-      }
+        // Cross currency transfer (e.g. EUR to BDT): Enable manual rate and charge options
+        fxFieldsContainer.style.display = 'flex';
+        chargeModeContainer.style.display = 'block';
 
-      summaryBox.innerHTML = `
-        <div>💱 <strong>Exchange Rate:</strong> 1 ${fromCard.currency} = ${rate} ${toCurr}</div>
-        <div>💸 <strong>Total Deducted from ${fromCard.name}:</strong> ${fromSym}${totalDeducted.toFixed(2)} (${chargeMode === 'deduct_from_amount' ? 'Inclusive' : 'Exclusive'} Fee: ${fromSym}${fee.toFixed(2)})</div>
-        <div>🎯 <strong>${toCard ? toCard.name : 'Receiver'} Gets:</strong> ${toSym}${targetReceived.toLocaleString('en-US', {maximumFractionDigits:0})}</div>
-      `;
+        const rate = parseFloat(document.getElementById('manualRateInput').value) || 130;
+        const fee = parseFloat(document.getElementById('manualFeeInput').value) || 0;
+        const chargeMode = document.getElementById('chargeModeSelect').value;
+        const toCurr = toCard ? toCard.currency : 'BDT';
+        const toSym = (CURRENCY_META[toCurr] || CURRENCY_META.BDT).symbol;
+        const fromSym = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).symbol;
+
+        document.getElementById('fxRateLabel').textContent = `Exchange Rate (1 ${fromCard.currency} = ?)`;
+
+        let netPrincipal = amount;
+        let totalDeducted = amount;
+        let targetReceived = 0;
+
+        if (chargeMode === 'deduct_from_amount') {
+          netPrincipal = Math.max(0, amount - fee);
+          totalDeducted = amount;
+          targetReceived = netPrincipal * rate;
+        } else {
+          netPrincipal = amount;
+          totalDeducted = amount + fee;
+          targetReceived = netPrincipal * rate;
+        }
+
+        summaryBox.innerHTML = `
+          <div>💱 <strong>Exchange Rate:</strong> 1 ${fromCard.currency} = ${rate} ${toCurr}</div>
+          <div>💸 <strong>Total Deducted from ${fromCard.name}:</strong> ${fromSym}${totalDeducted.toFixed(2)} (${chargeMode === 'deduct_from_amount' ? 'Inclusive' : 'Exclusive'} Fee: ${fromSym}${fee.toFixed(2)})</div>
+          <div>🎯 <strong>${toCard ? toCard.name : 'Receiver'} Gets:</strong> ${toSym}${targetReceived.toLocaleString('en-US', {maximumFractionDigits:0})}</div>
+        `;
+      }
     }
 
     document.getElementById('nativeAmountInput')?.addEventListener('input', updateTransferLiveCalculation);
@@ -1776,17 +1795,27 @@
 
       if (entryMode === 'transfer') {
         toCardId = document.getElementById('transferToSelect').value;
-        const rate = parseFloat(document.getElementById('manualRateInput').value) || 130;
-        transferFee = parseFloat(document.getElementById('manualFeeInput').value) || 0;
-        const chargeMode = document.getElementById('chargeModeSelect').value;
+        const toCard = state.cards.find(c => c.id === toCardId);
+        const isSameCurrency = toCard && card.currency === toCard.currency;
 
-        if (chargeMode === 'deduct_from_amount') {
-          const netSource = Math.max(0, amount - transferFee);
+        if (isSameCurrency) {
+          // Direct identical transfer (EUR to EUR)
           totalDeducted = amount;
-          convertedAmount = netSource * rate;
+          convertedAmount = amount;
         } else {
-          totalDeducted = amount + transferFee;
-          convertedAmount = amount * rate;
+          // Cross-currency transfer
+          const rate = parseFloat(document.getElementById('manualRateInput').value) || 130;
+          transferFee = parseFloat(document.getElementById('manualFeeInput').value) || 0;
+          const chargeMode = document.getElementById('chargeModeSelect').value;
+
+          if (chargeMode === 'deduct_from_amount') {
+            const netSource = Math.max(0, amount - transferFee);
+            totalDeducted = amount;
+            convertedAmount = netSource * rate;
+          } else {
+            totalDeducted = amount + transferFee;
+            convertedAmount = amount * rate;
+          }
         }
       }
 
@@ -1829,7 +1858,7 @@
       spinner.style.display = 'block';
       avatar.className = 'ring-avatar';
       avatar.textContent = entryMode === 'transfer' ? '⇄' : cat.icon;
-      title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring Remittance...';
+      title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...';
       sub.textContent = `${formatMoney(totalDeducted, card.currency)} • ${card.name}`;
       backdrop.classList.add('open');
 
@@ -1862,7 +1891,7 @@
           totalDeducted,
           type: entryMode,
           categoryId: cat.id,
-          categoryName: entryMode === 'transfer' ? 'Remittance Transfer' : cat.name,
+          categoryName: entryMode === 'transfer' ? 'Card Transfer' : cat.name,
           icon: entryMode === 'transfer' ? '⇄' : cat.icon,
           amount: entryMode === 'transfer' ? totalDeducted : amount,
           currency: card.currency,
@@ -2199,8 +2228,6 @@
           showToast('Invalid JSON backup text', true);
         }
       });
-
-      document.getElementById('toastUndoBtn').addEventListener('click', undoLastDelete);
 
       refreshAll();
     });
