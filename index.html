@@ -515,7 +515,7 @@
       transform: translateY(100%);
       transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s ease;
       padding-top: env(safe-area-inset-top);
-      padding-bottom: calc(16px + env(safe-area-inset-bottom));
+      padding-bottom: calc(24px + env(safe-area-inset-bottom));
     }
 
     .overlay-screen.open {
@@ -629,68 +629,65 @@
       display: block;
     }
 
-    /* Amount Display */
+    /* Native Amount Input Stage using iPhone default keyboard */
     .amount-stage {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 8px 20px;
+      padding: 12px 24px;
     }
 
-    .amount-display {
-      font-size: 52px;
-      font-weight: 800;
-      letter-spacing: -0.04em;
+    .native-amount-wrapper {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       justify-content: center;
-      gap: 4px;
+      background: var(--bg-card);
+      border: 2px solid var(--border-color);
+      border-radius: 24px;
+      padding: 12px 20px;
+      width: 100%;
+      max-width: 320px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease, var(--theme-transition);
     }
 
-    .amount-sym {
-      font-size: 28px;
+    .native-amount-wrapper:focus-within {
+      border-color: var(--emerald);
+    }
+
+    .native-sym {
+      font-size: 32px;
       font-weight: 700;
       color: var(--text-secondary);
+      margin-right: 4px;
     }
 
-    .digit-pop {
-      display: inline-block;
-      animation: digitPop 0.18s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    @keyframes digitPop {
-      0% { transform: scale(0.75); opacity: 0.4; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    .cursor-blink {
-      display: inline-block;
-      width: 2.5px;
-      height: 40px;
-      background: var(--emerald);
-      border-radius: 2px;
-      margin-left: 2px;
-      animation: blink 1s infinite;
-    }
-
-    @keyframes blink {
-      0%, 49% { opacity: 1; }
-      50%, 100% { opacity: 0; }
+    .native-amount-input {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      width: 100%;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
     }
 
     .note-input {
-      margin-top: 12px;
+      margin-top: 16px;
       background: var(--bg-input);
       border: 1px solid var(--border-color);
       border-radius: 999px;
-      padding: 9px 16px;
-      font-size: 13px;
+      padding: 11px 18px;
+      font-size: 13.5px;
       color: var(--text-primary);
       text-align: center;
-      width: 78%;
-      max-width: 270px;
+      width: 85%;
+      max-width: 290px;
       outline: none;
       transition: var(--theme-transition);
     }
@@ -700,12 +697,12 @@
       display: flex;
       justify-content: center;
       gap: 8px;
-      padding: 8px 16px 14px;
+      padding: 8px 16px 18px;
       flex-wrap: wrap;
     }
 
     .preset-chip {
-      padding: 7px 14px;
+      padding: 8px 14px;
       border-radius: 999px;
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -718,34 +715,6 @@
 
     .preset-chip:active {
       transform: scale(0.92);
-    }
-
-    /* Numeric Keypad */
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      padding: 0 20px 14px;
-    }
-
-    .key-btn {
-      height: 54px;
-      border-radius: 18px;
-      border: none;
-      background: var(--bg-card);
-      color: var(--text-primary);
-      font-size: 22px;
-      font-weight: 700;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      transition: transform 0.12s ease, var(--theme-transition);
-      -webkit-user-select: none;
-      user-select: none;
-    }
-
-    .key-btn:active, .key-btn.pressed {
-      transform: scale(0.92);
-      background: var(--bg-subtle);
     }
 
     .send-cta {
@@ -1119,34 +1088,17 @@
       <div class="transfer-info-box" id="transferInfoBox"></div>
     </div>
 
-    <!-- Live Amount Display -->
+    <!-- Native Amount Stage using iPhone default keyboard -->
     <div class="amount-stage">
-      <div class="amount-display">
-        <span class="amount-sym" id="entryCurrencySym">€</span>
-        <span id="entryAmountDigits">0</span>
-        <span class="cursor-blink"></span>
+      <div class="native-amount-wrapper">
+        <span class="native-sym" id="entryCurrencySym">€</span>
+        <input type="number" step="any" inputmode="decimal" class="native-amount-input" id="nativeAmountInput" placeholder="0" autofocus />
       </div>
       <input type="text" class="note-input" id="entryNoteInput" placeholder="Add a note (optional)..." />
     </div>
 
     <!-- Quick Preset Pills -->
     <div class="presets-row" id="presetsRow"></div>
-
-    <!-- Keypad -->
-    <div class="keypad" id="keypadGrid">
-      <button class="key-btn" data-key="1">1</button>
-      <button class="key-btn" data-key="2">2</button>
-      <button class="key-btn" data-key="3">3</button>
-      <button class="key-btn" data-key="4">4</button>
-      <button class="key-btn" data-key="5">5</button>
-      <button class="key-btn" data-key="6">6</button>
-      <button class="key-btn" data-key="7">7</button>
-      <button class="key-btn" data-key="8">8</button>
-      <button class="key-btn" data-key="9">9</button>
-      <button class="key-btn" data-key=".">.</button>
-      <button class="key-btn" data-key="0">0</button>
-      <button class="key-btn" data-key="back">⌫</button>
-    </div>
 
     <button class="send-cta" id="submitTxBtn">Send</button>
   </div>
@@ -1226,7 +1178,7 @@
 
       <div class="tabs-bar">
         <button class="tab-btn active" data-tab="cardsTab">My Cards</button>
-        <button class="tab-btn" data-tab="backupTab">Backup (Copy/Paste)</button>
+        <button class="tab-btn" data-tab="backupTab">Backup & Reset</button>
       </div>
 
       <!-- Cards Tab -->
@@ -1269,6 +1221,11 @@
           <label class="form-label">2. Restore Data (Paste Backup JSON Text Here)</label>
           <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste your saved backup JSON here..."></textarea>
           <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn">Restore Data</button>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
+        <div class="form-group">
+          <label class="form-label" style="color:var(--danger);">Danger Zone</label>
+          <button class="send-cta" style="width:100%;height:44px;font-size:14px;background:var(--danger-bg);color:var(--danger);" id="resetWalletBtn">⚠️ Reset All Wallet Data</button>
         </div>
       </div>
     </div>
@@ -1349,7 +1306,6 @@
     let activeCardIndex = 0;
     let entryMode = 'add';
     let selectedCatId = state.categories[0]?.id || 'food';
-    let amountStr = '0';
     let selectedGradient = CARD_GRADIENTS[0];
     let selectedNewIcon = ICON_LIBRARY[0];
     let lastDeletedTx = null;
@@ -1574,7 +1530,7 @@
     function openEntryOverlay(mode) {
       triggerHaptic();
       entryMode = mode;
-      amountStr = '0';
+      document.getElementById('nativeAmountInput').value = '';
       document.getElementById('entryNoteInput').value = '';
 
       const card = state.cards[activeCardIndex] || state.cards[0];
@@ -1605,8 +1561,13 @@
 
       renderCategoryStrip();
       renderPresets(card.currency);
-      updateAmountDigits();
       document.getElementById('entryOverlay').classList.add('open');
+      
+      // Auto focus native amount input to invoke iPhone default keyboard seamlessly
+      setTimeout(() => {
+        const amtInput = document.getElementById('nativeAmountInput');
+        if (amtInput) amtInput.focus();
+      }, 300);
     }
 
     function updateTransferInfo() {
@@ -1623,7 +1584,7 @@
       const fromRate = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).rateToEur;
       const toRate = (CURRENCY_META[toCard.currency] || CURRENCY_META.EUR).rateToEur;
       const exchangeRate = fromRate / toRate;
-      const feePercent = 1.5; // 1.5% international transfer fee
+      const feePercent = 1.5;
       infoBox.innerHTML = `💱 <strong>FX Rate:</strong> 1 ${fromCard.currency} = ${exchangeRate.toFixed(4)} ${toCard.currency} &nbsp;|&nbsp; ⚡ <strong>Transfer Fee:</strong> ${feePercent}%`;
       infoBox.classList.add('visible');
     }
@@ -1672,36 +1633,10 @@
         chip.textContent = `${sym}${val}`;
         chip.addEventListener('click', () => {
           triggerHaptic();
-          amountStr = String(val);
-          updateAmountDigits();
+          document.getElementById('nativeAmountInput').value = val;
         });
         row.appendChild(chip);
       });
-    }
-
-    function updateAmountDigits() {
-      const container = document.getElementById('entryAmountDigits');
-      if (!container) return;
-      container.innerHTML = '';
-      for (const ch of amountStr) {
-        const span = document.createElement('span');
-        span.className = 'digit-pop';
-        span.textContent = ch;
-        container.appendChild(span);
-      }
-    }
-
-    function handleKeyInput(key) {
-      triggerHaptic();
-      if (key === 'back') {
-        amountStr = amountStr.length > 1 ? amountStr.slice(0, -1) : '0';
-      } else if (key === '.') {
-        if (!amountStr.includes('.')) amountStr += '.';
-      } else {
-        if (amountStr === '0') amountStr = key;
-        else if (amountStr.length < 10) amountStr += key;
-      }
-      updateAmountDigits();
     }
 
     function spawnConfetti() {
@@ -1722,9 +1657,10 @@
     }
 
     function submitTransaction() {
-      const amount = parseFloat(amountStr);
+      const amountVal = document.getElementById('nativeAmountInput').value;
+      const amount = parseFloat(amountVal);
       if (!amount || amount <= 0) {
-        showToast('Please enter an amount greater than 0', true);
+        showToast('Please enter a valid amount greater than 0', true);
         return;
       }
 
@@ -1795,7 +1731,6 @@
           const toCard = state.cards.find(c => c.id === toCardId);
           
           if (toCard && card.currency !== toCard.currency) {
-            // FX conversion + 1.5% fee
             transferFee = amount * 0.015;
             const netAmount = amount - transferFee;
             const fromRate = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).rateToEur;
@@ -1804,7 +1739,6 @@
             card.balance = Math.max(0, Number(card.balance) - amount);
             toCard.balance = Number(toCard.balance) + convertedAmount;
           } else if (toCard) {
-            // Same currency transfer (Euro to Euro / USD to USD)
             card.balance = Math.max(0, Number(card.balance) - amount);
             toCard.balance = Number(toCard.balance) + amount;
             convertedAmount = amount;
@@ -2038,17 +1972,6 @@
       closeEntryBtn.addEventListener('click', closeOverlay);
       closeEntryBtn.addEventListener('pointerdown', closeOverlay);
 
-      document.querySelectorAll('#keypadGrid .key-btn').forEach(btn => {
-        const key = btn.dataset.key;
-        const handlePress = (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleKeyInput(key);
-        };
-        btn.addEventListener('click', handlePress);
-        btn.addEventListener('pointerdown', handlePress);
-      });
-
       document.getElementById('submitTxBtn').addEventListener('click', submitTransaction);
 
       document.getElementById('closeCustomCatBtn').addEventListener('click', () => document.getElementById('customCatBackdrop').classList.remove('open'));
@@ -2109,6 +2032,18 @@
         showToast('New card added');
       });
 
+      // RESET WALLET DATA BUTTON
+      document.getElementById('resetWalletBtn').addEventListener('click', () => {
+        if (!confirm('Are you sure you want to reset all wallet data? This will clear all cards and transactions permanently.')) return;
+        localStorage.removeItem(STORAGE_KEY);
+        state = getDefaultState();
+        activeCardIndex = 0;
+        saveState();
+        refreshAll();
+        document.getElementById('settingsBackdrop').classList.remove('open');
+        showToast('Wallet reset to default', true);
+      });
+
       document.getElementById('copyBackupBtn').addEventListener('click', async () => {
         const text = document.getElementById('backupExportText').value;
         try {
@@ -2122,7 +2057,7 @@
       });
 
       document.getElementById('restoreBackupBtn').addEventListener('click', () => {
-        const raw = document.getElementById('backupImportText').value.trim();
+        const raw = document.getElementById('backupImportTest').value.trim();
         if (!raw) return showToast('Paste backup JSON text first', true);
         try {
           const parsed = JSON.parse(raw);
