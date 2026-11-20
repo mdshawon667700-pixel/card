@@ -148,6 +148,238 @@
       justify-content: center;
     }
 
+    body.app-locked {
+      overflow: hidden;
+    }
+
+    /* 4-Digit iPhone-style PIN Lock Screen */
+    .pin-lock-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: calc(44px + env(safe-area-inset-top)) 28px calc(30px + env(safe-area-inset-bottom));
+      transition: opacity 0.25s ease, transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
+    }
+
+    .pin-lock-screen.visible {
+      display: flex;
+    }
+
+    .pin-lock-screen.unlocking {
+      opacity: 0;
+      transform: scale(1.04);
+      pointer-events: none;
+    }
+
+    .pin-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .pin-lock-badge {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .pin-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .pin-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      min-height: 18px;
+    }
+
+    .pin-subtitle.error {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .pin-dots-row {
+      display: flex;
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    .pin-dots-row.shake {
+      animation: pinShake 0.38s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+    }
+
+    @keyframes pinShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-10px); }
+      40% { transform: translateX(10px); }
+      60% { transform: translateX(-7px); }
+      80% { transform: translateX(7px); }
+    }
+
+    .pin-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--text-primary);
+      background: transparent;
+      transition: transform 0.14s ease, background-color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .pin-dot.filled {
+      background: var(--text-primary);
+      transform: scale(1.12);
+    }
+
+    .pin-dot.error {
+      border-color: var(--danger);
+      background: var(--danger);
+    }
+
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 76px);
+      gap: 16px 24px;
+      justify-content: center;
+      margin: 12px 0;
+    }
+
+    .pin-key {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 26px;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      touch-action: manipulation;
+      user-select: none;
+      transition: transform 0.1s ease, background-color 0.15s ease;
+    }
+
+    .pin-key:active {
+      transform: scale(0.92);
+      background: var(--bg-subtle);
+    }
+
+    .pin-key.empty-key {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .pin-key.action-key {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+      font-size: 20px;
+      color: var(--text-secondary);
+    }
+
+    .pin-footer-actions {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      min-height: 28px;
+    }
+
+    .pin-link-btn {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .pin-link-btn:active {
+      opacity: 0.7;
+    }
+
+    .security-status-card {
+      background: var(--bg-subtle);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: var(--text-muted);
+      transition: 0.25s;
+      border-radius: 999px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background-color: #ffffff;
+      transition: 0.25s;
+      border-radius: 50%;
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+      background-color: var(--emerald);
+    }
+
+    .toggle-switch input:checked + .toggle-slider:before {
+      transform: translateX(22px);
+    }
+
     /* 3-Zone App Shell */
     .app-shell {
       width: 100%;
@@ -1262,18 +1494,20 @@
       padding: 4px;
       border-radius: 14px;
       margin-bottom: 16px;
+      gap: 2px;
     }
 
     .tab-btn {
       flex: 1;
-      padding: 8px;
+      padding: 8px 6px;
       border: none;
       border-radius: 10px;
       background: transparent;
       color: var(--text-secondary);
-      font-size: 12.5px;
+      font-size: 11.5px;
       font-weight: 700;
       cursor: pointer;
+      white-space: nowrap;
       transition: var(--theme-transition);
     }
 
@@ -1383,7 +1617,7 @@
       align-items: center;
       gap: 12px;
       box-shadow: var(--shadow-lg);
-      z-index: 200;
+      z-index: 250;
       transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
@@ -1409,6 +1643,41 @@
   </style>
 </head>
 <body>
+  <!-- iPhone-style 4-Digit PIN Lock Screen -->
+  <div class="pin-lock-screen" id="pinLockScreen" aria-live="polite">
+    <div class="pin-header">
+      <div class="pin-lock-badge" id="pinLockIcon">🔒</div>
+      <div class="pin-title" id="pinScreenTitle">Enter Passcode</div>
+      <div class="pin-subtitle" id="pinScreenSub">Enter your 4-digit PIN</div>
+      <div class="pin-dots-row" id="pinDotsRow">
+        <span class="pin-dot" id="pinDot0"></span>
+        <span class="pin-dot" id="pinDot1"></span>
+        <span class="pin-dot" id="pinDot2"></span>
+        <span class="pin-dot" id="pinDot3"></span>
+      </div>
+    </div>
+
+    <div class="pin-keypad" id="pinKeypad">
+      <button class="pin-key" data-digit="1">1</button>
+      <button class="pin-key" data-digit="2">2</button>
+      <button class="pin-key" data-digit="3">3</button>
+      <button class="pin-key" data-digit="4">4</button>
+      <button class="pin-key" data-digit="5">5</button>
+      <button class="pin-key" data-digit="6">6</button>
+      <button class="pin-key" data-digit="7">7</button>
+      <button class="pin-key" data-digit="8">8</button>
+      <button class="pin-key" data-digit="9">9</button>
+      <button class="pin-key empty-key" tabindex="-1" aria-hidden="true"></button>
+      <button class="pin-key" data-digit="0">0</button>
+      <button class="pin-key action-key" id="pinBackspaceBtn" aria-label="Delete digit">⌫</button>
+    </div>
+
+    <div class="pin-footer-actions">
+      <button class="pin-link-btn" id="pinCancelSetupBtn" style="display:none;">Cancel</button>
+      <button class="pin-link-btn" id="pinForgotBtn">Forgot PIN?</button>
+    </div>
+  </div>
+
   <div class="app-shell">
     <!-- ZONE 1: Top Header & Hero Balance -->
     <div class="top-zone">
@@ -1648,6 +1917,7 @@
       <div class="tabs-bar">
         <button class="tab-btn active" data-tab="cardsTab" data-i18n="tabCards">My Cards</button>
         <button class="tab-btn" data-tab="appearanceTab" data-i18n="tabAppearance">Themes & Lang</button>
+        <button class="tab-btn" data-tab="securityTab" data-i18n="tabSecurity">PIN Lock</button>
         <button class="tab-btn" data-tab="backupTab" data-i18n="tabBackup">Backup</button>
       </div>
 
@@ -1689,6 +1959,24 @@
         <div class="form-group">
           <label class="form-label" data-i18n="chooseLang">Choose Language</label>
           <div class="lang-grid" id="settingsLangGrid"></div>
+        </div>
+      </div>
+
+      <div id="securityTab" style="display:none;">
+        <div class="security-status-card">
+          <div>
+            <div style="font-size:14.5px;font-weight:800;" data-i18n="pinLockTitle">4-Digit App PIN</div>
+            <div id="pinStatusText" style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Disabled</div>
+          </div>
+          <label class="toggle-switch" aria-label="Toggle 4-digit PIN lock">
+            <input type="checkbox" id="pinToggleCheckbox" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div id="pinConfiguredControls" style="display:none;">
+          <button class="action-sheet-btn" id="changePinBtn" data-i18n="changePinBtn">🔑 Change 4-Digit PIN</button>
+          <button class="action-sheet-btn" id="lockNowBtn" data-i18n="lockNowBtn">🔒 Lock App Now</button>
         </div>
       </div>
 
@@ -1772,7 +2060,25 @@
         settingsTitle: 'Wallet Settings',
         tabCards: 'My Cards',
         tabAppearance: 'Themes & Lang',
+        tabSecurity: 'PIN Lock',
         tabBackup: 'Backup',
+        pinLockTitle: '4-Digit App PIN',
+        pinEnabledStatus: 'Enabled — PIN required on launch',
+        pinDisabledStatus: 'Disabled — Open without PIN',
+        changePinBtn: '🔑 Change 4-Digit PIN',
+        lockNowBtn: '🔒 Lock App Now',
+        pinEnterTitle: 'Enter Passcode',
+        pinEnterSub: 'Enter your 4-digit PIN to unlock',
+        pinCreateTitle: 'Create 4-Digit PIN',
+        pinCreateSub: 'Choose 4 numbers like your iPhone passcode',
+        pinConfirmTitle: 'Confirm 4-Digit PIN',
+        pinConfirmSub: 'Enter the same 4 numbers again',
+        pinMismatch: 'PINs did not match. Try again',
+        pinWrong: 'Incorrect PIN. Try again',
+        pinSetSuccess: '4-digit PIN lock enabled!',
+        pinOffSuccess: 'PIN lock disabled',
+        pinForgotBtn: 'Forgot PIN?',
+        pinCancelBtn: 'Cancel',
         addNewCardTitle: '+ Add New Card',
         pickDesign: 'Pick Premium Material Design',
         saveCardBtn: 'Save Card',
@@ -1834,7 +2140,25 @@
         settingsTitle: 'Impostazioni',
         tabCards: 'Le Mie Carte',
         tabAppearance: 'Temi e Lingua',
+        tabSecurity: 'Blocco PIN',
         tabBackup: 'Backup',
+        pinLockTitle: 'PIN App a 4 Cifre',
+        pinEnabledStatus: 'Attivo — PIN richiesto all’avvio',
+        pinDisabledStatus: 'Disattivato',
+        changePinBtn: '🔑 Cambia PIN a 4 Cifre',
+        lockNowBtn: '🔒 Blocca Ora',
+        pinEnterTitle: 'Inserisci Codice',
+        pinEnterSub: 'Digita il tuo PIN a 4 cifre',
+        pinCreateTitle: 'Crea PIN a 4 Cifre',
+        pinCreateSub: 'Scegli 4 numeri come il codice iPhone',
+        pinConfirmTitle: 'Conferma PIN',
+        pinConfirmSub: 'Ridigita gli stessi 4 numeri',
+        pinMismatch: 'I PIN non coincidono. Riprova',
+        pinWrong: 'PIN errato. Riprova',
+        pinSetSuccess: 'Blocco PIN a 4 cifre attivato!',
+        pinOffSuccess: 'Blocco PIN disattivato',
+        pinForgotBtn: 'PIN dimenticato?',
+        pinCancelBtn: 'Annulla',
         addNewCardTitle: '+ Aggiungi Nuova Carta',
         pickDesign: 'Scegli Design Carta',
         saveCardBtn: 'Salva Carta',
@@ -1896,7 +2220,25 @@
         settingsTitle: 'Ajustes',
         tabCards: 'Mis Tarjetas',
         tabAppearance: 'Temas e Idioma',
+        tabSecurity: 'PIN',
         tabBackup: 'Copia',
+        pinLockTitle: 'PIN de 4 Dígitos',
+        pinEnabledStatus: 'Activado — PIN al abrir',
+        pinDisabledStatus: 'Desactivado',
+        changePinBtn: '🔑 Cambiar PIN de 4 Dígitos',
+        lockNowBtn: '🔒 Bloquear Ahora',
+        pinEnterTitle: 'Introduce el Código',
+        pinEnterSub: 'Escribe tu PIN de 4 dígitos',
+        pinCreateTitle: 'Crear PIN de 4 Dígitos',
+        pinCreateSub: 'Elige 4 números como en tu iPhone',
+        pinConfirmTitle: 'Confirmar PIN',
+        pinConfirmSub: 'Escribe los mismos 4 números',
+        pinMismatch: 'Los PIN no coinciden. Inténtalo de nuevo',
+        pinWrong: 'PIN incorrecto. Inténtalo de nuevo',
+        pinSetSuccess: '¡Bloqueo por PIN activado!',
+        pinOffSuccess: 'Bloqueo por PIN desactivado',
+        pinForgotBtn: '¿Olvidaste el PIN?',
+        pinCancelBtn: 'Cancelar',
         addNewCardTitle: '+ Añadir Nueva Tarjeta',
         pickDesign: 'Elige Diseño de Tarjeta',
         saveCardBtn: 'Guardar Tarjeta',
@@ -1958,7 +2300,25 @@
         settingsTitle: 'ওয়ালেট সেটিংস',
         tabCards: 'আমার কার্ড',
         tabAppearance: 'থিম ও ভাষা',
+        tabSecurity: 'পিন লক',
         tabBackup: 'ব্যাকআপ',
+        pinLockTitle: '৪ সংখ্যার অ্যাপ পিন',
+        pinEnabledStatus: 'চালু আছে — ওপেন করলে পিন চাইবে',
+        pinDisabledStatus: 'বন্ধ আছে',
+        changePinBtn: '🔑 ৪ সংখ্যার পিন বদলান',
+        lockNowBtn: '🔒 এখনই লক করুন',
+        pinEnterTitle: 'পিন দিন',
+        pinEnterSub: 'অ্যাপ খুলতে আপনার ৪ সংখ্যার পিন দিন',
+        pinCreateTitle: 'নতুন ৪ সংখ্যার পিন সেট করুন',
+        pinCreateSub: 'iPhone-এর পাসকোডের মতো ৪টি সংখ্যা দিন',
+        pinConfirmTitle: 'পিন নিশ্চিত করুন',
+        pinConfirmSub: 'একই ৪টি সংখ্যা আবার লিখুন',
+        pinMismatch: 'পিন দুটি মেলেনি। আবার চেষ্টা করুন',
+        pinWrong: 'ভুল পিন। আবার চেষ্টা করুন',
+        pinSetSuccess: '৪ সংখ্যার পিন লক চালু হয়েছে!',
+        pinOffSuccess: 'পিন লক বন্ধ করা হয়েছে',
+        pinForgotBtn: 'পিন ভুলে গেছেন?',
+        pinCancelBtn: 'বাতিল',
         addNewCardTitle: '+ নতুন কার্ড যোগ করুন',
         pickDesign: 'কার্ডের ডিজাইন বাছাই করুন',
         saveCardBtn: 'কার্ড সেভ করুন',
@@ -2048,6 +2408,8 @@
       return {
         theme: 'light',
         lang: 'en',
+        pinEnabled: false,
+        pinCode: '',
         cards: [
           {
             id: 'card_1',
@@ -2087,6 +2449,11 @@
     let selectedNewIcon = ICON_LIBRARY[0];
     let statementCardId = null;
 
+    // PIN Lock State
+    let pinBuffer = '';
+    let pinFlowMode = 'unlock'; // 'unlock' | 'setup_new' | 'setup_confirm'
+    let pendingNewPin = '';
+
     function t(key) {
       const langDict = TRANSLATIONS[state.lang] || TRANSLATIONS.en;
       return langDict[key] || TRANSLATIONS.en[key] || key;
@@ -2100,6 +2467,8 @@
           if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
             if (!parsed.theme) parsed.theme = parsed.darkMode ? 'dark' : 'light';
             if (!parsed.lang) parsed.lang = 'en';
+            parsed.pinEnabled = Boolean(parsed.pinEnabled && typeof parsed.pinCode === 'string' && parsed.pinCode.length === 4);
+            parsed.pinCode = typeof parsed.pinCode === 'string' ? parsed.pinCode : '';
             return parsed;
           }
         }
@@ -2115,6 +2484,148 @@
 
     function triggerHaptic() {
       if (navigator.vibrate) navigator.vibrate(12);
+    }
+
+    function updatePinDotsVisual(errorState = false) {
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById('pinDot' + i);
+        if (!dot) continue;
+        dot.classList.toggle('filled', i < pinBuffer.length);
+        dot.classList.toggle('error', errorState);
+      }
+    }
+
+    function showPinOverlay(mode, customSubText = '') {
+      pinFlowMode = mode;
+      pinBuffer = '';
+      if (mode === 'setup_new') pendingNewPin = '';
+
+      const screen = document.getElementById('pinLockScreen');
+      const titleEl = document.getElementById('pinScreenTitle');
+      const subEl = document.getElementById('pinScreenSub');
+      const iconEl = document.getElementById('pinLockIcon');
+      const cancelBtn = document.getElementById('pinCancelSetupBtn');
+      const forgotBtn = document.getElementById('pinForgotBtn');
+
+      subEl.classList.remove('error');
+      updatePinDotsVisual(false);
+
+      if (mode === 'unlock') {
+        iconEl.textContent = '🔒';
+        titleEl.textContent = t('pinEnterTitle');
+        subEl.textContent = customSubText || t('pinEnterSub');
+        cancelBtn.style.display = 'none';
+        forgotBtn.style.display = 'inline-block';
+      } else if (mode === 'setup_new') {
+        iconEl.textContent = '🔑';
+        titleEl.textContent = t('pinCreateTitle');
+        subEl.textContent = customSubText || t('pinCreateSub');
+        cancelBtn.style.display = 'inline-block';
+        forgotBtn.style.display = 'none';
+      } else if (mode === 'setup_confirm') {
+        iconEl.textContent = '✅';
+        titleEl.textContent = t('pinConfirmTitle');
+        subEl.textContent = customSubText || t('pinConfirmSub');
+        cancelBtn.style.display = 'inline-block';
+        forgotBtn.style.display = 'none';
+      }
+
+      document.body.classList.add('app-locked');
+      screen.classList.remove('unlocking');
+      screen.classList.add('visible');
+    }
+
+    function hidePinOverlay() {
+      const screen = document.getElementById('pinLockScreen');
+      screen.classList.add('unlocking');
+      document.body.classList.remove('app-locked');
+      setTimeout(() => {
+        screen.classList.remove('visible');
+        screen.classList.remove('unlocking');
+        pinBuffer = '';
+        pendingNewPin = '';
+        updatePinDotsVisual(false);
+      }, 240);
+    }
+
+    function flashPinError(message) {
+      triggerHaptic();
+      const dotsRow = document.getElementById('pinDotsRow');
+      const subEl = document.getElementById('pinScreenSub');
+      updatePinDotsVisual(true);
+      subEl.textContent = message;
+      subEl.classList.add('error');
+      dotsRow.classList.remove('shake');
+      void dotsRow.offsetWidth;
+      dotsRow.classList.add('shake');
+
+      setTimeout(() => {
+        pinBuffer = '';
+        updatePinDotsVisual(false);
+        subEl.classList.remove('error');
+        if (pinFlowMode === 'unlock') subEl.textContent = t('pinEnterSub');
+        else if (pinFlowMode === 'setup_new') subEl.textContent = t('pinCreateSub');
+        else if (pinFlowMode === 'setup_confirm') subEl.textContent = t('pinConfirmSub');
+      }, 650);
+    }
+
+    function handlePinComplete() {
+      if (pinFlowMode === 'unlock') {
+        if (pinBuffer === state.pinCode) {
+          triggerHaptic();
+          hidePinOverlay();
+        } else {
+          flashPinError(t('pinWrong'));
+        }
+      } else if (pinFlowMode === 'setup_new') {
+        pendingNewPin = pinBuffer;
+        pinBuffer = '';
+        showPinOverlay('setup_confirm');
+      } else if (pinFlowMode === 'setup_confirm') {
+        if (pinBuffer === pendingNewPin) {
+          state.pinCode = pinBuffer;
+          state.pinEnabled = true;
+          saveState();
+          renderSecurityTab();
+          triggerHaptic();
+          hidePinOverlay();
+          showToast(t('pinSetSuccess'));
+        } else {
+          flashPinError(t('pinMismatch'));
+          setTimeout(() => {
+            showPinOverlay('setup_new', t('pinMismatch'));
+          }, 700);
+        }
+      }
+    }
+
+    function handlePinDigit(digit) {
+      if (pinBuffer.length >= 4) return;
+      triggerHaptic();
+      pinBuffer += String(digit);
+      updatePinDotsVisual(false);
+      if (pinBuffer.length === 4) {
+        setTimeout(handlePinComplete, 110);
+      }
+    }
+
+    function handlePinBackspace() {
+      if (pinBuffer.length === 0) return;
+      triggerHaptic();
+      pinBuffer = pinBuffer.slice(0, -1);
+      updatePinDotsVisual(false);
+    }
+
+    function renderSecurityTab() {
+      const toggle = document.getElementById('pinToggleCheckbox');
+      const statusEl = document.getElementById('pinStatusText');
+      const controlsEl = document.getElementById('pinConfiguredControls');
+      if (!toggle || !statusEl || !controlsEl) return;
+
+      const active = Boolean(state.pinEnabled && state.pinCode && state.pinCode.length === 4);
+      toggle.checked = active;
+      statusEl.textContent = active ? t('pinEnabledStatus') : t('pinDisabledStatus');
+      controlsEl.style.display = active ? 'block' : 'none';
     }
 
     function formatMoney(amount, currencyCode) {
@@ -2153,6 +2664,8 @@
       if (stmtSearch) stmtSearch.placeholder = t('searchPlaceholder');
       const noteInput = document.getElementById('entryNoteInput');
       if (noteInput) noteInput.placeholder = t('notePlaceholder');
+
+      renderSecurityTab();
     }
 
     function renderThemeAndLangGrids() {
@@ -3156,6 +3669,7 @@
       renderSettingsCards();
       renderSwatches();
       renderThemeAndLangGrids();
+      renderSecurityTab();
       document.getElementById('backupExportText').value = JSON.stringify(state);
       document.getElementById('backupImportText').value = '';
       document.getElementById('settingsBackdrop').classList.add('open');
@@ -3232,6 +3746,52 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // PIN Keypad events
+      document.querySelectorAll('#pinKeypad .pin-key[data-digit]').forEach(btn => {
+        btn.addEventListener('click', () => handlePinDigit(btn.dataset.digit));
+      });
+      document.getElementById('pinBackspaceBtn')?.addEventListener('click', handlePinBackspace);
+      document.getElementById('pinCancelSetupBtn')?.addEventListener('click', () => {
+        hidePinOverlay();
+        renderSecurityTab();
+      });
+      document.getElementById('pinForgotBtn')?.addEventListener('click', () => {
+        if (confirm('Reset PIN lock? You can set a new 4-digit PIN in Settings afterward.')) {
+          state.pinEnabled = false;
+          state.pinCode = '';
+          saveState();
+          renderSecurityTab();
+          hidePinOverlay();
+          showToast(t('pinOffSuccess'));
+        }
+      });
+
+      // Security tab controls
+      document.getElementById('pinToggleCheckbox')?.addEventListener('change', (e) => {
+        triggerHaptic();
+        if (e.target.checked) {
+          e.target.checked = false;
+          showPinOverlay('setup_new');
+        } else {
+          state.pinEnabled = false;
+          state.pinCode = '';
+          saveState();
+          renderSecurityTab();
+          showToast(t('pinOffSuccess'));
+        }
+      });
+
+      document.getElementById('changePinBtn')?.addEventListener('click', () => {
+        triggerHaptic();
+        showPinOverlay('setup_new');
+      });
+
+      document.getElementById('lockNowBtn')?.addEventListener('click', () => {
+        triggerHaptic();
+        document.getElementById('settingsBackdrop').classList.remove('open');
+        showPinOverlay('unlock');
+      });
+
       document.getElementById('allSummaryPdfBtn')?.addEventListener('click', async () => {
         triggerHaptic();
         const blob = buildAllCardsSummaryPdfBlob();
@@ -3380,6 +3940,7 @@
           btn.classList.add('active');
           document.getElementById('cardsTab').style.display = btn.dataset.tab === 'cardsTab' ? 'block' : 'none';
           document.getElementById('appearanceTab').style.display = btn.dataset.tab === 'appearanceTab' ? 'block' : 'none';
+          document.getElementById('securityTab').style.display = btn.dataset.tab === 'securityTab' ? 'block' : 'none';
           document.getElementById('backupTab').style.display = btn.dataset.tab === 'backupTab' ? 'block' : 'none';
         });
       });
@@ -3452,6 +4013,10 @@
       });
 
       refreshAll(true);
+
+      if (state.pinEnabled && state.pinCode && state.pinCode.length === 4) {
+        showPinOverlay('unlock');
+      }
     });
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
