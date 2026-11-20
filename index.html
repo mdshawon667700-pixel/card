@@ -429,29 +429,6 @@
       letter-spacing: -0.03em;
     }
 
-    .mini-totals {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: var(--bg-subtle);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      transition: var(--theme-transition);
-    }
-
-    .mini-totals span.val-eur {
-      color: var(--text-primary);
-      font-weight: 700;
-    }
-
-    .mini-totals span.val-bdt {
-      color: var(--emerald);
-      font-weight: 700;
-    }
-
     .header-actions {
       display: flex;
       align-items: center;
@@ -489,28 +466,77 @@
     }
 
     .hero-section {
-      padding: 10px 20px 12px;
+      padding: 6px 20px 12px;
       text-align: center;
     }
 
-    .hero-label {
+    .hero-label-row {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
       font-size: 11.5px;
       font-weight: 700;
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      min-height: 16px;
+      min-height: 24px;
     }
 
-    .hero-balance {
-      font-size: 42px;
+    .eye-icon-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: transform 0.15s ease, var(--theme-transition);
+    }
+
+    .eye-icon-btn:active {
+      transform: scale(0.9);
+    }
+
+    .total-hero-box {
+      margin: 8px auto 14px;
+      padding: 12px 14px;
+      border-radius: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 380px;
+      min-height: 54px;
+      transition: var(--theme-transition);
+    }
+
+    .total-curr-item {
       font-weight: 800;
-      letter-spacing: -0.04em;
-      margin: 4px 0 14px;
+      letter-spacing: -0.02em;
       font-variant-numeric: tabular-nums;
-      min-height: 50px;
-      line-height: 1.15;
-      transition: color 0.3s ease;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .total-curr-item.eur { color: var(--text-primary); }
+    .total-curr-item.usd { color: var(--blue); }
+    .total-curr-item.bdt { color: var(--emerald); }
+    .total-curr-item.other { color: var(--text-primary); }
+
+    .total-sep-dot {
+      color: var(--text-muted);
+      font-weight: 700;
+      user-select: none;
     }
 
     .action-row {
@@ -785,6 +811,12 @@
       justify-content: space-between;
       padding: 10px 20px 8px;
       gap: 8px;
+    }
+
+    .section-title-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .section-title {
@@ -1761,17 +1793,12 @@
   </div>
 
   <div class="app-shell">
-    <!-- ZONE 1: Top Header & Hero Balance -->
+    <!-- ZONE 1: Top Header & Total Balance Hero -->
     <div class="top-zone">
       <header class="top-bar">
         <div class="wallet-title-group">
           <div class="wallet-heading-row">
             <h1 class="wallet-title" data-i18n="walletTitle">Wallet</h1>
-            <div class="mini-totals" id="miniTotalsBadge">
-              <span class="val-eur" id="totalEurMini">€0.00</span>
-              <span>•</span>
-              <span class="val-bdt" id="totalBdtMini">৳0</span>
-            </div>
           </div>
         </div>
         <div class="header-actions">
@@ -1783,8 +1810,13 @@
       </header>
 
       <section class="hero-section">
-        <div class="hero-label" id="activeCardLabel">MAIN CARD</div>
-        <div class="hero-balance" id="heroBalanceDisplay">€0.00</div>
+        <div class="hero-label-row">
+          <span id="totalBalanceHeroLabel" data-i18n="totalBalanceLabel">TOTAL BALANCE</span>
+          <button type="button" class="eye-icon-btn" id="toggleTotalEyeBtn" title="Hide / Show Total Balance" aria-label="Hide or show total balance">👁️</button>
+        </div>
+
+        <div class="total-hero-box" id="totalHeroBox"></div>
+
         <div class="action-row">
           <button class="pill-btn pill-add" id="openAddBtn" data-i18n="btnAdd">+ Add</button>
           <button class="pill-btn pill-expense" id="openExpenseBtn" data-i18n="btnExpense">− Expense</button>
@@ -1802,7 +1834,10 @@
     <!-- ZONE 3: Bottom Stable Activity Zone -->
     <div class="activity-zone">
       <div class="section-header">
-        <span class="section-title" data-i18n="recentActivity">Recent Activity</span>
+        <div class="section-title-group">
+          <span class="section-title" data-i18n="recentActivity">Recent Activity</span>
+          <button type="button" class="eye-icon-btn" id="toggleActivityEyeBtn" title="Hide / Show Card & Activity Amounts" aria-label="Hide or show card and activity amounts">👁️</button>
+        </div>
         <div class="month-pill">
           <span class="month-in" id="monthInVal">+€0</span>
           <span class="month-out" id="monthOutVal">−€0</span>
@@ -2181,6 +2216,7 @@
     const TRANSLATIONS = {
       en: {
         walletTitle: 'Wallet',
+        totalBalanceLabel: 'TOTAL BALANCE',
         btnAdd: '+ Add',
         btnExpense: '− Expense',
         btnTransfer: '⇄ Transfer',
@@ -2269,6 +2305,7 @@
       },
       it: {
         walletTitle: 'Portafoglio',
+        totalBalanceLabel: 'SALDO TOTALE',
         btnAdd: '+ Aggiungi',
         btnExpense: '− Spesa',
         btnTransfer: '⇄ Trasferisci',
@@ -2357,6 +2394,7 @@
       },
       es: {
         walletTitle: 'Billetera',
+        totalBalanceLabel: 'SALDO TOTAL',
         btnAdd: '+ Añadir',
         btnExpense: '− Gasto',
         btnTransfer: '⇄ Transferir',
@@ -2445,6 +2483,7 @@
       },
       bn: {
         walletTitle: 'ওয়ালেট',
+        totalBalanceLabel: 'মোট ব্যালেন্স',
         btnAdd: '+ যোগ করুন',
         btnExpense: '− খরচ',
         btnTransfer: '⇄ ট্রান্সফার',
@@ -2534,12 +2573,12 @@
     };
 
     const CURRENCY_META = {
-      EUR: { symbol: '€', rateToEur: 1 },
-      USD: { symbol: '$', rateToEur: 0.92 },
-      BDT: { symbol: '৳', rateToEur: 0.0077 },
-      JPY: { symbol: '¥', rateToEur: 0.0061 },
-      GBP: { symbol: '£', rateToEur: 1.17 },
-      CHF: { symbol: 'CHF ', rateToEur: 1.06 }
+      EUR: { symbol: '€' },
+      USD: { symbol: '$' },
+      BDT: { symbol: '৳' },
+      JPY: { symbol: '¥' },
+      GBP: { symbol: '£' },
+      CHF: { symbol: 'CHF ' }
     };
 
     const CARD_DESIGNS = [
@@ -2591,6 +2630,52 @@
     const STORAGE_KEY = 'pocketflow_wallet_v12';
     const BACKUP_CIPHER_PREFIX = 'PFENC1:';
     const BACKUP_KEY_BYTES = [0x50, 0x6f, 0x63, 0x6b, 0x65, 0x74, 0x46, 0x6c, 0x6f, 0x77, 0x32, 0x30, 0x32, 0x36, 0x21, 0x23];
+
+    // Auto AudioContext for Apple Pay-style confirmation chime
+    let pfAudioCtx = null;
+    function ensureAudioContext() {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (!AudioCtx) return null;
+      if (!pfAudioCtx) {
+        pfAudioCtx = new AudioCtx();
+      }
+      if (pfAudioCtx.state === 'suspended') {
+        pfAudioCtx.resume().catch(() => {});
+      }
+      return pfAudioCtx;
+    }
+
+    async function playApplePaySuccessSound() {
+      try {
+        const ctx = ensureAudioContext();
+        if (!ctx) return;
+        if (ctx.state === 'suspended') {
+          await ctx.resume();
+        }
+        const now = ctx.currentTime;
+        const chimeNotes = [
+          { freq: 1046.5, offset: 0, dur: 0.12, gain: 0.18 },     // C6
+          { freq: 1567.98, offset: 0.09, dur: 0.24, gain: 0.20 }   // G6
+        ];
+
+        chimeNotes.forEach(note => {
+          const osc = ctx.createOscillator();
+          const gainNode = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.freq, now + note.offset);
+
+          gainNode.gain.setValueAtTime(0.0001, now + note.offset);
+          gainNode.gain.exponentialRampToValueAtTime(note.gain, now + note.offset + 0.015);
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, now + note.offset + note.dur);
+
+          osc.connect(gainNode);
+          gainNode.connect(ctx.destination);
+
+          osc.start(now + note.offset);
+          osc.stop(now + note.offset + note.dur + 0.03);
+        });
+      } catch (e) {}
+    }
 
     function encryptBackupPayload(jsonStr) {
       const encoder = new TextEncoder();
@@ -2657,6 +2742,8 @@
       return {
         theme: 'light',
         lang: 'en',
+        hideTotalBalance: false,
+        hideActivityBalances: false,
         pinEnabled: false,
         pinHash: '',
         recoveryHash: hashSecret('0000'),
@@ -2693,6 +2780,8 @@
       return {
         theme: state.theme || 'light',
         lang: state.lang || 'en',
+        hideTotalBalance: Boolean(state.hideTotalBalance),
+        hideActivityBalances: Boolean(state.hideActivityBalances),
         pinEnabled: Boolean(state.pinEnabled),
         pinHash: state.pinHash || '',
         recoveryHash: state.recoveryHash || hashSecret('0000'),
@@ -2746,6 +2835,9 @@
           if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
             if (!parsed.theme) parsed.theme = parsed.darkMode ? 'dark' : 'light';
             if (!parsed.lang) parsed.lang = 'en';
+            const legacyHide = Boolean(parsed.hideBalances);
+            parsed.hideTotalBalance = parsed.hideTotalBalance !== undefined ? Boolean(parsed.hideTotalBalance) : legacyHide;
+            parsed.hideActivityBalances = parsed.hideActivityBalances !== undefined ? Boolean(parsed.hideActivityBalances) : legacyHide;
             const migratedHash =
               parsed.pinHash ||
               (typeof parsed.pinCode === 'string' && parsed.pinCode.length === 4 ? hashSecret(parsed.pinCode) : '');
@@ -2767,7 +2859,31 @@
     }
 
     function triggerHaptic() {
-      if (navigator.vibrate) navigator.vibrate(12);
+      if (navigator.vibrate) navigator.vibrate(14);
+    }
+
+    function updateEyeButtonsVisual() {
+      const totalBtn = document.getElementById('toggleTotalEyeBtn');
+      const actBtn = document.getElementById('toggleActivityEyeBtn');
+      if (totalBtn) totalBtn.textContent = state.hideTotalBalance ? '🙈' : '👁️';
+      if (actBtn) actBtn.textContent = state.hideActivityBalances ? '🙈' : '👁️';
+    }
+
+    function toggleTotalBalanceEye() {
+      triggerHaptic();
+      state.hideTotalBalance = !state.hideTotalBalance;
+      saveState();
+      updateEyeButtonsVisual();
+      updateTotalBalancesHero();
+    }
+
+    function toggleActivityBalanceEye() {
+      triggerHaptic();
+      state.hideActivityBalances = !state.hideActivityBalances;
+      saveState();
+      updateEyeButtonsVisual();
+      renderCards();
+      renderTransactions(false);
     }
 
     function setDecryptedJsonState(parsedObj) {
@@ -2952,8 +3068,24 @@
       controlsEl.style.display = active ? 'block' : 'none';
     }
 
-    function formatMoney(amount, currencyCode) {
+    function formatMoney(amount, currencyCode, forceReveal = false) {
       const meta = CURRENCY_META[currencyCode] || CURRENCY_META.EUR;
+      if (state.hideActivityBalances && !forceReveal) {
+        return `${meta.symbol}••••`;
+      }
+      const num = Number(amount) || 0;
+      const decimals = currencyCode === 'JPY' || currencyCode === 'BDT' ? 0 : 2;
+      return `${meta.symbol}${num.toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      })}`;
+    }
+
+    function formatTotalCurrency(amount, currencyCode, hidden) {
+      const meta = CURRENCY_META[currencyCode] || CURRENCY_META.EUR;
+      if (hidden) {
+        return `${meta.symbol}••••`;
+      }
       const num = Number(amount) || 0;
       const decimals = currencyCode === 'JPY' || currencyCode === 'BDT' ? 0 : 2;
       return `${meta.symbol}${num.toLocaleString('en-US', {
@@ -3037,24 +3169,59 @@
       });
     }
 
-    function updateHeaderTotals() {
-      let totalEur = 0;
-      let totalBdt = 0;
+    function updateTotalBalancesHero() {
+      const box = document.getElementById('totalHeroBox');
+      if (!box || !state.cards || !Array.isArray(state.cards)) return;
 
-      if (!state.cards || !Array.isArray(state.cards)) return;
-
+      // Group strictly by each card's own currency without converting or mixing currencies
+      const totalsByCurrency = {};
       state.cards.forEach(c => {
+        const curr = c.currency || 'EUR';
         const bal = Number(c.balance) || 0;
-        if (c.currency === 'BDT') {
-          totalBdt += bal;
-        } else {
-          const rate = (CURRENCY_META[c.currency] || CURRENCY_META.EUR).rateToEur;
-          totalEur += bal * rate;
-        }
+        totalsByCurrency[curr] = (totalsByCurrency[curr] || 0) + bal;
       });
 
-      document.getElementById('totalEurMini').textContent = `€${totalEur.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-      document.getElementById('totalBdtMini').textContent = `৳${totalBdt.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+      const entries = Object.entries(totalsByCurrency);
+      if (entries.length === 0) {
+        box.innerHTML = `<span class="total-curr-item eur" style="font-size:26px;">€0.00</span>`;
+        return;
+      }
+
+      // Auto-scale font size based on how many currencies & character length exist
+      const combinedTextLen = entries.reduce((sum, [curr, val]) => {
+        return sum + formatTotalCurrency(val, curr, state.hideTotalBalance).length;
+      }, 0);
+
+      let fontSizePx = 26;
+      if (entries.length === 1 && combinedTextLen <= 10) {
+        fontSizePx = 30;
+      } else if (entries.length === 2 && combinedTextLen <= 18) {
+        fontSizePx = 23;
+      } else if (entries.length === 2) {
+        fontSizePx = 19;
+      } else if (entries.length === 3) {
+        fontSizePx = 16.5;
+      } else {
+        fontSizePx = 14.5;
+      }
+
+      box.innerHTML = '';
+      entries.forEach(([curr, val], idx) => {
+        if (idx > 0) {
+          const dot = document.createElement('span');
+          dot.className = 'total-sep-dot';
+          dot.style.fontSize = `${Math.max(13, Math.round(fontSizePx * 0.72))}px`;
+          dot.textContent = '•';
+          box.appendChild(dot);
+        }
+
+        const span = document.createElement('span');
+        const cls = curr === 'EUR' ? 'eur' : curr === 'USD' ? 'usd' : curr === 'BDT' ? 'bdt' : 'other';
+        span.className = `total-curr-item ${cls}`;
+        span.style.fontSize = `${fontSizePx}px`;
+        span.textContent = formatTotalCurrency(val, curr, state.hideTotalBalance);
+        box.appendChild(span);
+      });
     }
 
     function populateHomeCategoryFilter() {
@@ -3133,15 +3300,13 @@
         dots.appendChild(dot);
       });
 
-      updateHeroForActiveCard();
+      syncActiveCardIndicator();
     }
 
-    function updateHeroForActiveCard() {
+    function syncActiveCardIndicator() {
       if (!state.cards || state.cards.length === 0) return;
       const card = state.cards[activeCardIndex] || state.cards[0];
       if (!card) return;
-      document.getElementById('activeCardLabel').textContent = `${card.name} ••${card.digits}`;
-      document.getElementById('heroBalanceDisplay').textContent = formatMoney(card.balance, card.currency);
       document.getElementById('selectedCardFilterBtn').textContent = `${card.name} (${t('onlySuffix')})`;
       document.querySelectorAll('#cardDots .dot').forEach((d, i) => {
         d.classList.toggle('active', i === activeCardIndex);
@@ -3170,8 +3335,14 @@
       });
 
       const sym = (CURRENCY_META[activeCard.currency] || CURRENCY_META.EUR).symbol;
-      document.getElementById('monthInVal').textContent = `+${sym}${monthIn.toFixed(0)}`;
-      document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(0)}`;
+      if (state.hideActivityBalances) {
+        document.getElementById('monthInVal').textContent = `+${sym}•••`;
+        document.getElementById('monthOutVal').textContent = `−${sym}•••`;
+      } else {
+        const dec = activeCard.currency === 'BDT' || activeCard.currency === 'JPY' ? 0 : 0;
+        document.getElementById('monthInVal').textContent = `+${sym}${monthIn.toFixed(dec)}`;
+        document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(dec)}`;
+      }
 
       const q = homeSearchQuery.trim().toLowerCase();
       const filteredTxs = (state.transactions || []).filter(tx => {
@@ -3297,13 +3468,14 @@
         if (carousel && carousel.children[cardIdx]) {
           carousel.children[cardIdx].scrollIntoView({ behavior: 'smooth', inline: 'center' });
         }
-        updateHeroForActiveCard();
+        syncActiveCardIndicator();
       }
 
       openEntryOverlay(tx.type, tx);
     }
 
     function openEntryOverlay(mode, editTx = null) {
+      ensureAudioContext();
       triggerHaptic();
       entryMode = mode;
       editingTxId = editTx ? editTx.id : null;
@@ -3434,6 +3606,7 @@
           <span class="cat-label">${cat.name}</span>
         `;
         item.addEventListener('click', () => {
+          ensureAudioContext();
           triggerHaptic();
           selectedCatId = isSelected ? null : cat.id;
           renderCategoryStrip();
@@ -3462,6 +3635,7 @@
         chip.className = 'preset-chip';
         chip.textContent = `${sym}${val}`;
         chip.addEventListener('click', () => {
+          ensureAudioContext();
           triggerHaptic();
           document.getElementById('nativeAmountInput').value = val;
           updateTransferLiveCalculation();
@@ -3488,6 +3662,7 @@
     }
 
     function submitTransaction() {
+      ensureAudioContext();
       if (!selectedCatId) {
         triggerHaptic();
         showToast(t('selectCatFirst'), true);
@@ -3561,7 +3736,7 @@
         avatar.className = 'ring-avatar declined';
         avatar.textContent = '✕';
         title.textContent = t('txDeclined');
-        sub.textContent = `${t('insufficientBal')} (${formatMoney(effectiveBalance, card.currency)})`;
+        sub.textContent = `${t('insufficientBal')} (${formatMoney(effectiveBalance, card.currency, true)})`;
         backdrop.classList.add('open');
 
         setTimeout(() => {
@@ -3588,11 +3763,12 @@
       avatar.className = 'ring-avatar';
       avatar.textContent = cat.icon;
       title.textContent = '...';
-      sub.textContent = `${formatMoney(totalDeducted, card.currency)} • ${card.name}`;
+      sub.textContent = `${formatMoney(totalDeducted, card.currency, true)} • ${card.name}`;
       backdrop.classList.add('open');
 
-      setTimeout(() => {
+      setTimeout(async () => {
         triggerHaptic();
+        await playApplePaySuccessSound();
         spinner.style.display = 'none';
         avatar.classList.add('done');
         avatar.textContent = '✓';
@@ -3644,7 +3820,7 @@
 
         saveState();
         title.textContent = t('completed');
-        sub.textContent = `${formatMoney(card.balance, card.currency)}`;
+        sub.textContent = `${formatMoney(card.balance, card.currency, true)}`;
 
         setTimeout(() => {
           backdrop.classList.remove('open');
@@ -3786,7 +3962,7 @@
 
       const lines = [];
       lines.push(`PocketFlow Statement - ${escPdf(card.name)} (${escPdf(card.currency)})`);
-      lines.push(`Card Ending: ••${escPdf(card.digits)} | Current Balance: ${escPdf(formatMoney(card.balance, card.currency))}`);
+      lines.push(`Card Ending: ••${escPdf(card.digits)} | Current Balance: ${escPdf(formatMoney(card.balance, card.currency, true))}`);
       lines.push(`${escPdf(summaryLabel)} ${escPdf(summaryVal)}`);
       lines.push(`Generated: ${escPdf(new Date().toLocaleString('en-GB'))}`);
       lines.push('----------------------------------------------------------------------');
@@ -3797,8 +3973,8 @@
         transactions.slice(0, 45).forEach((tx, i) => {
           const isIncoming = tx.type === 'transfer' && tx.toCardId === card.id;
           const amt = isIncoming
-            ? formatMoney(tx.convertedAmount, card.currency)
-            : formatMoney(tx.totalDeducted || tx.amount, card.currency);
+            ? formatMoney(tx.convertedAmount, card.currency, true)
+            : formatMoney(tx.totalDeducted || tx.amount, card.currency, true);
           const sign = tx.type === 'add' || isIncoming ? '+' : '-';
           const dStr = new Date(tx.date).toLocaleDateString('en-GB', {
             day: '2-digit',
@@ -3872,41 +4048,27 @@
       const txs = state.transactions || [];
 
       const currencyTotals = {};
-      let totalEurEquivalent = 0;
-      let totalBdtDirect = 0;
-
       cards.forEach((c) => {
         const curr = c.currency || 'EUR';
         const bal = Number(c.balance) || 0;
         currencyTotals[curr] = (currencyTotals[curr] || 0) + bal;
-
-        if (curr === 'BDT') {
-          totalBdtDirect += bal;
-        } else {
-          const rate = (CURRENCY_META[curr] || CURRENCY_META.EUR).rateToEur;
-          totalEurEquivalent += bal * rate;
-        }
       });
 
       const lines = [];
-      lines.push('PocketFlow - All Cards Total Summary');
+      lines.push('PocketFlow - All Cards Total Summary (By Currency)');
       lines.push(`Generated: ${escPdf(new Date().toLocaleString('en-GB'))} | Total Cards: ${cards.length}`);
       lines.push('======================================================================');
-      lines.push(`Combined EUR Equivalent (Non-BDT): EUR ${totalEurEquivalent.toFixed(2)}`);
-      lines.push(`Total BDT Balance: BDT ${totalBdtDirect.toLocaleString('en-US', { maximumFractionDigits: 0 })}`);
+      lines.push('SEPARATE CURRENCY TOTALS:');
+      Object.keys(currencyTotals).forEach((curr) => {
+        lines.push(`* ${curr}: ${formatMoney(currencyTotals[curr], curr, true)}`);
+      });
       lines.push('----------------------------------------------------------------------');
       lines.push('CARDS BREAKDOWN:');
 
       cards.forEach((c, idx) => {
         lines.push(
-          `${idx + 1}. ${c.name} (••${c.digits || '0000'}) [${c.currency}] -> Balance: ${formatMoney(c.balance, c.currency)}`
+          `${idx + 1}. ${c.name} (••${c.digits || '0000'}) [${c.currency}] -> Balance: ${formatMoney(c.balance, c.currency, true)}`
         );
-      });
-
-      lines.push('----------------------------------------------------------------------');
-      lines.push('CURRENCY TOTALS:');
-      Object.keys(currencyTotals).forEach((curr) => {
-        lines.push(`* ${curr}: ${formatMoney(currencyTotals[curr], curr)}`);
       });
 
       lines.push('----------------------------------------------------------------------');
@@ -3923,7 +4085,7 @@
             month: 'short',
             year: 'numeric'
           });
-          const amtStr = formatMoney(tx.sourceAmount || tx.amount, tx.currency || (card ? card.currency : 'EUR'));
+          const amtStr = formatMoney(tx.sourceAmount || tx.amount, tx.currency || (card ? card.currency : 'EUR'), true);
           const notePart = tx.note ? ` | ${tx.note}` : '';
           lines.push(`${i + 1}. [${dStr}] ${cardLabel} - ${tx.categoryName} (${tx.type}): ${amtStr}${notePart}`);
         });
@@ -4130,13 +4292,25 @@
     function refreshAll(animateTx = false) {
       applyTheme();
       applyTranslations();
-      updateHeaderTotals();
+      updateEyeButtonsVisual();
+      updateTotalBalancesHero();
       populateHomeCategoryFilter();
       renderCards();
       renderTransactions(animateTx);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Unlock Web Audio on first user interaction anywhere in the app
+      document.addEventListener('pointerdown', () => {
+        ensureAudioContext();
+      }, { passive: true });
+
+      // Independent Eye buttons:
+      // 1) Total Balance Eye toggles only Total Balance hero
+      document.getElementById('toggleTotalEyeBtn')?.addEventListener('click', toggleTotalBalanceEye);
+      // 2) Activity Eye toggles only Card balances & Recent Activity amounts
+      document.getElementById('toggleActivityEyeBtn')?.addEventListener('click', toggleActivityBalanceEye);
+
       // Edit Card Design Modal events
       document.getElementById('closeEditDesignBtn')?.addEventListener('click', () => {
         editingDesignCardId = null;
@@ -4310,7 +4484,7 @@
             const idx = Math.round(carouselEl.scrollLeft / cardWidth);
             if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
               activeCardIndex = idx;
-              updateHeroForActiveCard();
+              syncActiveCardIndicator();
 
               clearTimeout(txTimer);
               txTimer = setTimeout(() => {
