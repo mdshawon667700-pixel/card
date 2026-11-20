@@ -131,15 +131,13 @@
       margin: 0;
       padding: 0;
       -webkit-tap-highlight-color: transparent;
-      touch-action: manipulation;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     html, body {
       background-color: var(--bg-app);
       color: var(--text-primary);
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
+      min-height: 100dvh;
       width: 100%;
       overflow-x: hidden;
       transition: var(--theme-transition);
@@ -150,11 +148,11 @@
       justify-content: center;
     }
 
+    /* 3-Zone App Shell */
     .app-shell {
       width: 100%;
       max-width: 440px;
-      min-height: 100vh;
-      min-height: -webkit-fill-available;
+      min-height: 100dvh;
       background-color: var(--bg-app);
       position: relative;
       display: flex;
@@ -163,7 +161,15 @@
       transition: var(--theme-transition);
     }
 
-    /* Top Header */
+    /* Zone 1: Top Header & Hero Balance */
+    .top-zone {
+      flex: 0 0 auto;
+      position: relative;
+      z-index: 3;
+      background: var(--bg-app);
+      transition: var(--theme-transition);
+    }
+
     .top-bar {
       display: flex;
       align-items: center;
@@ -233,6 +239,7 @@
       cursor: pointer;
       font-size: 15px;
       box-shadow: var(--shadow-sm);
+      touch-action: manipulation;
       transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
     }
 
@@ -249,9 +256,8 @@
       letter-spacing: 0.02em;
     }
 
-    /* Active Card Hero Balance */
     .hero-section {
-      padding: 12px 20px 16px;
+      padding: 10px 20px 12px;
       text-align: center;
     }
 
@@ -261,14 +267,17 @@
       color: var(--text-secondary);
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      min-height: 16px;
     }
 
     .hero-balance {
       font-size: 42px;
       font-weight: 800;
       letter-spacing: -0.04em;
-      margin: 4px 0 16px;
+      margin: 4px 0 14px;
       font-variant-numeric: tabular-nums;
+      min-height: 50px;
+      line-height: 1.15;
       transition: color 0.3s ease;
     }
 
@@ -289,6 +298,7 @@
       font-weight: 700;
       border: none;
       cursor: pointer;
+      touch-action: manipulation;
       transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
     }
 
@@ -314,9 +324,14 @@
       color: var(--text-primary);
     }
 
-    /* Cards Carousel */
+    /* Zone 2: Middle Dedicated Card Stage */
     .cards-wrapper {
-      padding: 6px 0 8px;
+      flex: 0 0 auto;
+      padding: 4px 0 10px;
+      position: relative;
+      z-index: 2;
+      background: var(--bg-app);
+      transition: var(--theme-transition);
     }
 
     .cards-carousel {
@@ -324,7 +339,10 @@
       gap: 14px;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
-      padding: 6px 20px 14px;
+      overscroll-behavior-x: contain;
+      touch-action: pan-x;
+      -webkit-overflow-scrolling: touch;
+      padding: 6px 20px 12px;
       scrollbar-width: none;
     }
 
@@ -347,6 +365,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.15);
       cursor: pointer;
       overflow: hidden;
+      transform: translateZ(0);
       transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s ease;
     }
 
@@ -389,7 +408,7 @@
       overflow: hidden;
       margin-top: 10px;
     }
-    
+
     .card-chip::before {
       content: '';
       position: absolute;
@@ -477,7 +496,9 @@
     .card-dots {
       display: flex;
       justify-content: center;
+      align-items: center;
       gap: 6px;
+      height: 14px;
       margin-top: 2px;
     }
 
@@ -496,12 +517,20 @@
       opacity: 1;
     }
 
-    /* Monthly Summary & Activity */
+    /* Zone 3: Bottom Stable Activity Zone */
+    .activity-zone {
+      flex: 1 1 auto;
+      min-width: 0;
+      position: relative;
+      z-index: 1;
+    }
+
     .section-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 20px 8px;
+      padding: 10px 20px 8px;
+      gap: 8px;
     }
 
     .section-title {
@@ -526,6 +555,11 @@
       border: 1px solid var(--border-color);
       color: var(--text-secondary);
       cursor: pointer;
+      white-space: nowrap;
+      max-width: 190px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      touch-action: manipulation;
       transition: var(--theme-transition);
     }
 
@@ -536,7 +570,6 @@
       box-shadow: var(--shadow-sm);
     }
 
-    /* Search & Category Filter Row on Main Screen */
     .home-search-row {
       display: flex;
       gap: 8px;
@@ -607,7 +640,7 @@
     }
 
     .month-pill {
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 10px;
       background: var(--bg-card);
@@ -616,6 +649,8 @@
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
       transition: var(--theme-transition);
     }
 
@@ -644,8 +679,11 @@
       justify-content: space-between;
       box-shadow: var(--shadow-sm);
       cursor: pointer;
-      animation: slideUpFade 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
       transition: transform 0.16s ease, var(--theme-transition);
+    }
+
+    .tx-item.tx-enter {
+      animation: slideUpFade 0.28s cubic-bezier(0.22, 1, 0.36, 1) backwards;
     }
 
     .tx-item:active {
@@ -655,7 +693,7 @@
     @keyframes slideUpFade {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
       }
       to {
         opacity: 1;
@@ -667,6 +705,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      min-width: 0;
     }
 
     .tx-avatar {
@@ -678,6 +717,7 @@
       justify-content: center;
       font-size: 20px;
       background: var(--bg-subtle);
+      flex-shrink: 0;
       transition: var(--theme-transition);
     }
 
@@ -685,11 +725,15 @@
       display: flex;
       flex-direction: column;
       gap: 2px;
+      min-width: 0;
     }
 
     .tx-cat {
       font-size: 14px;
       font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .tx-sub {
@@ -702,6 +746,8 @@
       font-weight: 800;
       font-variant-numeric: tabular-nums;
       text-align: right;
+      flex-shrink: 0;
+      margin-left: 8px;
     }
 
     .tx-amount.add {
@@ -763,7 +809,6 @@
       font-weight: 700;
     }
 
-    /* Category Bar */
     .cat-strip {
       display: flex;
       gap: 14px;
@@ -820,7 +865,6 @@
       font-weight: 700;
     }
 
-    /* Transfer Manual Exchange Rate & Charge Mode Controls */
     .transfer-bar {
       display: none;
       flex-direction: column;
@@ -865,7 +909,6 @@
       color: var(--text-secondary);
     }
 
-    /* Native Amount Input Stage */
     .amount-stage {
       display: flex;
       flex-direction: column;
@@ -927,7 +970,6 @@
       transition: var(--theme-transition);
     }
 
-    /* Preset Pills */
     .presets-row {
       display: flex;
       justify-content: center;
@@ -970,7 +1012,6 @@
       transform: scale(0.97);
     }
 
-    /* Bottom Sheet Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -1005,7 +1046,6 @@
       to { transform: translateY(0); }
     }
 
-    /* Theme Grid Cards */
     .theme-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1043,7 +1083,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Language Grid */
     .lang-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -1070,7 +1109,6 @@
       background: var(--emerald-bg);
     }
 
-    /* Action Sheet Buttons */
     .action-sheet-header {
       display: flex;
       align-items: center;
@@ -1196,7 +1234,6 @@
       100% { transform: translate(var(--tx), var(--ty)) rotate(240deg) scale(0.4); opacity: 0; }
     }
 
-    /* Settings & Statement Controls */
     .tabs-bar {
       display: flex;
       background: var(--bg-subtle);
@@ -1309,7 +1346,6 @@
       transform: scale(1.06);
     }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: calc(24px + env(safe-area-inset-bottom));
@@ -1349,7 +1385,6 @@
       cursor: pointer;
     }
 
-    /* Print / PDF Statement Styles */
     @media print {
       body * { visibility: hidden; }
       #statementSheet, #statementSheet * { visibility: visible; }
@@ -1369,69 +1404,71 @@
 </head>
 <body>
   <div class="app-shell">
-    <!-- Top Header -->
-    <header class="top-bar">
-      <div class="wallet-title-group">
-        <div class="wallet-heading-row">
-          <h1 class="wallet-title" data-i18n="walletTitle">Wallet</h1>
-          <div class="mini-totals" id="miniTotalsBadge">
-            <span class="val-eur" id="totalEurMini">€0.00</span>
-            <span>•</span>
-            <span class="val-bdt" id="totalBdtMini">৳0</span>
+    <!-- ZONE 1: Top Header & Hero Balance -->
+    <div class="top-zone">
+      <header class="top-bar">
+        <div class="wallet-title-group">
+          <div class="wallet-heading-row">
+            <h1 class="wallet-title" data-i18n="walletTitle">Wallet</h1>
+            <div class="mini-totals" id="miniTotalsBadge">
+              <span class="val-eur" id="totalEurMini">€0.00</span>
+              <span>•</span>
+              <span class="val-bdt" id="totalBdtMini">৳0</span>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="header-actions">
-        <button class="icon-btn lang-badge-btn" id="quickLangBtn" title="Switch Language">EN</button>
-        <button class="icon-btn" id="quickThemeBtn" title="Switch Theme">🎨</button>
-        <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
-      </div>
-    </header>
+        <div class="header-actions">
+          <button class="icon-btn lang-badge-btn" id="quickLangBtn" title="Switch Language">EN</button>
+          <button class="icon-btn" id="quickThemeBtn" title="Switch Theme">🎨</button>
+          <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
+        </div>
+      </header>
 
-    <!-- Active Card Hero Balance -->
-    <section class="hero-section">
-      <div class="hero-label" id="activeCardLabel">MAIN CARD</div>
-      <div class="hero-balance" id="heroBalanceDisplay">€0.00</div>
-      <div class="action-row">
-        <button class="pill-btn pill-add" id="openAddBtn" data-i18n="btnAdd">+ Add</button>
-        <button class="pill-btn pill-expense" id="openExpenseBtn" data-i18n="btnExpense">− Expense</button>
-        <button class="pill-btn pill-transfer" id="openTransferBtn" data-i18n="btnTransfer">⇄ Transfer</button>
-      </div>
-    </section>
+      <section class="hero-section">
+        <div class="hero-label" id="activeCardLabel">MAIN CARD</div>
+        <div class="hero-balance" id="heroBalanceDisplay">€0.00</div>
+        <div class="action-row">
+          <button class="pill-btn pill-add" id="openAddBtn" data-i18n="btnAdd">+ Add</button>
+          <button class="pill-btn pill-expense" id="openExpenseBtn" data-i18n="btnExpense">− Expense</button>
+          <button class="pill-btn pill-transfer" id="openTransferBtn" data-i18n="btnTransfer">⇄ Transfer</button>
+        </div>
+      </section>
+    </div>
 
-    <!-- Cards Carousel -->
+    <!-- ZONE 2: Middle Dedicated Card Carousel Zone -->
     <section class="cards-wrapper">
       <div class="cards-carousel" id="cardsCarousel"></div>
       <div class="card-dots" id="cardDots"></div>
     </section>
 
-    <!-- Recent Activity & Filters -->
-    <div class="section-header">
-      <span class="section-title" data-i18n="recentActivity">Recent Activity</span>
-      <div class="month-pill">
-        <span class="month-in" id="monthInVal">+€0</span>
-        <span class="month-out" id="monthOutVal">−€0</span>
+    <!-- ZONE 3: Bottom Stable Activity Zone -->
+    <div class="activity-zone">
+      <div class="section-header">
+        <span class="section-title" data-i18n="recentActivity">Recent Activity</span>
+        <div class="month-pill">
+          <span class="month-in" id="monthInVal">+€0</span>
+          <span class="month-out" id="monthOutVal">−€0</span>
+        </div>
       </div>
-    </div>
 
-    <div class="activity-filter-bar">
-      <button class="filter-tab active" data-filter="all" data-i18n="allCards">All Cards</button>
-      <button class="filter-tab" data-filter="selected" id="selectedCardFilterBtn">Selected Card</button>
-    </div>
-
-    <!-- Search & Category Filter Bar -->
-    <div class="home-search-row">
-      <div class="home-search-box">
-        <span class="home-search-icon">🔍</span>
-        <input type="text" class="home-search-input" id="homeSearchInput" placeholder="Search note or category..." />
-        <button class="home-search-clear" id="homeSearchClear" aria-label="Clear search">✕</button>
+      <div class="activity-filter-bar">
+        <button class="filter-tab active" data-filter="all" data-i18n="allCards">All Cards</button>
+        <button class="filter-tab" data-filter="selected" id="selectedCardFilterBtn">Selected Card</button>
       </div>
-      <select class="home-cat-select" id="homeCatFilter">
-        <option value="all">All Categories</option>
-      </select>
-    </div>
 
-    <div class="tx-list" id="txList"></div>
+      <div class="home-search-row">
+        <div class="home-search-box">
+          <span class="home-search-icon">🔍</span>
+          <input type="text" class="home-search-input" id="homeSearchInput" placeholder="Search note or category..." />
+          <button class="home-search-clear" id="homeSearchClear" aria-label="Clear search">✕</button>
+        </div>
+        <select class="home-cat-select" id="homeCatFilter">
+          <option value="all">All Categories</option>
+        </select>
+      </div>
+
+      <div class="tx-list" id="txList"></div>
+    </div>
   </div>
 
   <!-- Quick Theme & Language Picker Bottom Sheet -->
@@ -1460,10 +1497,8 @@
       <span style="width:38px"></span>
     </div>
 
-    <!-- Category Strip -->
     <div class="cat-strip" id="catStrip"></div>
 
-    <!-- Transfer Manual Exchange Rate & Charge Mode Controls -->
     <div class="transfer-bar" id="transferBar">
       <div class="transfer-box-card">
         <div class="transfer-row">
@@ -1495,7 +1530,6 @@
       </div>
     </div>
 
-    <!-- Native Amount Stage -->
     <div class="amount-stage">
       <div class="native-amount-wrapper">
         <span class="native-sym" id="entryCurrencySym">€</span>
@@ -1504,7 +1538,6 @@
       <input type="text" class="note-input" id="entryNoteInput" placeholder="Add a note (optional)..." />
     </div>
 
-    <!-- Quick Preset Pills -->
     <div class="presets-row" id="presetsRow"></div>
 
     <button class="send-cta" id="submitTxBtn">Send</button>
@@ -2137,7 +2170,7 @@
             triggerHaptic();
             state.lang = lg.code;
             saveState();
-            refreshAll();
+            refreshAll(false);
             renderThemeAndLangGrids();
           });
           container.appendChild(btn);
@@ -2251,7 +2284,7 @@
       });
     }
 
-    function renderTransactions() {
+    function renderTransactions(animate = false) {
       const list = document.getElementById('txList');
       if (!list) return;
       list.innerHTML = '';
@@ -2305,7 +2338,7 @@
         const card = state.cards.find(c => c.id === tx.cardId) || activeCard;
         const cat = state.categories.find(c => c.id === tx.categoryId) || { name: tx.categoryName || 'Entry', icon: tx.icon || '💳' };
         const dateStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
-        
+
         let displayAmtStr = '';
         let prefix = '';
         let amountClass = tx.type;
@@ -2324,8 +2357,10 @@
         }
 
         const row = document.createElement('div');
-        row.className = 'tx-item';
-        row.style.animationDelay = `${index * 0.03}s`;
+        row.className = 'tx-item' + (animate ? ' tx-enter' : '');
+        if (animate) {
+          row.style.animationDelay = `${Math.min(index, 8) * 0.025}s`;
+        }
         row.innerHTML = `
           <div class="tx-left">
             <div class="tx-avatar">${cat.icon}</div>
@@ -2383,7 +2418,7 @@
       revertTransactionBalance(tx);
       state.transactions.splice(idx, 1);
       saveState();
-      refreshAll();
+      refreshAll(true);
       showToast('Deleted & balance restored', false);
     }
 
@@ -2455,7 +2490,7 @@
       renderCategoryStrip();
       renderPresets(card.currency);
       document.getElementById('entryOverlay').classList.add('open');
-      
+
       setTimeout(() => {
         const amtInput = document.getElementById('nativeAmountInput');
         if (amtInput) amtInput.focus();
@@ -2750,7 +2785,7 @@
         setTimeout(() => {
           backdrop.classList.remove('open');
           document.getElementById('entryOverlay').classList.remove('open');
-          refreshAll();
+          refreshAll(true);
 
           const cardEl = document.querySelector(`.wallet-card[data-card-id="${card.id}"]`);
           if (cardEl) {
@@ -2887,7 +2922,7 @@
             state.cards = state.cards.filter(c => c.id !== card.id);
             saveState();
             renderSettingsCards();
-            refreshAll();
+            refreshAll(false);
           });
         }
         box.appendChild(row);
@@ -2928,17 +2963,16 @@
       document.getElementById('toastEl').classList.remove('show');
     }
 
-    function refreshAll() {
+    function refreshAll(animateTx = false) {
       applyTheme();
       applyTranslations();
       updateHeaderTotals();
       populateHomeCategoryFilter();
       renderCards();
-      renderTransactions();
+      renderTransactions(animateTx);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Quick Theme & Language Sheet triggers
       const openAppearance = () => {
         triggerHaptic();
         renderThemeAndLangGrids();
@@ -2958,30 +2992,28 @@
           document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           homeActivityFilter = btn.dataset.filter;
-          renderTransactions();
+          renderTransactions(false);
         });
       });
 
-      // Home Search & Category Filter Events
       const homeSearchInput = document.getElementById('homeSearchInput');
       const homeSearchClear = document.getElementById('homeSearchClear');
       homeSearchInput.addEventListener('input', (e) => {
         homeSearchQuery = e.target.value;
         homeSearchClear.style.display = homeSearchQuery ? 'flex' : 'none';
-        renderTransactions();
+        renderTransactions(false);
       });
       homeSearchClear.addEventListener('click', () => {
         homeSearchQuery = '';
         homeSearchInput.value = '';
         homeSearchClear.style.display = 'none';
-        renderTransactions();
+        renderTransactions(false);
       });
       document.getElementById('homeCatFilter').addEventListener('change', (e) => {
         homeCategoryFilter = e.target.value;
-        renderTransactions();
+        renderTransactions(false);
       });
 
-      // Transaction Action Sheet Events (Edit / Delete)
       document.getElementById('closeTxActionBtn').addEventListener('click', () => {
         document.getElementById('txActionBackdrop').classList.remove('open');
       });
@@ -3001,22 +3033,33 @@
 
       const carouselEl = document.getElementById('cardsCarousel');
       if (carouselEl) {
-        carouselEl.addEventListener('scroll', (e) => {
-          const el = e.target;
-          const cardWidth = el.firstElementChild ? el.firstElementChild.offsetWidth + 14 : 340;
-          const idx = Math.round(el.scrollLeft / cardWidth);
-          if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
-            activeCardIndex = idx;
-            updateHeroForActiveCard();
-            renderTransactions();
-          }
-        });
+        let rafId = null;
+        let txTimer = null;
+
+        carouselEl.addEventListener('scroll', () => {
+          if (rafId) return;
+          rafId = requestAnimationFrame(() => {
+            const firstCard = carouselEl.firstElementChild;
+            const cardWidth = firstCard ? firstCard.offsetWidth + 14 : 340;
+            const idx = Math.round(carouselEl.scrollLeft / cardWidth);
+            if (idx !== activeCardIndex && idx >= 0 && idx < state.cards.length) {
+              activeCardIndex = idx;
+              updateHeroForActiveCard();
+
+              clearTimeout(txTimer);
+              txTimer = setTimeout(() => {
+                renderTransactions(false);
+              }, 90);
+            }
+            rafId = null;
+          });
+        }, { passive: true });
       }
 
       document.getElementById('openAddBtn').addEventListener('click', () => openEntryOverlay('add'));
       document.getElementById('openExpenseBtn').addEventListener('click', () => openEntryOverlay('expense'));
       document.getElementById('openTransferBtn').addEventListener('click', () => openEntryOverlay('transfer'));
-      
+
       const closeEntryBtn = document.getElementById('closeEntryBtn');
       const closeOverlay = (e) => {
         e.preventDefault();
@@ -3086,7 +3129,7 @@
         document.getElementById('newCardBalance').value = '';
         saveState();
         renderSettingsCards();
-        refreshAll();
+        refreshAll(false);
         showToast('New card added');
       });
 
@@ -3098,7 +3141,7 @@
         state = getDefaultState();
         activeCardIndex = 0;
         saveState();
-        refreshAll();
+        refreshAll(true);
         document.getElementById('settingsBackdrop').classList.remove('open');
         showToast('Wallet reset', true);
       });
@@ -3123,7 +3166,7 @@
           if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
           state = parsed;
           saveState();
-          refreshAll();
+          refreshAll(true);
           document.getElementById('settingsBackdrop').classList.remove('open');
           showToast('Wallet data restored!');
         } catch (e) {
@@ -3131,11 +3174,11 @@
         }
       });
 
-      refreshAll();
+      refreshAll(true);
     });
 
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
-      refreshAll();
+      refreshAll(true);
     }
   </script>
 </body>
