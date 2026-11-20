@@ -439,7 +439,9 @@
     .activity-filter-bar {
       display: flex;
       gap: 8px;
-      padding: 0 20px 10px;
+      padding: 0 20px 8px;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     .filter-tab {
@@ -459,6 +461,76 @@
       color: var(--accent-dark-text);
       border-color: var(--accent-dark);
       box-shadow: var(--shadow-sm);
+    }
+
+    /* Search & Category Filter Row on Main Screen */
+    .home-search-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 20px 12px;
+    }
+
+    .home-search-box {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .home-search-input {
+      width: 100%;
+      padding: 8px 30px 8px 32px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12.5px;
+      outline: none;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease, var(--theme-transition);
+    }
+
+    .home-search-input:focus {
+      border-color: var(--emerald);
+    }
+
+    .home-search-icon {
+      position: absolute;
+      left: 11px;
+      font-size: 12px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .home-search-clear {
+      position: absolute;
+      right: 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border: none;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .home-cat-select {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 600;
+      outline: none;
+      max-width: 135px;
+      box-shadow: var(--shadow-sm);
+      cursor: pointer;
+      transition: var(--theme-transition);
     }
 
     .month-pill {
@@ -556,6 +628,7 @@
       font-size: 15px;
       font-weight: 800;
       font-variant-numeric: tabular-nums;
+      text-align: right;
     }
 
     .tx-amount.add {
@@ -703,7 +776,7 @@
       align-items: center;
     }
 
-    .transfer-row .form-input, .transfer-row .form-select {
+    .transfer-row > div {
       flex: 1;
       min-width: 0;
     }
@@ -824,7 +897,7 @@
       transform: scale(0.97);
     }
 
-    /* Confirmation Bottom Sheet */
+    /* Bottom Sheet Modals */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -857,6 +930,50 @@
     @keyframes sheetRise {
       from { transform: translateY(100%); }
       to { transform: translateY(0); }
+    }
+
+    /* Action Sheet Buttons */
+    .action-sheet-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .action-sheet-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 14.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: transform 0.14s ease, var(--theme-transition);
+    }
+
+    .action-sheet-btn:active {
+      transform: scale(0.98);
+    }
+
+    .action-sheet-btn.edit-btn {
+      background: var(--blue-bg);
+      color: var(--blue);
+      border-color: transparent;
+    }
+
+    .action-sheet-btn.delete-btn {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-color: transparent;
     }
 
     .confirm-stage {
@@ -1151,7 +1268,7 @@
       <div class="card-dots" id="cardDots"></div>
     </section>
 
-    <!-- Recent Activity & Filter -->
+    <!-- Recent Activity & Filters -->
     <div class="section-header">
       <span class="section-title">Recent Activity</span>
       <div class="month-pill">
@@ -1159,15 +1276,28 @@
         <span class="month-out" id="monthOutVal">−€0</span>
       </div>
     </div>
+
     <div class="activity-filter-bar">
       <button class="filter-tab active" data-filter="all">All Cards</button>
       <button class="filter-tab" data-filter="selected" id="selectedCardFilterBtn">Selected Card</button>
     </div>
 
+    <!-- Search & Category Filter Bar -->
+    <div class="home-search-row">
+      <div class="home-search-box">
+        <span class="home-search-icon">🔍</span>
+        <input type="text" class="home-search-input" id="homeSearchInput" placeholder="Search note or category..." />
+        <button class="home-search-clear" id="homeSearchClear" aria-label="Clear search">✕</button>
+      </div>
+      <select class="home-cat-select" id="homeCatFilter">
+        <option value="all">All Categories</option>
+      </select>
+    </div>
+
     <div class="tx-list" id="txList"></div>
   </div>
 
-  <!-- Fullscreen Add / Expense / Transfer Screen -->
+  <!-- Fullscreen Add / Expense / Transfer / Edit Screen -->
   <div class="overlay-screen" id="entryOverlay">
     <div class="overlay-top">
       <button class="icon-btn" id="closeEntryBtn" aria-label="Close">✕</button>
@@ -1175,7 +1305,7 @@
       <span style="width:38px"></span>
     </div>
 
-    <!-- Category Strip (Nothing selected by default) -->
+    <!-- Category Strip -->
     <div class="cat-strip" id="catStrip"></div>
 
     <!-- Transfer Manual Exchange Rate & Charge Mode Bar -->
@@ -1212,7 +1342,7 @@
       </div>
     </div>
 
-    <!-- Native Amount Stage using iPhone default keyboard -->
+    <!-- Native Amount Stage -->
     <div class="amount-stage">
       <div class="native-amount-wrapper">
         <span class="native-sym" id="entryCurrencySym">€</span>
@@ -1225,6 +1355,23 @@
     <div class="presets-row" id="presetsRow"></div>
 
     <button class="send-cta" id="submitTxBtn">Send</button>
+  </div>
+
+  <!-- Transaction Action Sheet (Edit / Delete) -->
+  <div class="modal-backdrop" id="txActionBackdrop">
+    <div class="bottom-sheet">
+      <div class="action-sheet-header">
+        <div class="tx-avatar" id="txActionIcon">💳</div>
+        <div style="flex:1;min-width:0;">
+          <div id="txActionTitle" style="font-size:16px;font-weight:800;">Transaction</div>
+          <div id="txActionSub" style="font-size:12.5px;color:var(--text-secondary);">Details</div>
+        </div>
+        <button class="icon-btn" id="closeTxActionBtn">✕</button>
+      </div>
+
+      <button class="action-sheet-btn edit-btn" id="txActionEditBtn">✏️ Edit Transaction</button>
+      <button class="action-sheet-btn delete-btn" id="txActionDeleteBtn">🗑️ Delete Transaction</button>
+    </div>
   </div>
 
   <!-- Confirmation Animation Bottom Sheet -->
@@ -1408,7 +1555,7 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v8';
+    const STORAGE_KEY = 'pocketflow_wallet_v9';
 
     function getDefaultState() {
       return {
@@ -1441,8 +1588,11 @@
     let state = loadState();
     let activeCardIndex = 0;
     let homeActivityFilter = 'all';
+    let homeSearchQuery = '';
+    let homeCategoryFilter = 'all';
     let entryMode = 'add';
-    // Nothing selected by default
+    let editingTxId = null; // Stores ID when editing an existing transaction
+    let selectedActionTxId = null; // Stores ID tapped for Edit/Delete action sheet
     let selectedCatId = null;
     let selectedGradient = CARD_DESIGNS[0].grad;
     let selectedNetwork = "VISA";
@@ -1451,7 +1601,7 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('pocketflow_wallet_v8') || localStorage.getItem('pocketflow_wallet_v7');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
@@ -1512,6 +1662,25 @@
 
       document.getElementById('totalEurMini').textContent = `€${totalEur.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       document.getElementById('totalBdtMini').textContent = `৳${totalBdt.toLocaleString('en-US', { maximumFractionDigits: 0 })}`;
+    }
+
+    function populateHomeCategoryFilter() {
+      const sel = document.getElementById('homeCatFilter');
+      if (!sel) return;
+      const currentVal = sel.value || homeCategoryFilter;
+      sel.innerHTML = `<option value="all">All Categories</option>`;
+      (state.categories || []).forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = `${cat.icon} ${cat.name}`;
+        sel.appendChild(opt);
+      });
+      if ([...sel.options].some(o => o.value === currentVal)) {
+        sel.value = currentVal;
+      } else {
+        sel.value = 'all';
+        homeCategoryFilter = 'all';
+      }
     }
 
     function renderCards() {
@@ -1592,12 +1761,8 @@
       let monthIn = 0;
       let monthOut = 0;
 
-      const filteredTxs = (state.transactions || []).filter(tx => {
-        if (homeActivityFilter === 'selected') return tx.cardId === activeCard.id || tx.toCardId === activeCard.id;
-        return true;
-      });
-
-      filteredTxs.forEach(tx => {
+      // Calculate monthly summary for active card
+      (state.transactions || []).forEach(tx => {
         const d = new Date(tx.date);
         if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
           if (tx.cardId === activeCard.id) {
@@ -1611,12 +1776,33 @@
       document.getElementById('monthInVal').textContent = `+${sym}${monthIn.toFixed(0)}`;
       document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(0)}`;
 
+      // Filter transactions by Card, Category, and Search Text
+      const q = homeSearchQuery.trim().toLowerCase();
+      const filteredTxs = (state.transactions || []).filter(tx => {
+        if (homeActivityFilter === 'selected' && tx.cardId !== activeCard.id && tx.toCardId !== activeCard.id) {
+          return false;
+        }
+        if (homeCategoryFilter !== 'all' && tx.categoryId !== homeCategoryFilter) {
+          return false;
+        }
+        if (q) {
+          const catObj = state.categories.find(c => c.id === tx.categoryId);
+          const catName = catObj ? catObj.name : (tx.categoryName || '');
+          const cardObj = state.cards.find(c => c.id === tx.cardId);
+          const cardName = cardObj ? cardObj.name : '';
+          const searchable = `${catName} ${tx.note || ''} ${cardName} ${tx.amount}`.toLowerCase();
+          if (!searchable.includes(q)) return false;
+        }
+        return true;
+      });
+
       if (filteredTxs.length === 0) {
-        list.innerHTML = `<div class="empty-state">No transactions found. Tap <strong>+ Add</strong> or <strong>− Expense</strong> above.</div>`;
+        const hasFilters = q || homeCategoryFilter !== 'all' || homeActivityFilter !== 'all';
+        list.innerHTML = `<div class="empty-state">${hasFilters ? 'No transactions match your search/filter.' : 'No transactions found. Tap <strong>+ Add</strong> or <strong>− Expense</strong> above.'}</div>`;
         return;
       }
 
-      filteredTxs.slice(0, 25).forEach((tx, index) => {
+      filteredTxs.slice(0, 35).forEach((tx, index) => {
         const card = state.cards.find(c => c.id === tx.cardId) || activeCard;
         const cat = state.categories.find(c => c.id === tx.categoryId) || { name: tx.categoryName || 'Entry', icon: tx.icon || '💳' };
         const dateStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
@@ -1651,53 +1837,98 @@
           </div>
           <div class="tx-amount ${amountClass}" style="font-size:13.5px;">${prefix}${displayAmtStr}</div>
         `;
-        row.addEventListener('click', () => deleteTransactionWithUndo(tx.id));
+        row.addEventListener('click', () => openTxActionSheet(tx.id));
         list.appendChild(row);
       });
     }
 
-    function deleteTransactionWithUndo(txId) {
+    // Open Action Sheet for Edit or Delete
+    function openTxActionSheet(txId) {
+      const tx = state.transactions.find(t => t.id === txId);
+      if (!tx) return;
+      triggerHaptic();
+      selectedActionTxId = txId;
+
+      const card = state.cards.find(c => c.id === tx.cardId) || state.cards[0];
+      const cat = state.categories.find(c => c.id === tx.categoryId) || { name: tx.categoryName || 'Entry', icon: tx.icon || '💳' };
+      const dateStr = new Date(tx.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+      const amtStr = formatMoney(tx.sourceAmount || tx.amount, card.currency);
+
+      document.getElementById('txActionIcon').textContent = cat.icon;
+      document.getElementById('txActionTitle').textContent = `${cat.name} (${amtStr})`;
+      document.getElementById('txActionSub').textContent = `${card.name} • ${dateStr}${tx.note ? ` • "${tx.note}"` : ''}`;
+      document.getElementById('txActionBackdrop').classList.add('open');
+    }
+
+    function revertTransactionBalance(tx) {
+      const card = state.cards.find(c => c.id === tx.cardId);
+      if (!card) return;
+      if (tx.type === 'add') {
+        card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
+      } else if (tx.type === 'expense') {
+        card.balance = Number(card.balance) + Number(tx.amount);
+      } else if (tx.type === 'transfer') {
+        card.balance = Number(card.balance) + Number(tx.totalDeducted || tx.amount);
+        const toCard = state.cards.find(c => c.id === tx.toCardId);
+        if (toCard) {
+          toCard.balance = Math.max(0, Number(toCard.balance) - Number(tx.convertedAmount));
+        }
+      }
+    }
+
+    function deleteTransactionById(txId) {
       const idx = state.transactions.findIndex(t => t.id === txId);
       if (idx === -1) return;
       const tx = state.transactions[idx];
-      if (!confirm(`Delete transaction "${tx.categoryName}"?`)) return;
+      if (!confirm(`Delete "${tx.categoryName}"? Card balance will be restored.`)) return;
 
-      const card = state.cards.find(c => c.id === tx.cardId);
-      if (card) {
-        if (tx.type === 'add') {
-          card.balance = Math.max(0, Number(card.balance) - Number(tx.amount));
-        } else if (tx.type === 'expense') {
-          card.balance = Number(card.balance) + Number(tx.amount);
-        } else if (tx.type === 'transfer') {
-          card.balance = Number(card.balance) + Number(tx.totalDeducted);
-          const toCard = state.cards.find(c => c.id === tx.toCardId);
-          if (toCard) {
-            toCard.balance = Math.max(0, Number(toCard.balance) - Number(tx.convertedAmount));
-          }
-        }
-      }
-
+      revertTransactionBalance(tx);
       state.transactions.splice(idx, 1);
       saveState();
       refreshAll();
-      showToast('Transaction deleted and balances reversed', true);
+      showToast('Transaction deleted & balance restored', false);
     }
 
-    function openEntryOverlay(mode) {
+    function openEditTransaction(txId) {
+      const tx = state.transactions.find(t => t.id === txId);
+      if (!tx) return;
+
+      // Focus the card associated with this transaction
+      const cardIdx = state.cards.findIndex(c => c.id === tx.cardId);
+      if (cardIdx !== -1) {
+        activeCardIndex = cardIdx;
+        const carousel = document.getElementById('cardsCarousel');
+        if (carousel && carousel.children[cardIdx]) {
+          carousel.children[cardIdx].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        }
+        updateHeroForActiveCard();
+      }
+
+      openEntryOverlay(tx.type, tx);
+    }
+
+    function openEntryOverlay(mode, editTx = null) {
       triggerHaptic();
       entryMode = mode;
-      // Reset category selection on opening screen
-      selectedCatId = null;
-      document.getElementById('nativeAmountInput').value = '';
-      document.getElementById('entryNoteInput').value = '';
+      editingTxId = editTx ? editTx.id : null;
+
+      // Pre-fill if editing, otherwise start blank with no default category
+      selectedCatId = editTx ? editTx.categoryId : null;
+      document.getElementById('nativeAmountInput').value = editTx ? (editTx.sourceAmount || editTx.amount) : '';
+      document.getElementById('entryNoteInput').value = editTx ? (editTx.note || '') : '';
 
       const card = state.cards[activeCardIndex] || state.cards[0];
       const sym = (CURRENCY_META[card.currency] || CURRENCY_META.EUR).symbol;
       document.getElementById('entryCurrencySym').textContent = sym;
 
-      const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer Between Cards' };
-      document.getElementById('entryModeTitle').textContent = titleMap[mode];
-      document.getElementById('submitTxBtn').textContent = mode === 'add' ? 'Add to Card' : mode === 'expense' ? 'Send Expense' : 'Complete Transfer';
+      if (editTx) {
+        document.getElementById('entryModeTitle').textContent = `Edit ${mode === 'add' ? 'Income' : mode === 'expense' ? 'Expense' : 'Transfer'}`;
+        document.getElementById('submitTxBtn').textContent = 'Save Changes';
+      } else {
+        const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer Between Cards' };
+        document.getElementById('entryModeTitle').textContent = titleMap[mode];
+        document.getElementById('submitTxBtn').textContent = mode === 'add' ? 'Add to Card' : mode === 'expense' ? 'Send Expense' : 'Complete Transfer';
+      }
 
       const transferBar = document.getElementById('transferBar');
       if (mode === 'transfer' && state.cards.length > 1) {
@@ -1712,6 +1943,13 @@
             sel.appendChild(opt);
           }
         });
+
+        if (editTx && editTx.toCardId) {
+          sel.value = editTx.toCardId;
+          if (editTx.exchangeRate) document.getElementById('manualRateInput').value = editTx.exchangeRate;
+          if (editTx.transferFee !== undefined) document.getElementById('manualFeeInput').value = editTx.transferFee;
+          if (editTx.chargeMode) document.getElementById('chargeModeSelect').value = editTx.chargeMode;
+        }
         updateTransferLiveCalculation();
       } else {
         transferBar.classList.remove('visible');
@@ -1802,7 +2040,6 @@
         `;
         item.addEventListener('click', () => {
           triggerHaptic();
-          // Toggle or select category
           selectedCatId = isSelected ? null : cat.id;
           renderCategoryStrip();
         });
@@ -1856,7 +2093,6 @@
     }
 
     function submitTransaction() {
-      // 1. Validate category selection FIRST
       if (!selectedCatId) {
         triggerHaptic();
         showToast('Please select a category from the top bar first!', true);
@@ -1874,9 +2110,25 @@
       const cat = state.categories.find(c => c.id === selectedCatId);
       const note = document.getElementById('entryNoteInput').value.trim();
 
+      // Calculate available balance including what will be refunded if editing
+      let oldTx = null;
+      let effectiveBalance = Number(card.balance);
+      if (editingTxId) {
+        oldTx = state.transactions.find(t => t.id === editingTxId);
+        if (oldTx && oldTx.cardId === card.id) {
+          if (oldTx.type === 'expense' || oldTx.type === 'transfer') {
+            effectiveBalance += Number(oldTx.totalDeducted || oldTx.amount);
+          } else if (oldTx.type === 'add') {
+            effectiveBalance = Math.max(0, effectiveBalance - Number(oldTx.amount));
+          }
+        }
+      }
+
       let totalDeducted = amount;
       let convertedAmount = amount;
       let transferFee = 0;
+      let exchangeRate = 1;
+      let chargeMode = 'deduct_from_amount';
       let toCardId = null;
 
       if (entryMode === 'transfer') {
@@ -1888,23 +2140,22 @@
           totalDeducted = amount;
           convertedAmount = amount;
         } else {
-          const rate = parseFloat(document.getElementById('manualRateInput').value) || 130;
+          exchangeRate = parseFloat(document.getElementById('manualRateInput').value) || 130;
           transferFee = parseFloat(document.getElementById('manualFeeInput').value) || 0;
-          const chargeMode = document.getElementById('chargeModeSelect').value;
+          chargeMode = document.getElementById('chargeModeSelect').value;
 
           if (chargeMode === 'deduct_from_amount') {
             const netSource = Math.max(0, amount - transferFee);
             totalDeducted = amount;
-            convertedAmount = netSource * rate;
+            convertedAmount = netSource * exchangeRate;
           } else {
             totalDeducted = amount + transferFee;
-            convertedAmount = amount * rate;
+            convertedAmount = amount * exchangeRate;
           }
         }
       }
 
-      // INSUFFICIENT BALANCE CHECK
-      if ((entryMode === 'expense' || entryMode === 'transfer') && Number(card.balance) < totalDeducted) {
+      if ((entryMode === 'expense' || entryMode === 'transfer') && effectiveBalance < totalDeducted) {
         triggerHaptic();
         const backdrop = document.getElementById('confirmBackdrop');
         const spinner = document.getElementById('confirmSpinner');
@@ -1916,7 +2167,7 @@
         avatar.className = 'ring-avatar declined';
         avatar.textContent = '✕';
         title.textContent = 'Transaction Declined';
-        sub.textContent = `Insufficient balance! Available: ${formatMoney(card.balance, card.currency)}`;
+        sub.textContent = `Insufficient balance! Available: ${formatMoney(effectiveBalance, card.currency)}`;
         backdrop.classList.add('open');
 
         setTimeout(() => {
@@ -1942,7 +2193,7 @@
       spinner.style.display = 'block';
       avatar.className = 'ring-avatar';
       avatar.textContent = cat.icon;
-      title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...';
+      title.textContent = editingTxId ? 'Updating...' : (entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...');
       sub.textContent = `${formatMoney(totalDeducted, card.currency)} • ${card.name}`;
       backdrop.classList.add('open');
 
@@ -1953,6 +2204,12 @@
         avatar.textContent = '✓';
         spawnConfetti();
 
+        // If editing, first revert the old transaction's effect on card balances
+        if (oldTx) {
+          revertTransactionBalance(oldTx);
+        }
+
+        // Apply new balances
         if (entryMode === 'add') {
           card.balance = Number(card.balance) + amount;
         } else if (entryMode === 'expense') {
@@ -1965,13 +2222,15 @@
           }
         }
 
-        state.transactions.unshift({
-          id: 'tx_' + Date.now(),
+        const updatedRecord = {
+          id: editingTxId || ('tx_' + Date.now()),
           cardId: card.id,
           toCardId,
           sourceAmount: amount,
           convertedAmount,
           transferFee,
+          exchangeRate,
+          chargeMode,
           totalDeducted,
           type: entryMode,
           categoryId: cat.id,
@@ -1980,8 +2239,16 @@
           amount: entryMode === 'transfer' ? totalDeducted : amount,
           currency: card.currency,
           note,
-          date: new Date().toISOString()
-        });
+          date: oldTx ? oldTx.date : new Date().toISOString()
+        };
+
+        if (editingTxId) {
+          const txIndex = state.transactions.findIndex(t => t.id === editingTxId);
+          if (txIndex !== -1) state.transactions[txIndex] = updatedRecord;
+          editingTxId = null;
+        } else {
+          state.transactions.unshift(updatedRecord);
+        }
 
         saveState();
         title.textContent = 'Completed!';
@@ -2091,6 +2358,10 @@
           </div>
           <div class="tx-amount ${isIncoming ? 'add' : tx.type}">${prefix}${displayAmt}</div>
         `;
+        item.addEventListener('click', () => {
+          document.getElementById('statementBackdrop').classList.remove('open');
+          openTxActionSheet(tx.id);
+        });
         list.appendChild(item);
       });
     }
@@ -2167,6 +2438,7 @@
     function refreshAll() {
       applyTheme();
       updateHeaderTotals();
+      populateHomeCategoryFilter();
       renderCards();
       renderTransactions();
     }
@@ -2186,6 +2458,43 @@
           homeActivityFilter = btn.dataset.filter;
           renderTransactions();
         });
+      });
+
+      // Home Search & Category Filter Events
+      const homeSearchInput = document.getElementById('homeSearchInput');
+      const homeSearchClear = document.getElementById('homeSearchClear');
+      homeSearchInput.addEventListener('input', (e) => {
+        homeSearchQuery = e.target.value;
+        homeSearchClear.style.display = homeSearchQuery ? 'flex' : 'none';
+        renderTransactions();
+      });
+      homeSearchClear.addEventListener('click', () => {
+        homeSearchQuery = '';
+        homeSearchInput.value = '';
+        homeSearchClear.style.display = 'none';
+        renderTransactions();
+      });
+      document.getElementById('homeCatFilter').addEventListener('change', (e) => {
+        homeCategoryFilter = e.target.value;
+        renderTransactions();
+      });
+
+      // Transaction Action Sheet Events (Edit / Delete)
+      document.getElementById('closeTxActionBtn').addEventListener('click', () => {
+        document.getElementById('txActionBackdrop').classList.remove('open');
+      });
+      document.getElementById('txActionBackdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'txActionBackdrop') {
+          document.getElementById('txActionBackdrop').classList.remove('open');
+        }
+      });
+      document.getElementById('txActionEditBtn').addEventListener('click', () => {
+        document.getElementById('txActionBackdrop').classList.remove('open');
+        if (selectedActionTxId) openEditTransaction(selectedActionTxId);
+      });
+      document.getElementById('txActionDeleteBtn').addEventListener('click', () => {
+        document.getElementById('txActionBackdrop').classList.remove('open');
+        if (selectedActionTxId) deleteTransactionById(selectedActionTxId);
       });
 
       const carouselEl = document.getElementById('cardsCarousel');
@@ -2210,6 +2519,7 @@
       const closeOverlay = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        editingTxId = null;
         document.getElementById('entryOverlay').classList.remove('open');
       };
       closeEntryBtn.addEventListener('click', closeOverlay);
@@ -2225,6 +2535,7 @@
         state.categories.push(newCat);
         selectedCatId = newCat.id;
         saveState();
+        populateHomeCategoryFilter();
         renderCategoryStrip();
         document.getElementById('customCatBackdrop').classList.remove('open');
         showToast(`Category "${name}" added`);
@@ -2279,6 +2590,7 @@
       document.getElementById('resetWalletBtn').addEventListener('click', () => {
         if (!confirm('Are you sure you want to reset all wallet data? This will clear all cards and transactions permanently.')) return;
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('pocketflow_wallet_v8');
         state = getDefaultState();
         activeCardIndex = 0;
         saveState();
