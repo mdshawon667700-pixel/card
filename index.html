@@ -241,7 +241,7 @@
       color: var(--text-primary);
     }
 
-    /* Premium Cards Carousel (inspired by Revolut physical card styling in image_7.png) */
+    /* Cards Carousel */
     .cards-wrapper {
       padding: 6px 0 8px;
     }
@@ -281,7 +281,6 @@
       transform: scale(0.975);
     }
 
-    /* Metallic lighting and reflections based on the Revolut style */
     .wallet-card::before {
       content: '';
       position: absolute;
@@ -291,7 +290,6 @@
       z-index: 1;
     }
 
-    /* Dynamic shimmering glare overlay */
     .wallet-card .glare-shine {
       position: absolute;
       top: -150%;
@@ -308,7 +306,6 @@
       box-shadow: 0 0 0 3px var(--emerald), 0 14px 36px rgba(16, 185, 129, 0.32);
     }
 
-    /* Micro EMV Chip Design */
     .card-chip {
       width: 36px;
       height: 27px;
@@ -335,13 +332,6 @@
       justify-content: space-between;
       align-items: center;
       z-index: 2;
-    }
-
-    .card-name {
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: -0.015em;
-      opacity: 0.95;
     }
 
     .card-brand {
@@ -664,9 +654,9 @@
     }
 
     .cat-item.selected .cat-circle {
-      border-color: var(--text-primary);
+      border-color: var(--emerald);
       transform: scale(1.08);
-      background: var(--bg-subtle);
+      background: var(--emerald-bg);
     }
 
     .cat-label {
@@ -1031,19 +1021,6 @@
       transition: transform 0.15s ease;
     }
 
-    .swatch::after {
-      content: attr(data-name);
-      position: absolute;
-      bottom: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 8px;
-      font-weight: 700;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      display: none;
-    }
-
     .swatch.active {
       border-color: var(--text-primary);
       transform: scale(1.08);
@@ -1198,10 +1175,10 @@
       <span style="width:38px"></span>
     </div>
 
-    <!-- Category Strip -->
+    <!-- Category Strip (Nothing selected by default) -->
     <div class="cat-strip" id="catStrip"></div>
 
-    <!-- Transfer Manual Exchange Rate & Charge Mode Bar (Only visible on cross-currency transfers) -->
+    <!-- Transfer Manual Exchange Rate & Charge Mode Bar -->
     <div class="transfer-bar" id="transferBar">
       <div class="transfer-box-card">
         <div class="transfer-row">
@@ -1283,7 +1260,7 @@
     </div>
   </div>
 
-  <!-- Card Statement Modal (Date Search + PDF Export) -->
+  <!-- Card Statement Modal -->
   <div class="modal-backdrop" id="statementBackdrop">
     <div class="bottom-sheet" id="statementSheet">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -1333,7 +1310,6 @@
         <button class="tab-btn" data-tab="backupTab">Backup & Reset</button>
       </div>
 
-      <!-- Cards Tab -->
       <div id="cardsTab">
         <div id="settingsCardsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
 
@@ -1354,7 +1330,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Pick Premium Material Design (inspired by Revolut)</label>
+            <label class="form-label">Pick Premium Material Design</label>
             <div class="color-swatches" id="cardColorSwatches"></div>
           </div>
           <div class="form-row form-group" style="align-items:center;margin-top:14px;">
@@ -1364,16 +1340,15 @@
         </div>
       </div>
 
-      <!-- Backup Tab -->
       <div id="backupTab" style="display:none;">
         <div class="form-group">
-          <label class="form-label">1. Copy Backup Text (Save in WhatsApp or Apple Notes)</label>
+          <label class="form-label">1. Copy Backup Text</label>
           <textarea class="form-textarea" id="backupExportText" rows="4" readonly></textarea>
           <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn">Copy Backup Text</button>
         </div>
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
         <div class="form-group">
-          <label class="form-label">2. Restore Data (Paste Backup JSON Text Here)</label>
+          <label class="form-label">2. Restore Data</label>
           <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste your saved backup JSON here..."></textarea>
           <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn">Restore Data</button>
         </div>
@@ -1402,7 +1377,6 @@
       CHF: { symbol: 'CHF ', rateToEur: 1.06 }
     };
 
-    // Card premium gradients directly referencing the materials from the provided screenshot image_7.png
     const CARD_DESIGNS = [
       { name: "Metal Bronze", grad: "linear-gradient(135deg, #a87e53 0%, #d4b58c 30%, #7d5b32 70%, #9e754a 100%)", defaultNetwork: "VISA" },
       { name: "Metal Nera", grad: "linear-gradient(135deg, #2b2b2b 0%, #171717 30%, #404040 70%, #0d0d0d 100%)", defaultNetwork: "VISA" },
@@ -1434,7 +1408,7 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v7';
+    const STORAGE_KEY = 'pocketflow_wallet_v8';
 
     function getDefaultState() {
       return {
@@ -1468,7 +1442,8 @@
     let activeCardIndex = 0;
     let homeActivityFilter = 'all';
     let entryMode = 'add';
-    let selectedCatId = state.categories[0]?.id || 'food';
+    // Nothing selected by default
+    let selectedCatId = null;
     let selectedGradient = CARD_DESIGNS[0].grad;
     let selectedNetwork = "VISA";
     let selectedNewIcon = ICON_LIBRARY[0];
@@ -1711,6 +1686,8 @@
     function openEntryOverlay(mode) {
       triggerHaptic();
       entryMode = mode;
+      // Reset category selection on opening screen
+      selectedCatId = null;
       document.getElementById('nativeAmountInput').value = '';
       document.getElementById('entryNoteInput').value = '';
 
@@ -1816,15 +1793,17 @@
       strip.innerHTML = '';
 
       state.categories.forEach(cat => {
+        const isSelected = cat.id === selectedCatId;
         const item = document.createElement('div');
-        item.className = 'cat-item' + (cat.id === selectedCatId ? ' selected' : '');
+        item.className = 'cat-item' + (isSelected ? ' selected' : '');
         item.innerHTML = `
           <div class="cat-circle">${cat.icon}</div>
           <span class="cat-label">${cat.name}</span>
         `;
         item.addEventListener('click', () => {
           triggerHaptic();
-          selectedCatId = cat.id;
+          // Toggle or select category
+          selectedCatId = isSelected ? null : cat.id;
           renderCategoryStrip();
         });
         strip.appendChild(item);
@@ -1877,6 +1856,13 @@
     }
 
     function submitTransaction() {
+      // 1. Validate category selection FIRST
+      if (!selectedCatId) {
+        triggerHaptic();
+        showToast('Please select a category from the top bar first!', true);
+        return;
+      }
+
       const amountVal = document.getElementById('nativeAmountInput').value;
       const amount = parseFloat(amountVal);
       if (!amount || amount <= 0) {
@@ -1885,7 +1871,7 @@
       }
 
       const card = state.cards[activeCardIndex] || state.cards[0];
-      const cat = state.categories.find(c => c.id === selectedCatId) || state.categories[0];
+      const cat = state.categories.find(c => c.id === selectedCatId);
       const note = document.getElementById('entryNoteInput').value.trim();
 
       let totalDeducted = amount;
@@ -1955,7 +1941,7 @@
 
       spinner.style.display = 'block';
       avatar.className = 'ring-avatar';
-      avatar.textContent = entryMode === 'transfer' ? '⇄' : cat.icon;
+      avatar.textContent = cat.icon;
       title.textContent = entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...';
       sub.textContent = `${formatMoney(totalDeducted, card.currency)} • ${card.name}`;
       backdrop.classList.add('open');
@@ -1989,8 +1975,8 @@
           totalDeducted,
           type: entryMode,
           categoryId: cat.id,
-          categoryName: entryMode === 'transfer' ? 'Card Transfer' : cat.name,
-          icon: entryMode === 'transfer' ? '⇄' : cat.icon,
+          categoryName: cat.name,
+          icon: cat.icon,
           amount: entryMode === 'transfer' ? totalDeducted : amount,
           currency: card.currency,
           note,
@@ -2148,11 +2134,10 @@
       const box = document.getElementById('cardColorSwatches');
       if (!box) return;
       box.innerHTML = '';
-      CARD_DESIGNS.forEach((design, idx) => {
+      CARD_DESIGNS.forEach((design) => {
         const s = document.createElement('div');
         s.className = 'swatch' + (design.grad === selectedGradient ? ' active' : '');
         s.style.background = design.grad;
-        s.dataset.name = design.name;
         s.title = design.name;
         s.addEventListener('click', () => {
           selectedGradient = design.grad;
@@ -2186,7 +2171,6 @@
       renderTransactions();
     }
 
-    // Event Listeners Setup
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('themeToggleBtn').addEventListener('click', () => {
         triggerHaptic();
