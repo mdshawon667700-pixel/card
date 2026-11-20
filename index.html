@@ -1384,22 +1384,6 @@
       font-weight: 700;
       cursor: pointer;
     }
-
-    @media print {
-      body * { visibility: hidden; }
-      #statementSheet, #statementSheet * { visibility: visible; }
-      #statementSheet {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        max-width: 100%;
-        box-shadow: none;
-        background: #ffffff !important;
-        color: #111827 !important;
-      }
-      .no-print { display: none !important; }
-    }
   </style>
 </head>
 <body>
@@ -1601,7 +1585,7 @@
           <h3 id="stmtCardTitle" style="font-size:18px;font-weight:800;">Card Statement</h3>
           <div id="stmtCardBal" style="font-size:12.5px;font-weight:700;color:var(--emerald);">Current Balance: €0.00</div>
         </div>
-        <div class="no-print" style="display:flex;gap:8px;">
+        <div style="display:flex;gap:8px;">
           <button class="pill-btn pill-add" style="padding:8px 12px;font-size:12px;" id="downloadPdfBtn">📄 PDF</button>
           <button class="icon-btn" id="closeStmtBtn">✕</button>
         </div>
@@ -1612,11 +1596,11 @@
         <span id="stmtSummaryVal" style="font-size:15px;font-weight:800;color:var(--text-primary);">€0.00</span>
       </div>
 
-      <div class="form-row no-print" style="display:flex;gap:10px;margin-bottom:10px;">
+      <div class="form-row" style="display:flex;gap:10px;margin-bottom:10px;">
         <input type="date" class="form-input" id="stmtFromDate" />
         <input type="date" class="form-input" id="stmtToDate" />
       </div>
-      <div class="form-row no-print" style="display:flex;gap:10px;margin-bottom:14px;">
+      <div class="form-row" style="display:flex;gap:10px;margin-bottom:14px;">
         <input type="text" class="form-input" id="stmtSearchInput" placeholder="Search note or category..." />
         <select class="form-select" id="stmtTypeFilter" style="max-width:115px;">
           <option value="all" data-i18n="filterAll">All</option>
@@ -2828,19 +2812,13 @@
       document.getElementById('statementBackdrop').classList.add('open');
     }
 
-    function renderStatementTransactions() {
-      const list = document.getElementById('stmtTxList');
-      if (!list) return;
-      list.innerHTML = '';
-      const card = state.cards.find(c => c.id === statementCardId);
-      if (!card) return;
-
+    function getFilteredStatementTransactions(card) {
       const fromDate = document.getElementById('stmtFromDate').value;
       const toDate = document.getElementById('stmtToDate').value;
       const query = document.getElementById('stmtSearchInput').value.trim().toLowerCase();
       const typeFilter = document.getElementById('stmtTypeFilter').value;
 
-      const filtered = (state.transactions || []).filter(tx => {
+      return (state.transactions || []).filter(tx => {
         if (tx.cardId !== card.id && tx.toCardId !== card.id) return false;
         if (typeFilter !== 'all' && tx.type !== typeFilter) return false;
         const txDay = tx.date.slice(0, 10);
@@ -2852,6 +2830,17 @@
         }
         return true;
       });
+    }
+
+    function renderStatementTransactions() {
+      const list = document.getElementById('stmtTxList');
+      if (!list) return;
+      list.innerHTML = '';
+      const card = state.cards.find(c => c.id === statementCardId);
+      if (!card) return;
+
+      const typeFilter = document.getElementById('stmtTypeFilter').value;
+      const filtered = getFilteredStatementTransactions(card);
 
       let filteredTotal = 0;
       filtered.forEach(tx => {
@@ -2891,6 +2880,90 @@
         });
         list.appendChild(item);
       });
+    }
+
+    function buildStatementPdfBlob(card, transactions, summaryLabel, summaryVal) {
+      const escPdf = (str) =>
+        String(str || '')
+          .replace(/[^\x20-\x7E]/g, (ch) => {
+            const map = {
+              '€': 'EUR ',
+              '৳': 'BDT ',
+              '£': 'GBP ',
+              '$': 'USD ',
+              '¥': 'JPY ',
+              '•': '-',
+              '➔': '->',
+              '⇄': '<->',
+              '–': '-',
+              '—': '-'
+            };
+            return map[ch] || '';
+          })
+          .replace(/\\/g, '\\\\')
+          .replace(/\(/g, '\\(')
+          .replace(/\)/g, '\\)');
+
+      const lines = [];
+      lines.push(`PocketFlow Statement - ${escPdf(card.name)} (${escPdf(card.currency)})`);
+      lines.push(`Card Ending: ••${escPdf(card.digits)} | Current Balance: ${escPdf(formatMoney(card.balance, card.currency))}`);
+      lines.push(`${escPdf(summaryLabel)} ${escPdf(summaryVal)}`);
+      lines.push(`Generated: ${escPdf(new Date().toLocaleString('en-GB'))}`);
+      lines.push('----------------------------------------------------------------------');
+
+      if (!transactions.length) {
+        lines.push('No transactions found for the selected filter.');
+      } else {
+        transactions.slice(0, 45).forEach((tx, i) => {
+          const isIncoming = tx.type === 'transfer' && tx.toCardId === card.id;
+          const amt = isIncoming
+            ? formatMoney(tx.convertedAmount, card.currency)
+            : formatMoney(tx.totalDeducted || tx.amount, card.currency);
+          const sign = tx.type === 'add' || isIncoming ? '+' : '-';
+          const dStr = new Date(tx.date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+          });
+          const notePart = tx.note ? ` | Note: ${tx.note}` : '';
+          lines.push(`${i + 1}. [${dStr}] ${tx.categoryName} (${tx.type}) -> ${sign}${amt}${notePart}`);
+        });
+      }
+
+      let streamContent = 'BT\n/F1 11 Tf\n40 790 Td\n15 TL\n';
+      lines.forEach((line, idx) => {
+        const safeLine = escPdf(line).slice(0, 95);
+        if (idx === 0) {
+          streamContent += `/F1 14 Tf\n(${safeLine}) Tj\nT*\n/F1 10 Tf\n`;
+        } else {
+          streamContent += `(${safeLine}) Tj\nT*\n`;
+        }
+      });
+      streamContent += 'ET';
+
+      const objects = [];
+      objects.push('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+      objects.push('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+      objects.push('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n');
+      objects.push(`4 0 obj\n<< /Length ${streamContent.length} >>\nstream\n${streamContent}\nendstream\nendobj\n`);
+      objects.push('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
+
+      let pdf = '%PDF-1.4\n';
+      const offsets = [0];
+      objects.forEach((obj) => {
+        offsets.push(pdf.length);
+        pdf += obj;
+      });
+
+      const xrefStart = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n`;
+      pdf += '0000000000 65535 f \n';
+      for (let i = 1; i <= objects.length; i++) {
+        pdf += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+      }
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;
+
+      return new Blob([pdf], { type: 'application/pdf' });
     }
 
     function openSettingsModal() {
@@ -3092,7 +3165,39 @@
         if (el) el.addEventListener('input', renderStatementTransactions);
         if (el && el.tagName === 'SELECT') el.addEventListener('change', renderStatementTransactions);
       });
-      document.getElementById('downloadPdfBtn').addEventListener('click', () => window.print());
+
+      document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
+        const card = state.cards.find(c => c.id === statementCardId);
+        if (!card) return;
+
+        const filtered = getFilteredStatementTransactions(card);
+        const summaryLabel = document.getElementById('stmtSummaryLabel').textContent;
+        const summaryVal = document.getElementById('stmtSummaryVal').textContent;
+        const blob = buildStatementPdfBlob(card, filtered, summaryLabel, summaryVal);
+        const fileName = `PocketFlow_${card.name.replace(/\s+/g, '_')}_${card.digits}.pdf`;
+
+        try {
+          const file = new File([blob], fileName, { type: 'application/pdf' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: fileName
+            });
+            showToast('PDF ready to save!');
+            return;
+          }
+        } catch (err) {}
+
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        showToast('Statement PDF downloaded!');
+      });
 
       document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
       document.getElementById('closeSettingsBtn').addEventListener('click', () => document.getElementById('settingsBackdrop').classList.remove('open'));
