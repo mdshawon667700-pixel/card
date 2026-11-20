@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    :root {
+    :root, [data-theme="light"] {
       --bg-app: #f5f6f8;
       --bg-card: #ffffff;
       --bg-subtle: #eceef2;
@@ -32,13 +32,13 @@
       --shadow-sm: 0 2px 10px rgba(17, 24, 39, 0.04);
       --shadow-md: 0 10px 28px rgba(17, 24, 39, 0.08);
       --shadow-lg: 0 20px 48px rgba(17, 24, 39, 0.14);
-      --theme-transition: background-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-                          color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-                          border-color 0.45s cubic-bezier(0.22, 1, 0.36, 1),
-                          box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+      --theme-transition: background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                          color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                          border-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+                          box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    html.dark, body.dark {
+    [data-theme="dark"] {
       --bg-app: #0f1218;
       --bg-card: #181c26;
       --bg-subtle: #212734;
@@ -52,6 +52,78 @@
       --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.22);
       --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.34);
       --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.48);
+    }
+
+    [data-theme="emerald"] {
+      --bg-app: #ecf5f1;
+      --bg-card: #ffffff;
+      --bg-subtle: #dcece5;
+      --bg-input: #e5f1ec;
+      --text-primary: #0b291e;
+      --text-secondary: #486b5e;
+      --text-muted: #7a9c8f;
+      --border-color: rgba(11, 41, 30, 0.09);
+      --accent-dark: #065f46;
+      --accent-dark-text: #ffffff;
+      --emerald: #059669;
+      --emerald-bg: rgba(5, 150, 105, 0.14);
+      --shadow-sm: 0 2px 10px rgba(6, 95, 70, 0.05);
+      --shadow-md: 0 10px 28px rgba(6, 95, 70, 0.10);
+      --shadow-lg: 0 20px 48px rgba(6, 95, 70, 0.16);
+    }
+
+    [data-theme="ocean"] {
+      --bg-app: #0b132b;
+      --bg-card: #1c2541;
+      --bg-subtle: #283559;
+      --bg-input: #222e4f;
+      --text-primary: #f0f4ff;
+      --text-secondary: #9fb1d6;
+      --text-muted: #6a7fa8;
+      --border-color: rgba(160, 196, 255, 0.1);
+      --accent-dark: #38bdf8;
+      --accent-dark-text: #081226;
+      --emerald: #2dd4bf;
+      --emerald-bg: rgba(45, 212, 191, 0.15);
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.25);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.38);
+      --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.52);
+    }
+
+    [data-theme="sunset"] {
+      --bg-app: #fbf5f0;
+      --bg-card: #ffffff;
+      --bg-subtle: #f3e6dc;
+      --bg-input: #f7ede5;
+      --text-primary: #2d1b14;
+      --text-secondary: #7a5c50;
+      --text-muted: #a88b7f;
+      --border-color: rgba(45, 27, 20, 0.08);
+      --accent-dark: #c2410c;
+      --accent-dark-text: #ffffff;
+      --emerald: #0d9488;
+      --emerald-bg: rgba(13, 148, 136, 0.12);
+      --shadow-sm: 0 2px 10px rgba(194, 65, 12, 0.05);
+      --shadow-md: 0 10px 28px rgba(194, 65, 12, 0.10);
+      --shadow-lg: 0 20px 48px rgba(194, 65, 12, 0.16);
+    }
+
+    [data-theme="oled"] {
+      --bg-app: #000000;
+      --bg-card: #111113;
+      --bg-subtle: #1c1c20;
+      --bg-input: #17171a;
+      --text-primary: #ffffff;
+      --text-secondary: #8e8e93;
+      --text-muted: #58585e;
+      --border-color: rgba(255, 255, 255, 0.1);
+      --accent-dark: #ffffff;
+      --accent-dark-text: #000000;
+      --emerald: #30d158;
+      --emerald-bg: rgba(48, 209, 88, 0.15);
+      --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.5);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.7);
+      --shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.85);
     }
 
     * {
@@ -145,12 +217,12 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 7px;
     }
 
     .icon-btn {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       border: 1px solid var(--border-color);
       background: var(--bg-card);
@@ -159,6 +231,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      font-size: 15px;
       box-shadow: var(--shadow-sm);
       transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
     }
@@ -167,13 +240,13 @@
       transform: scale(0.9);
     }
 
-    .theme-icon-spin {
-      display: inline-block;
-      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    body.dark .theme-icon-spin {
-      transform: rotate(180deg);
+    .lang-badge-btn {
+      width: auto;
+      padding: 0 10px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
     }
 
     /* Active Card Hero Balance */
@@ -527,7 +600,7 @@
       font-size: 12px;
       font-weight: 600;
       outline: none;
-      max-width: 135px;
+      max-width: 140px;
       box-shadow: var(--shadow-sm);
       cursor: pointer;
       transition: var(--theme-transition);
@@ -666,7 +739,7 @@
       max-width: 440px;
       margin: 0 auto;
       transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.45s ease;
+      transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.4s ease;
       padding-top: env(safe-area-inset-top);
       padding-bottom: calc(24px + env(safe-area-inset-bottom));
       overflow-y: auto;
@@ -932,6 +1005,71 @@
       to { transform: translateY(0); }
     }
 
+    /* Theme Grid Cards */
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .theme-option-card {
+      padding: 12px;
+      border-radius: 16px;
+      border: 2px solid var(--border-color);
+      background: var(--bg-input);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    .theme-option-card.active {
+      border-color: var(--emerald);
+      background: var(--emerald-bg);
+    }
+
+    .theme-option-card:active {
+      transform: scale(0.97);
+    }
+
+    .theme-preview-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      border: 2px solid rgba(255,255,255,0.3);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* Language Grid */
+    .lang-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .lang-option-btn {
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 2px solid var(--border-color);
+      background: var(--bg-input);
+      color: var(--text-primary);
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.2s ease;
+    }
+
+    .lang-option-btn.active {
+      border-color: var(--emerald);
+      background: var(--emerald-bg);
+    }
+
     /* Action Sheet Buttons */
     .action-sheet-header {
       display: flex;
@@ -1074,7 +1212,7 @@
       border-radius: 10px;
       background: transparent;
       color: var(--text-secondary);
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: 700;
       cursor: pointer;
       transition: var(--theme-transition);
@@ -1235,7 +1373,7 @@
     <header class="top-bar">
       <div class="wallet-title-group">
         <div class="wallet-heading-row">
-          <h1 class="wallet-title">Wallet</h1>
+          <h1 class="wallet-title" data-i18n="walletTitle">Wallet</h1>
           <div class="mini-totals" id="miniTotalsBadge">
             <span class="val-eur" id="totalEurMini">€0.00</span>
             <span>•</span>
@@ -1244,9 +1382,8 @@
         </div>
       </div>
       <div class="header-actions">
-        <button class="icon-btn" id="themeToggleBtn" title="Toggle Dark Mode" aria-label="Toggle Dark Mode">
-          <span class="theme-icon-spin" id="themeIconSpan">🌙</span>
-        </button>
+        <button class="icon-btn lang-badge-btn" id="quickLangBtn" title="Switch Language">EN</button>
+        <button class="icon-btn" id="quickThemeBtn" title="Switch Theme">🎨</button>
         <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
       </div>
     </header>
@@ -1256,9 +1393,9 @@
       <div class="hero-label" id="activeCardLabel">MAIN CARD</div>
       <div class="hero-balance" id="heroBalanceDisplay">€0.00</div>
       <div class="action-row">
-        <button class="pill-btn pill-add" id="openAddBtn">+ Add</button>
-        <button class="pill-btn pill-expense" id="openExpenseBtn">− Expense</button>
-        <button class="pill-btn pill-transfer" id="openTransferBtn">⇄ Transfer</button>
+        <button class="pill-btn pill-add" id="openAddBtn" data-i18n="btnAdd">+ Add</button>
+        <button class="pill-btn pill-expense" id="openExpenseBtn" data-i18n="btnExpense">− Expense</button>
+        <button class="pill-btn pill-transfer" id="openTransferBtn" data-i18n="btnTransfer">⇄ Transfer</button>
       </div>
     </section>
 
@@ -1270,7 +1407,7 @@
 
     <!-- Recent Activity & Filters -->
     <div class="section-header">
-      <span class="section-title">Recent Activity</span>
+      <span class="section-title" data-i18n="recentActivity">Recent Activity</span>
       <div class="month-pill">
         <span class="month-in" id="monthInVal">+€0</span>
         <span class="month-out" id="monthOutVal">−€0</span>
@@ -1278,7 +1415,7 @@
     </div>
 
     <div class="activity-filter-bar">
-      <button class="filter-tab active" data-filter="all">All Cards</button>
+      <button class="filter-tab active" data-filter="all" data-i18n="allCards">All Cards</button>
       <button class="filter-tab" data-filter="selected" id="selectedCardFilterBtn">Selected Card</button>
     </div>
 
@@ -1297,6 +1434,24 @@
     <div class="tx-list" id="txList"></div>
   </div>
 
+  <!-- Quick Theme & Language Picker Bottom Sheet -->
+  <div class="modal-backdrop" id="appearanceBackdrop">
+    <div class="bottom-sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <h3 style="font-size:18px;font-weight:800;" data-i18n="appearanceTitle">Theme & Language</h3>
+        <button class="icon-btn" id="closeAppearanceBtn">✕</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="chooseTheme">Choose App Theme</label>
+        <div class="theme-grid" id="quickThemeGrid"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label" data-i18n="chooseLang">Choose Language</label>
+        <div class="lang-grid" id="quickLangGrid"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Fullscreen Add / Expense / Transfer / Edit Screen -->
   <div class="overlay-screen" id="entryOverlay">
     <div class="overlay-top">
@@ -1308,19 +1463,19 @@
     <!-- Category Strip -->
     <div class="cat-strip" id="catStrip"></div>
 
-    <!-- Transfer Manual Exchange Rate & Charge Mode Bar -->
+    <!-- Transfer Manual Exchange Rate & Charge Mode Controls -->
     <div class="transfer-bar" id="transferBar">
       <div class="transfer-box-card">
         <div class="transfer-row">
           <div>
-            <label class="form-label">To Card (Receiver)</label>
+            <label class="form-label" data-i18n="toCard">To Card (Receiver)</label>
             <select class="form-select" id="transferToSelect"></select>
           </div>
           <div id="chargeModeContainer">
-            <label class="form-label">Charge Type</label>
+            <label class="form-label" data-i18n="chargeType">Charge Type</label>
             <select class="form-select" id="chargeModeSelect">
-              <option value="deduct_from_amount">Inclusive (মোট অ্যামাউন্টের ভেতর চার্জ)</option>
-              <option value="add_to_amount">Exclusive (অ্যামাউন্ট + আলাদা চার্জ)</option>
+              <option value="deduct_from_amount" data-i18n="inclusiveCharge">Inclusive (Fee included)</option>
+              <option value="add_to_amount" data-i18n="exclusiveCharge">Exclusive (Amount + Fee)</option>
             </select>
           </div>
         </div>
@@ -1331,14 +1486,12 @@
             <input type="number" step="any" class="form-input" id="manualRateInput" value="130" placeholder="130" />
           </div>
           <div>
-            <label class="form-label">Service Charge</label>
+            <label class="form-label" data-i18n="serviceCharge">Service Charge</label>
             <input type="number" step="any" class="form-input" id="manualFeeInput" value="2" placeholder="2.00" />
           </div>
         </div>
 
-        <div class="fx-summary-box" id="transferFxSummary">
-          <div>💱 <strong>Direct Transfer:</strong> Sender & Receiver amount is identical.</div>
-        </div>
+        <div class="fx-summary-box" id="transferFxSummary"></div>
       </div>
     </div>
 
@@ -1369,8 +1522,8 @@
         <button class="icon-btn" id="closeTxActionBtn">✕</button>
       </div>
 
-      <button class="action-sheet-btn edit-btn" id="txActionEditBtn">✏️ Edit Transaction</button>
-      <button class="action-sheet-btn delete-btn" id="txActionDeleteBtn">🗑️ Delete Transaction</button>
+      <button class="action-sheet-btn edit-btn" id="txActionEditBtn" data-i18n="editTxBtn">✏️ Edit Transaction</button>
+      <button class="action-sheet-btn delete-btn" id="txActionDeleteBtn" data-i18n="deleteTxBtn">🗑️ Delete Transaction</button>
     </div>
   </div>
 
@@ -1392,18 +1545,18 @@
   <div class="modal-backdrop" id="customCatBackdrop">
     <div class="bottom-sheet">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <h3 style="font-size:18px;font-weight:800;">New Category</h3>
+        <h3 style="font-size:18px;font-weight:800;" data-i18n="newCatTitle">New Category</h3>
         <button class="icon-btn" id="closeCustomCatBtn">✕</button>
       </div>
       <div class="form-group">
-        <label class="form-label">Category Name</label>
+        <label class="form-label" data-i18n="catNameLabel">Category Name</label>
         <input type="text" class="form-input" id="newCatName" placeholder="e.g., Coffee, Metro, Remittance..." />
       </div>
       <div class="form-group">
-        <label class="form-label">Pick an Icon</label>
+        <label class="form-label" data-i18n="pickIconLabel">Pick an Icon</label>
         <div class="icon-grid" id="iconPickerGrid"></div>
       </div>
-      <button class="send-cta" style="width:100%;margin:10px 0 0;" id="saveCustomCatBtn">Create Category</button>
+      <button class="send-cta" style="width:100%;margin:10px 0 0;" id="saveCustomCatBtn" data-i18n="createCatBtn">Create Category</button>
     </div>
   </div>
 
@@ -1433,10 +1586,10 @@
       <div class="form-row no-print" style="display:flex;gap:10px;margin-bottom:14px;">
         <input type="text" class="form-input" id="stmtSearchInput" placeholder="Search note or category..." />
         <select class="form-select" id="stmtTypeFilter" style="max-width:115px;">
-          <option value="all">All</option>
-          <option value="add">Added</option>
-          <option value="expense">Expense</option>
-          <option value="transfer">Transfer</option>
+          <option value="all" data-i18n="filterAll">All</option>
+          <option value="add" data-i18n="filterAdded">Added</option>
+          <option value="expense" data-i18n="filterExpense">Expense</option>
+          <option value="transfer" data-i18n="filterTransfer">Transfer</option>
         </select>
       </div>
 
@@ -1448,20 +1601,21 @@
   <div class="modal-backdrop" id="settingsBackdrop">
     <div class="bottom-sheet">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
-        <h3 style="font-size:18px;font-weight:800;">Wallet Settings</h3>
+        <h3 style="font-size:18px;font-weight:800;" data-i18n="settingsTitle">Wallet Settings</h3>
         <button class="icon-btn" id="closeSettingsBtn">✕</button>
       </div>
 
       <div class="tabs-bar">
-        <button class="tab-btn active" data-tab="cardsTab">My Cards</button>
-        <button class="tab-btn" data-tab="backupTab">Backup & Reset</button>
+        <button class="tab-btn active" data-tab="cardsTab" data-i18n="tabCards">My Cards</button>
+        <button class="tab-btn" data-tab="appearanceTab" data-i18n="tabAppearance">Themes & Lang</button>
+        <button class="tab-btn" data-tab="backupTab" data-i18n="tabBackup">Backup</button>
       </div>
 
       <div id="cardsTab">
         <div id="settingsCardsList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;"></div>
 
         <div style="background:var(--bg-subtle);padding:14px;border-radius:18px;">
-          <div style="font-size:14px;font-weight:800;margin-bottom:10px;">+ Add New Card</div>
+          <div style="font-size:14px;font-weight:800;margin-bottom:10px;" data-i18n="addNewCardTitle">+ Add New Card</div>
           <div class="form-group">
             <input type="text" class="form-input" id="newCardName" placeholder="Card Name (e.g. Metal Bronze, Cromata...)" />
           </div>
@@ -1477,32 +1631,43 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Pick Premium Material Design</label>
+            <label class="form-label" data-i18n="pickDesign">Pick Premium Material Design</label>
             <div class="color-swatches" id="cardColorSwatches"></div>
           </div>
           <div class="form-row form-group" style="align-items:center;margin-top:14px;">
             <input type="number" class="form-input" id="newCardBalance" placeholder="Initial Balance (0)" step="any" />
           </div>
-          <button class="send-cta" style="width:100%;margin:6px 0 0;" id="saveNewCardBtn">Save Card</button>
+          <button class="send-cta" style="width:100%;margin:6px 0 0;" id="saveNewCardBtn" data-i18n="saveCardBtn">Save Card</button>
+        </div>
+      </div>
+
+      <div id="appearanceTab" style="display:none;">
+        <div class="form-group">
+          <label class="form-label" data-i18n="chooseTheme">Choose App Theme</label>
+          <div class="theme-grid" id="settingsThemeGrid"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="chooseLang">Choose Language</label>
+          <div class="lang-grid" id="settingsLangGrid"></div>
         </div>
       </div>
 
       <div id="backupTab" style="display:none;">
         <div class="form-group">
-          <label class="form-label">1. Copy Backup Text</label>
+          <label class="form-label" data-i18n="copyBackupLabel">1. Copy Backup Text</label>
           <textarea class="form-textarea" id="backupExportText" rows="4" readonly></textarea>
-          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn">Copy Backup Text</button>
+          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn" data-i18n="copyBackupBtn">Copy Backup Text</button>
         </div>
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
         <div class="form-group">
-          <label class="form-label">2. Restore Data</label>
+          <label class="form-label" data-i18n="restoreDataLabel">2. Restore Data</label>
           <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste your saved backup JSON here..."></textarea>
-          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn">Restore Data</button>
+          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn" data-i18n="restoreDataBtn">Restore Data</button>
         </div>
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
         <div class="form-group">
-          <label class="form-label" style="color:var(--danger);">Danger Zone</label>
-          <button class="send-cta" style="width:100%;height:44px;font-size:14px;background:var(--danger-bg);color:var(--danger);" id="resetWalletBtn">⚠️ Reset All Wallet Data</button>
+          <label class="form-label" style="color:var(--danger);" data-i18n="dangerZone">Danger Zone</label>
+          <button class="send-cta" style="width:100%;height:44px;font-size:14px;background:var(--danger-bg);color:var(--danger);" id="resetWalletBtn" data-i18n="resetWalletBtn">⚠️ Reset All Wallet Data</button>
         </div>
       </div>
     </div>
@@ -1515,6 +1680,273 @@
   </div>
 
   <script>
+    const APP_THEMES = [
+      { id: 'light', name: 'Light Minimal', bg: '#f5f6f8', accent: '#14171f', meta: '#f5f6f8' },
+      { id: 'dark', name: 'Midnight Dark', bg: '#0f1218', accent: '#3b82f6', meta: '#0f1218' },
+      { id: 'emerald', name: 'Emerald Forest', bg: '#ecf5f1', accent: '#065f46', meta: '#ecf5f1' },
+      { id: 'ocean', name: 'Royal Ocean', bg: '#0b132b', accent: '#38bdf8', meta: '#0b132b' },
+      { id: 'sunset', name: 'Warm Sunset', bg: '#fbf5f0', accent: '#c2410c', meta: '#fbf5f0' },
+      { id: 'oled', name: 'Cyber OLED', bg: '#000000', accent: '#30d158', meta: '#000000' }
+    ];
+
+    const LANGUAGES = [
+      { code: 'en', short: 'EN', label: '🇬🇧 English' },
+      { code: 'it', short: 'IT', label: '🇮🇹 Italiano' },
+      { code: 'es', short: 'ES', label: '🇪🇸 Español' },
+      { code: 'bn', short: 'বাং', label: '🇧🇩 বাংলা' }
+    ];
+
+    const TRANSLATIONS = {
+      en: {
+        walletTitle: 'Wallet',
+        btnAdd: '+ Add',
+        btnExpense: '− Expense',
+        btnTransfer: '⇄ Transfer',
+        recentActivity: 'Recent Activity',
+        allCards: 'All Cards',
+        onlySuffix: 'Only',
+        allCategories: 'All Categories',
+        searchPlaceholder: 'Search note or category...',
+        notePlaceholder: 'Add a note (optional)...',
+        addMoneyTitle: 'Add Money',
+        addExpenseTitle: 'Add Expense',
+        transferTitle: 'Transfer Between Cards',
+        editIncomeTitle: 'Edit Income',
+        editExpenseTitle: 'Edit Expense',
+        editTransferTitle: 'Edit Transfer',
+        addToCardBtn: 'Add to Card',
+        sendExpenseBtn: 'Send Expense',
+        completeTransferBtn: 'Complete Transfer',
+        saveChangesBtn: 'Save Changes',
+        toCard: 'To Card (Receiver)',
+        chargeType: 'Charge Type',
+        inclusiveCharge: 'Inclusive (Fee included)',
+        exclusiveCharge: 'Exclusive (Amount + Fee)',
+        serviceCharge: 'Service Charge',
+        editTxBtn: '✏️ Edit Transaction',
+        deleteTxBtn: '🗑️ Delete Transaction',
+        newCatTitle: 'New Category',
+        catNameLabel: 'Category Name',
+        pickIconLabel: 'Pick an Icon',
+        createCatBtn: 'Create Category',
+        settingsTitle: 'Wallet Settings',
+        tabCards: 'My Cards',
+        tabAppearance: 'Themes & Lang',
+        tabBackup: 'Backup',
+        addNewCardTitle: '+ Add New Card',
+        pickDesign: 'Pick Premium Material Design',
+        saveCardBtn: 'Save Card',
+        chooseTheme: 'Choose App Theme',
+        chooseLang: 'Choose Language',
+        appearanceTitle: 'Theme & Language',
+        copyBackupLabel: '1. Copy Backup Text',
+        copyBackupBtn: 'Copy Backup Text',
+        restoreDataLabel: '2. Restore Data',
+        restoreDataBtn: 'Restore Data',
+        dangerZone: 'Danger Zone',
+        resetWalletBtn: '⚠️ Reset All Wallet Data',
+        selectCatFirst: 'Please select a category from the top bar first!',
+        validAmountErr: 'Please enter a valid amount greater than 0',
+        insufficientBal: 'Insufficient balance!',
+        txDeclined: 'Transaction Declined',
+        completed: 'Completed!',
+        noTxFound: 'No transactions found. Tap + Add or − Expense above.',
+        noMatchFound: 'No transactions match your search/filter.',
+        currentBalance: 'Current Balance',
+        filterAll: 'All',
+        filterAdded: 'Added',
+        filterExpense: 'Expense',
+        filterTransfer: 'Transfer',
+        customLabel: 'Custom'
+      },
+      it: {
+        walletTitle: 'Portafoglio',
+        btnAdd: '+ Aggiungi',
+        btnExpense: '− Spesa',
+        btnTransfer: '⇄ Trasferisci',
+        recentActivity: 'Attività Recente',
+        allCards: 'Tutte le Carte',
+        onlySuffix: 'Solo',
+        allCategories: 'Tutte le Categorie',
+        searchPlaceholder: 'Cerca nota o categoria...',
+        notePlaceholder: 'Aggiungi una nota (opzionale)...',
+        addMoneyTitle: 'Aggiungi Saldo',
+        addExpenseTitle: 'Nuova Spesa',
+        transferTitle: 'Trasferisci tra Carte',
+        editIncomeTitle: 'Modifica Entrata',
+        editExpenseTitle: 'Modifica Spesa',
+        editTransferTitle: 'Modifica Trasferimento',
+        addToCardBtn: 'Aggiungi alla Carta',
+        sendExpenseBtn: 'Registra Spesa',
+        completeTransferBtn: 'Completa Trasferimento',
+        saveChangesBtn: 'Salva Modifiche',
+        toCard: 'Carta Destinataria',
+        chargeType: 'Tipo di Commissione',
+        inclusiveCharge: 'Inclusa (nel totale)',
+        exclusiveCharge: 'Esclusa (Importo + Fee)',
+        serviceCharge: 'Commissione',
+        editTxBtn: '✏️ Modifica Transazione',
+        deleteTxBtn: '🗑️ Elimina Transazione',
+        newCatTitle: 'Nuova Categoria',
+        catNameLabel: 'Nome Categoria',
+        pickIconLabel: 'Scegli un’Icona',
+        createCatBtn: 'Crea Categoria',
+        settingsTitle: 'Impostazioni',
+        tabCards: 'Le Mie Carte',
+        tabAppearance: 'Temi e Lingua',
+        tabBackup: 'Backup',
+        addNewCardTitle: '+ Aggiungi Nuova Carta',
+        pickDesign: 'Scegli Design Carta',
+        saveCardBtn: 'Salva Carta',
+        chooseTheme: 'Scegli Tema App',
+        chooseLang: 'Scegli Lingua',
+        appearanceTitle: 'Tema e Lingua',
+        copyBackupLabel: '1. Copia Testo Backup',
+        copyBackupBtn: 'Copia Backup',
+        restoreDataLabel: '2. Ripristina Dati',
+        restoreDataBtn: 'Ripristina Dati',
+        dangerZone: 'Zona Pericolosa',
+        resetWalletBtn: '⚠️ Ripristina Tutti i Dati',
+        selectCatFirst: 'Seleziona prima una categoria in alto!',
+        validAmountErr: 'Inserisci un importo valido maggiore di 0',
+        insufficientBal: 'Saldo insufficiente!',
+        txDeclined: 'Transazione Rifiutata',
+        completed: 'Completato!',
+        noTxFound: 'Nessuna transazione. Tocca + Aggiungi o − Spesa.',
+        noMatchFound: 'Nessuna transazione trovata per questo filtro.',
+        currentBalance: 'Saldo Attuale',
+        filterAll: 'Tutte',
+        filterAdded: 'Entrate',
+        filterExpense: 'Spese',
+        filterTransfer: 'Trasferimenti',
+        customLabel: 'Altro'
+      },
+      es: {
+        walletTitle: 'Billetera',
+        btnAdd: '+ Añadir',
+        btnExpense: '− Gasto',
+        btnTransfer: '⇄ Transferir',
+        recentActivity: 'Actividad Reciente',
+        allCards: 'Todas las Tarjetas',
+        onlySuffix: 'Solo',
+        allCategories: 'Todas las Categorías',
+        searchPlaceholder: 'Buscar nota o categoría...',
+        notePlaceholder: 'Añadir una nota (opcional)...',
+        addMoneyTitle: 'Añadir Dinero',
+        addExpenseTitle: 'Registrar Gasto',
+        transferTitle: 'Transferir entre Tarjetas',
+        editIncomeTitle: 'Editar Ingreso',
+        editExpenseTitle: 'Editar Gasto',
+        editTransferTitle: 'Editar Transferencia',
+        addToCardBtn: 'Añadir a Tarjeta',
+        sendExpenseBtn: 'Guardar Gasto',
+        completeTransferBtn: 'Completar Transferencia',
+        saveChangesBtn: 'Guardar Cambios',
+        toCard: 'Tarjeta Destino',
+        chargeType: 'Tipo de Comisión',
+        inclusiveCharge: 'Incluida (en el monto)',
+        exclusiveCharge: 'Exclusiva (Monto + Cargo)',
+        serviceCharge: 'Comisión',
+        editTxBtn: '✏️ Editar Transacción',
+        deleteTxBtn: '🗑️ Eliminar Transacción',
+        newCatTitle: 'Nueva Categoría',
+        catNameLabel: 'Nombre de Categoría',
+        pickIconLabel: 'Elige un Icono',
+        createCatBtn: 'Crear Categoría',
+        settingsTitle: 'Ajustes',
+        tabCards: 'Mis Tarjetas',
+        tabAppearance: 'Temas e Idioma',
+        tabBackup: 'Copia',
+        addNewCardTitle: '+ Añadir Nueva Tarjeta',
+        pickDesign: 'Elige Diseño de Tarjeta',
+        saveCardBtn: 'Guardar Tarjeta',
+        chooseTheme: 'Elige Tema de la App',
+        chooseLang: 'Elige Idioma',
+        appearanceTitle: 'Tema e Idioma',
+        copyBackupLabel: '1. Copiar Texto de Respaldo',
+        copyBackupBtn: 'Copiar Respaldo',
+        restoreDataLabel: '2. Restaurar Datos',
+        restoreDataBtn: 'Restaurar Datos',
+        dangerZone: 'Zona de Peligro',
+        resetWalletBtn: '⚠️ Borrar Todos los Datos',
+        selectCatFirst: '¡Selecciona una categoría arriba primero!',
+        validAmountErr: 'Introduce un monto válido mayor que 0',
+        insufficientBal: '¡Saldo insuficiente!',
+        txDeclined: 'Transacción Rechazada',
+        completed: '¡Completado!',
+        noTxFound: 'Sin transacciones. Toca + Añadir o − Gasto.',
+        noMatchFound: 'No hay transacciones que coincidan.',
+        currentBalance: 'Saldo Actual',
+        filterAll: 'Todo',
+        filterAdded: 'Ingresos',
+        filterExpense: 'Gastos',
+        filterTransfer: 'Transferencias',
+        customLabel: 'Nuevo'
+      },
+      bn: {
+        walletTitle: 'ওয়ালেট',
+        btnAdd: '+ যোগ করুন',
+        btnExpense: '− খরচ',
+        btnTransfer: '⇄ ট্রান্সফার',
+        recentActivity: 'সাম্প্রতিক লেনদেন',
+        allCards: 'সব কার্ড',
+        onlySuffix: 'শুধু',
+        allCategories: 'সব ক্যাটাগরি',
+        searchPlaceholder: 'নোট বা ক্যাটাগরি খুঁজুন...',
+        notePlaceholder: 'নোট লিখুন (ঐচ্ছিক)...',
+        addMoneyTitle: 'টাকা যোগ করুন',
+        addExpenseTitle: 'খরচ লিখুন',
+        transferTitle: 'কার্ড ট্রান্সফার',
+        editIncomeTitle: 'আয় এডিট করুন',
+        editExpenseTitle: 'খরচ এডিট করুন',
+        editTransferTitle: 'ট্রান্সফার এডিট করুন',
+        addToCardBtn: 'কার্ডে যোগ করুন',
+        sendExpenseBtn: 'খরচ সেভ করুন',
+        completeTransferBtn: 'ট্রান্সফার সম্পন্ন করুন',
+        saveChangesBtn: 'পরিবর্তন সেভ করুন',
+        toCard: 'প্রাপক কার্ড (To)',
+        chargeType: 'চার্জের ধরন',
+        inclusiveCharge: 'ইনক্লুসিভ (মোট টাকার ভেতর)',
+        exclusiveCharge: 'এক্সক্লুসিভ (টাকা + আলাদা চার্জ)',
+        serviceCharge: 'সার্ভিস চার্জ',
+        editTxBtn: '✏️ লেনদেন এডিট করুন',
+        deleteTxBtn: '🗑️ লেনদেন ডিলিট করুন',
+        newCatTitle: 'নতুন ক্যাটাগরি',
+        catNameLabel: 'ক্যাটাগরির নাম',
+        pickIconLabel: 'আইকন বাছাই করুন',
+        createCatBtn: 'ক্যাটাগরি তৈরি করুন',
+        settingsTitle: 'ওয়ালেট সেটিংস',
+        tabCards: 'আমার কার্ড',
+        tabAppearance: 'থিম ও ভাষা',
+        tabBackup: 'ব্যাকআপ',
+        addNewCardTitle: '+ নতুন কার্ড যোগ করুন',
+        pickDesign: 'কার্ডের ডিজাইন বাছাই করুন',
+        saveCardBtn: 'কার্ড সেভ করুন',
+        chooseTheme: 'অ্যাপের থিম বাছাই করুন',
+        chooseLang: 'ভাষা নির্বাচন করুন',
+        appearanceTitle: 'থিম ও ভাষা',
+        copyBackupLabel: '১. ব্যাকআপ টেক্সট কপি করুন',
+        copyBackupBtn: 'ব্যাকআপ কপি করুন',
+        restoreDataLabel: '২. ডেটা রিস্টোর করুন',
+        restoreDataBtn: 'রিস্টোর করুন',
+        dangerZone: 'ডেঞ্জার জোন',
+        resetWalletBtn: '⚠️ সব ডেটা রিসেট করুন',
+        selectCatFirst: 'দয়া করে ওপর থেকে আগে একটি ক্যাটাগরি সিলেক্ট করুন!',
+        validAmountErr: 'সঠিক অ্যামাউন্ট লিখুন (০ এর বেশি)',
+        insufficientBal: 'কার্ডে পর্যাপ্ত ব্যালেন্স নেই!',
+        txDeclined: 'লেনদেন বাতিল হয়েছে',
+        completed: 'সম্পন্ন হয়েছে!',
+        noTxFound: 'কোনো লেনদেন নেই। ওপরে + যোগ বা − খরচ চাপুন।',
+        noMatchFound: 'আপনার সার্চের সাথে কোনো লেনদেন মেলেনি।',
+        currentBalance: 'বর্তমান ব্যালেন্স',
+        filterAll: 'সব',
+        filterAdded: 'জমা',
+        filterExpense: 'খরচ',
+        filterTransfer: 'ট্রান্সফার',
+        customLabel: 'নতুন'
+      }
+    };
+
     const CURRENCY_META = {
       EUR: { symbol: '€', rateToEur: 1 },
       USD: { symbol: '$', rateToEur: 0.92 },
@@ -1555,11 +1987,12 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v9';
+    const STORAGE_KEY = 'pocketflow_wallet_v10';
 
     function getDefaultState() {
       return {
-        darkMode: false,
+        theme: 'light',
+        lang: 'en',
         cards: [
           {
             id: 'card_1',
@@ -1591,20 +2024,27 @@
     let homeSearchQuery = '';
     let homeCategoryFilter = 'all';
     let entryMode = 'add';
-    let editingTxId = null; // Stores ID when editing an existing transaction
-    let selectedActionTxId = null; // Stores ID tapped for Edit/Delete action sheet
+    let editingTxId = null;
+    let selectedActionTxId = null;
     let selectedCatId = null;
     let selectedGradient = CARD_DESIGNS[0].grad;
     let selectedNetwork = "VISA";
     let selectedNewIcon = ICON_LIBRARY[0];
     let statementCardId = null;
 
+    function t(key) {
+      const langDict = TRANSLATIONS[state.lang] || TRANSLATIONS.en;
+      return langDict[key] || TRANSLATIONS.en[key] || key;
+    }
+
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('pocketflow_wallet_v8') || localStorage.getItem('pocketflow_wallet_v7');
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('pocketflow_wallet_v9') || localStorage.getItem('pocketflow_wallet_v8');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
+            if (!parsed.theme) parsed.theme = parsed.darkMode ? 'dark' : 'light';
+            if (!parsed.lang) parsed.lang = 'en';
             return parsed;
           }
         }
@@ -1633,15 +2073,76 @@
     }
 
     function applyTheme() {
-      const isDark = !!state.darkMode;
-      document.documentElement.classList.toggle('dark', isDark);
-      document.body.classList.toggle('dark', isDark);
-      const iconSpan = document.getElementById('themeIconSpan');
-      if (iconSpan) iconSpan.textContent = isDark ? '☀️' : '🌙';
+      const themeId = state.theme || 'light';
+      document.documentElement.setAttribute('data-theme', themeId);
+      document.body.setAttribute('data-theme', themeId);
+      const themeObj = APP_THEMES.find(th => th.id === themeId) || APP_THEMES[0];
       const metaTheme = document.getElementById('metaThemeColor');
-      if (metaTheme) {
-        metaTheme.setAttribute('content', isDark ? '#0f1218' : '#f5f6f8');
-      }
+      if (metaTheme) metaTheme.setAttribute('content', themeObj.meta);
+    }
+
+    function applyTranslations() {
+      document.documentElement.lang = state.lang || 'en';
+      const langObj = LANGUAGES.find(l => l.code === state.lang) || LANGUAGES[0];
+      const langBtn = document.getElementById('quickLangBtn');
+      if (langBtn) langBtn.textContent = langObj.short;
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key);
+      });
+
+      const homeSearch = document.getElementById('homeSearchInput');
+      if (homeSearch) homeSearch.placeholder = t('searchPlaceholder');
+      const stmtSearch = document.getElementById('stmtSearchInput');
+      if (stmtSearch) stmtSearch.placeholder = t('searchPlaceholder');
+      const noteInput = document.getElementById('entryNoteInput');
+      if (noteInput) noteInput.placeholder = t('notePlaceholder');
+    }
+
+    function renderThemeAndLangGrids() {
+      const grids = ['quickThemeGrid', 'settingsThemeGrid'];
+      grids.forEach(gridId => {
+        const container = document.getElementById(gridId);
+        if (!container) return;
+        container.innerHTML = '';
+        APP_THEMES.forEach(th => {
+          const card = document.createElement('div');
+          card.className = 'theme-option-card' + (state.theme === th.id ? ' active' : '');
+          card.innerHTML = `
+            <div class="theme-preview-dot" style="background: linear-gradient(135deg, ${th.bg} 50%, ${th.accent} 50%);"></div>
+            <span style="font-size:12.5px;font-weight:700;">${th.name}</span>
+          `;
+          card.addEventListener('click', () => {
+            triggerHaptic();
+            state.theme = th.id;
+            saveState();
+            applyTheme();
+            renderThemeAndLangGrids();
+          });
+          container.appendChild(card);
+        });
+      });
+
+      const langGrids = ['quickLangGrid', 'settingsLangGrid'];
+      langGrids.forEach(gridId => {
+        const container = document.getElementById(gridId);
+        if (!container) return;
+        container.innerHTML = '';
+        LANGUAGES.forEach(lg => {
+          const btn = document.createElement('button');
+          btn.className = 'lang-option-btn' + (state.lang === lg.code ? ' active' : '');
+          btn.textContent = lg.label;
+          btn.addEventListener('click', () => {
+            triggerHaptic();
+            state.lang = lg.code;
+            saveState();
+            refreshAll();
+            renderThemeAndLangGrids();
+          });
+          container.appendChild(btn);
+        });
+      });
     }
 
     function updateHeaderTotals() {
@@ -1668,7 +2169,7 @@
       const sel = document.getElementById('homeCatFilter');
       if (!sel) return;
       const currentVal = sel.value || homeCategoryFilter;
-      sel.innerHTML = `<option value="all">All Categories</option>`;
+      sel.innerHTML = `<option value="all">${t('allCategories')}</option>`;
       (state.categories || []).forEach(cat => {
         const opt = document.createElement('option');
         opt.value = cat.id;
@@ -1744,7 +2245,7 @@
       if (!card) return;
       document.getElementById('activeCardLabel').textContent = `${card.name} ••${card.digits}`;
       document.getElementById('heroBalanceDisplay').textContent = formatMoney(card.balance, card.currency);
-      document.getElementById('selectedCardFilterBtn').textContent = `${card.name} Only`;
+      document.getElementById('selectedCardFilterBtn').textContent = `${card.name} (${t('onlySuffix')})`;
       document.querySelectorAll('#cardDots .dot').forEach((d, i) => {
         d.classList.toggle('active', i === activeCardIndex);
       });
@@ -1761,7 +2262,6 @@
       let monthIn = 0;
       let monthOut = 0;
 
-      // Calculate monthly summary for active card
       (state.transactions || []).forEach(tx => {
         const d = new Date(tx.date);
         if (d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
@@ -1776,7 +2276,6 @@
       document.getElementById('monthInVal').textContent = `+${sym}${monthIn.toFixed(0)}`;
       document.getElementById('monthOutVal').textContent = `−${sym}${monthOut.toFixed(0)}`;
 
-      // Filter transactions by Card, Category, and Search Text
       const q = homeSearchQuery.trim().toLowerCase();
       const filteredTxs = (state.transactions || []).filter(tx => {
         if (homeActivityFilter === 'selected' && tx.cardId !== activeCard.id && tx.toCardId !== activeCard.id) {
@@ -1798,7 +2297,7 @@
 
       if (filteredTxs.length === 0) {
         const hasFilters = q || homeCategoryFilter !== 'all' || homeActivityFilter !== 'all';
-        list.innerHTML = `<div class="empty-state">${hasFilters ? 'No transactions match your search/filter.' : 'No transactions found. Tap <strong>+ Add</strong> or <strong>− Expense</strong> above.'}</div>`;
+        list.innerHTML = `<div class="empty-state">${hasFilters ? t('noMatchFound') : t('noTxFound')}</div>`;
         return;
       }
 
@@ -1842,7 +2341,6 @@
       });
     }
 
-    // Open Action Sheet for Edit or Delete
     function openTxActionSheet(txId) {
       const tx = state.transactions.find(t => t.id === txId);
       if (!tx) return;
@@ -1880,20 +2378,19 @@
       const idx = state.transactions.findIndex(t => t.id === txId);
       if (idx === -1) return;
       const tx = state.transactions[idx];
-      if (!confirm(`Delete "${tx.categoryName}"? Card balance will be restored.`)) return;
+      if (!confirm(`Delete "${tx.categoryName}"?`)) return;
 
       revertTransactionBalance(tx);
       state.transactions.splice(idx, 1);
       saveState();
       refreshAll();
-      showToast('Transaction deleted & balance restored', false);
+      showToast('Deleted & balance restored', false);
     }
 
     function openEditTransaction(txId) {
       const tx = state.transactions.find(t => t.id === txId);
       if (!tx) return;
 
-      // Focus the card associated with this transaction
       const cardIdx = state.cards.findIndex(c => c.id === tx.cardId);
       if (cardIdx !== -1) {
         activeCardIndex = cardIdx;
@@ -1912,7 +2409,6 @@
       entryMode = mode;
       editingTxId = editTx ? editTx.id : null;
 
-      // Pre-fill if editing, otherwise start blank with no default category
       selectedCatId = editTx ? editTx.categoryId : null;
       document.getElementById('nativeAmountInput').value = editTx ? (editTx.sourceAmount || editTx.amount) : '';
       document.getElementById('entryNoteInput').value = editTx ? (editTx.note || '') : '';
@@ -1922,12 +2418,13 @@
       document.getElementById('entryCurrencySym').textContent = sym;
 
       if (editTx) {
-        document.getElementById('entryModeTitle').textContent = `Edit ${mode === 'add' ? 'Income' : mode === 'expense' ? 'Expense' : 'Transfer'}`;
-        document.getElementById('submitTxBtn').textContent = 'Save Changes';
+        const editTitles = { add: t('editIncomeTitle'), expense: t('editExpenseTitle'), transfer: t('editTransferTitle') };
+        document.getElementById('entryModeTitle').textContent = editTitles[mode];
+        document.getElementById('submitTxBtn').textContent = t('saveChangesBtn');
       } else {
-        const titleMap = { add: 'Add Money', expense: 'Add Expense', transfer: 'Transfer Between Cards' };
+        const titleMap = { add: t('addMoneyTitle'), expense: t('addExpenseTitle'), transfer: t('transferTitle') };
         document.getElementById('entryModeTitle').textContent = titleMap[mode];
-        document.getElementById('submitTxBtn').textContent = mode === 'add' ? 'Add to Card' : mode === 'expense' ? 'Send Expense' : 'Complete Transfer';
+        document.getElementById('submitTxBtn').textContent = mode === 'add' ? t('addToCardBtn') : mode === 'expense' ? t('sendExpenseBtn') : t('completeTransferBtn');
       }
 
       const transferBar = document.getElementById('transferBar');
@@ -1939,7 +2436,7 @@
           if (idx !== activeCardIndex) {
             const opt = document.createElement('option');
             opt.value = c.id;
-            opt.textContent = `${c.name} (${c.currency}) — Balance: ${formatMoney(c.balance, c.currency)}`;
+            opt.textContent = `${c.name} (${c.currency}) — ${formatMoney(c.balance, c.currency)}`;
             sel.appendChild(opt);
           }
         });
@@ -1981,8 +2478,7 @@
         chargeModeContainer.style.display = 'none';
         const sym = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).symbol;
         summaryBox.innerHTML = `
-          <div>🔄 <strong>Direct Transfer (${fromCard.currency} to ${fromCard.currency}):</strong> No exchange rate or conversion fee.</div>
-          <div>🎯 <strong>${toCard.name} will receive:</strong> ${sym}${amount.toFixed(2)} exact.</div>
+          <div>🔄 <strong>Direct (${fromCard.currency} ➔ ${fromCard.currency}):</strong> ${sym}${amount.toFixed(2)}</div>
         `;
       } else {
         fxFieldsContainer.style.display = 'flex';
@@ -1995,7 +2491,7 @@
         const toSym = (CURRENCY_META[toCurr] || CURRENCY_META.BDT).symbol;
         const fromSym = (CURRENCY_META[fromCard.currency] || CURRENCY_META.EUR).symbol;
 
-        document.getElementById('fxRateLabel').textContent = `Exchange Rate (1 ${fromCard.currency} = ?)`;
+        document.getElementById('fxRateLabel').textContent = `Rate (1 ${fromCard.currency} = ?)`;
 
         let netPrincipal = amount;
         let totalDeducted = amount;
@@ -2012,9 +2508,9 @@
         }
 
         summaryBox.innerHTML = `
-          <div>💱 <strong>Exchange Rate:</strong> 1 ${fromCard.currency} = ${rate} ${toCurr}</div>
-          <div>💸 <strong>Total Deducted from ${fromCard.name}:</strong> ${fromSym}${totalDeducted.toFixed(2)} (${chargeMode === 'deduct_from_amount' ? 'Inclusive' : 'Exclusive'} Fee: ${fromSym}${fee.toFixed(2)})</div>
-          <div>🎯 <strong>${toCard ? toCard.name : 'Receiver'} Gets:</strong> ${toSym}${targetReceived.toLocaleString('en-US', {maximumFractionDigits:0})}</div>
+          <div>💱 <strong>1 ${fromCard.currency} = ${rate} ${toCurr}</strong></div>
+          <div>💸 <strong>Total Deducted:</strong> ${fromSym}${totalDeducted.toFixed(2)} (Fee: ${fromSym}${fee.toFixed(2)})</div>
+          <div>🎯 <strong>${toCard ? toCard.name : 'Receiver'}:</strong> ${toSym}${targetReceived.toLocaleString('en-US', {maximumFractionDigits:0})}</div>
         `;
       }
     }
@@ -2050,7 +2546,7 @@
       customItem.className = 'cat-item';
       customItem.innerHTML = `
         <div class="cat-circle" style="font-weight:800;">+</div>
-        <span class="cat-label">Custom</span>
+        <span class="cat-label">${t('customLabel')}</span>
       `;
       customItem.addEventListener('click', openCustomCatSheet);
       strip.appendChild(customItem);
@@ -2095,14 +2591,14 @@
     function submitTransaction() {
       if (!selectedCatId) {
         triggerHaptic();
-        showToast('Please select a category from the top bar first!', true);
+        showToast(t('selectCatFirst'), true);
         return;
       }
 
       const amountVal = document.getElementById('nativeAmountInput').value;
       const amount = parseFloat(amountVal);
       if (!amount || amount <= 0) {
-        showToast('Please enter a valid amount greater than 0', true);
+        showToast(t('validAmountErr'), true);
         return;
       }
 
@@ -2110,7 +2606,6 @@
       const cat = state.categories.find(c => c.id === selectedCatId);
       const note = document.getElementById('entryNoteInput').value.trim();
 
-      // Calculate available balance including what will be refunded if editing
       let oldTx = null;
       let effectiveBalance = Number(card.balance);
       if (editingTxId) {
@@ -2166,8 +2661,8 @@
         spinner.style.display = 'none';
         avatar.className = 'ring-avatar declined';
         avatar.textContent = '✕';
-        title.textContent = 'Transaction Declined';
-        sub.textContent = `Insufficient balance! Available: ${formatMoney(effectiveBalance, card.currency)}`;
+        title.textContent = t('txDeclined');
+        sub.textContent = `${t('insufficientBal')} (${formatMoney(effectiveBalance, card.currency)})`;
         backdrop.classList.add('open');
 
         setTimeout(() => {
@@ -2175,7 +2670,7 @@
           avatar.className = 'ring-avatar';
         }, 2200);
 
-        showToast('Insufficient balance!', true);
+        showToast(t('insufficientBal'), true);
         return;
       }
 
@@ -2193,7 +2688,7 @@
       spinner.style.display = 'block';
       avatar.className = 'ring-avatar';
       avatar.textContent = cat.icon;
-      title.textContent = editingTxId ? 'Updating...' : (entryMode === 'add' ? 'Adding Funds...' : entryMode === 'expense' ? 'Sending Expense...' : 'Transferring...');
+      title.textContent = '...';
       sub.textContent = `${formatMoney(totalDeducted, card.currency)} • ${card.name}`;
       backdrop.classList.add('open');
 
@@ -2204,12 +2699,10 @@
         avatar.textContent = '✓';
         spawnConfetti();
 
-        // If editing, first revert the old transaction's effect on card balances
         if (oldTx) {
           revertTransactionBalance(oldTx);
         }
 
-        // Apply new balances
         if (entryMode === 'add') {
           card.balance = Number(card.balance) + amount;
         } else if (entryMode === 'expense') {
@@ -2251,8 +2744,8 @@
         }
 
         saveState();
-        title.textContent = 'Completed!';
-        sub.textContent = `New Balance: ${formatMoney(card.balance, card.currency)}`;
+        title.textContent = t('completed');
+        sub.textContent = `${formatMoney(card.balance, card.currency)}`;
 
         setTimeout(() => {
           backdrop.classList.remove('open');
@@ -2291,7 +2784,7 @@
       const card = state.cards.find(c => c.id === cardId);
       if (!card) return;
       document.getElementById('stmtCardTitle').textContent = `${card.name} (••${card.digits})`;
-      document.getElementById('stmtCardBal').textContent = `Current Balance: ${formatMoney(card.balance, card.currency)}`;
+      document.getElementById('stmtCardBal').textContent = `${t('currentBalance')}: ${formatMoney(card.balance, card.currency)}`;
       document.getElementById('stmtFromDate').value = '';
       document.getElementById('stmtToDate').value = '';
       document.getElementById('stmtSearchInput').value = '';
@@ -2331,12 +2824,11 @@
         filteredTotal += Number(isIncoming ? tx.convertedAmount : (tx.totalDeducted || tx.amount)) || 0;
       });
 
-      const labels = { all: 'All Transactions Total', add: 'Total Added', expense: 'Total Expense', transfer: 'Total Transfer' };
-      document.getElementById('stmtSummaryLabel').textContent = labels[typeFilter] || 'Filtered Total:';
+      document.getElementById('stmtSummaryLabel').textContent = `${t('filter' + typeFilter.charAt(0).toUpperCase() + typeFilter.slice(1))}:`;
       document.getElementById('stmtSummaryVal').textContent = formatMoney(filteredTotal, card.currency);
 
       if (filtered.length === 0) {
-        list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-secondary);font-size:13px;">No matching transactions found.</div>`;
+        list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text-secondary);font-size:13px;">${t('noMatchFound')}</div>`;
         return;
       }
 
@@ -2369,6 +2861,7 @@
     function openSettingsModal() {
       renderSettingsCards();
       renderSwatches();
+      renderThemeAndLangGrids();
       document.getElementById('backupExportText').value = JSON.stringify(state);
       document.getElementById('backupImportText').value = '';
       document.getElementById('settingsBackdrop').classList.add('open');
@@ -2437,6 +2930,7 @@
 
     function refreshAll() {
       applyTheme();
+      applyTranslations();
       updateHeaderTotals();
       populateHomeCategoryFilter();
       renderCards();
@@ -2444,11 +2938,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('themeToggleBtn').addEventListener('click', () => {
+      // Quick Theme & Language Sheet triggers
+      const openAppearance = () => {
         triggerHaptic();
-        state.darkMode = !state.darkMode;
-        saveState();
-        applyTheme();
+        renderThemeAndLangGrids();
+        document.getElementById('appearanceBackdrop').classList.add('open');
+      };
+      document.getElementById('quickThemeBtn').addEventListener('click', openAppearance);
+      document.getElementById('quickLangBtn').addEventListener('click', openAppearance);
+      document.getElementById('closeAppearanceBtn').addEventListener('click', () => {
+        document.getElementById('appearanceBackdrop').classList.remove('open');
+      });
+      document.getElementById('appearanceBackdrop').addEventListener('click', (e) => {
+        if (e.target.id === 'appearanceBackdrop') document.getElementById('appearanceBackdrop').classList.remove('open');
       });
 
       document.querySelectorAll('.filter-tab').forEach(btn => {
@@ -2538,7 +3040,7 @@
         populateHomeCategoryFilter();
         renderCategoryStrip();
         document.getElementById('customCatBackdrop').classList.remove('open');
-        showToast(`Category "${name}" added`);
+        showToast(`"${name}" added`);
       });
 
       document.getElementById('closeStmtBtn').addEventListener('click', () => document.getElementById('statementBackdrop').classList.remove('open'));
@@ -2557,6 +3059,7 @@
           document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           document.getElementById('cardsTab').style.display = btn.dataset.tab === 'cardsTab' ? 'block' : 'none';
+          document.getElementById('appearanceTab').style.display = btn.dataset.tab === 'appearanceTab' ? 'block' : 'none';
           document.getElementById('backupTab').style.display = btn.dataset.tab === 'backupTab' ? 'block' : 'none';
         });
       });
@@ -2588,22 +3091,23 @@
       });
 
       document.getElementById('resetWalletBtn').addEventListener('click', () => {
-        if (!confirm('Are you sure you want to reset all wallet data? This will clear all cards and transactions permanently.')) return;
+        if (!confirm('Are you sure you want to reset all wallet data?')) return;
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('pocketflow_wallet_v9');
         localStorage.removeItem('pocketflow_wallet_v8');
         state = getDefaultState();
         activeCardIndex = 0;
         saveState();
         refreshAll();
         document.getElementById('settingsBackdrop').classList.remove('open');
-        showToast('Wallet reset to default', true);
+        showToast('Wallet reset', true);
       });
 
       document.getElementById('copyBackupBtn').addEventListener('click', async () => {
         const text = document.getElementById('backupExportText').value;
         try {
           await navigator.clipboard.writeText(text);
-          showToast('Backup JSON copied to clipboard!');
+          showToast('Backup JSON copied!');
         } catch (e) {
           document.getElementById('backupExportText').select();
           document.execCommand('copy');
@@ -2613,7 +3117,7 @@
 
       document.getElementById('restoreBackupBtn').addEventListener('click', () => {
         const raw = document.getElementById('backupImportText').value.trim();
-        if (!raw) return showToast('Paste backup JSON text first', true);
+        if (!raw) return showToast('Paste backup JSON first', true);
         try {
           const parsed = JSON.parse(raw);
           if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
