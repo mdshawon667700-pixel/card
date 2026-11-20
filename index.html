@@ -1266,6 +1266,31 @@
       transform: scale(0.97);
     }
 
+    .reset-wallet-cta {
+      width: 100%;
+      margin-top: 8px;
+      padding: 14px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.16), rgba(220, 38, 38, 0.08));
+      color: var(--danger);
+      font-size: 14.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.16s ease, background-color 0.2s ease;
+    }
+
+    .reset-wallet-cta:active {
+      transform: scale(0.98);
+      background: var(--danger);
+      color: #ffffff;
+    }
+
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -1280,6 +1305,10 @@
 
     .modal-backdrop.open {
       display: flex;
+    }
+
+    .modal-backdrop.elevated {
+      z-index: 180;
     }
 
     .bottom-sheet {
@@ -1552,6 +1581,59 @@
       min-width: 0;
     }
 
+    .settings-card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--bg-input);
+      border-radius: 14px;
+    }
+
+    .settings-card-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .settings-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .order-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 9px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .order-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .design-edit-btn {
+      padding: 5px 9px;
+      border-radius: 9px;
+      border: none;
+      background: var(--blue-bg);
+      color: var(--blue);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
     .color-swatches {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
@@ -1643,7 +1725,7 @@
   </style>
 </head>
 <body>
-  <!-- iPhone-style 4-Digit PIN Lock Screen (No Easy Bypass) -->
+  <!-- iPhone-style 4-Digit PIN Lock Screen -->
   <div class="pin-lock-screen" id="pinLockScreen" aria-live="polite">
     <div class="pin-header">
       <div class="pin-lock-badge" id="pinLockIcon">🔒</div>
@@ -1744,6 +1826,24 @@
       </div>
 
       <div class="tx-list" id="txList"></div>
+    </div>
+  </div>
+
+  <!-- Edit Existing Card Design Bottom Sheet -->
+  <div class="modal-backdrop elevated" id="editCardDesignBackdrop">
+    <div class="bottom-sheet">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <div>
+          <h3 style="font-size:18px;font-weight:800;" data-i18n="changeCardDesignTitle">Change Card Design</h3>
+          <div id="editDesignCardLabel" style="font-size:12px;color:var(--text-secondary);font-weight:600;"></div>
+        </div>
+        <button class="icon-btn" id="closeEditDesignBtn">✕</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label" data-i18n="pickDesign">Pick Premium Material Design</label>
+        <div class="color-swatches" id="editCardDesignSwatches"></div>
+      </div>
+      <button class="send-cta" style="width:100%;margin:14px 0 0;" id="applyCardDesignBtn" data-i18n="updateDesignBtn">Update Design</button>
     </div>
   </div>
 
@@ -1990,20 +2090,66 @@
 
       <div id="backupTab" style="display:none;">
         <div class="form-group">
-          <label class="form-label" data-i18n="copyBackupLabel">1. Copy Backup Text</label>
-          <textarea class="form-textarea" id="backupExportText" rows="4" readonly></textarea>
-          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;" id="copyBackupBtn" data-i18n="copyBackupBtn">Copy Backup Text</button>
+          <label class="form-label" data-i18n="copyBackupLabel">1. Encrypted Backup</label>
+          <button class="send-cta" style="width:100%;margin:4px 0 0;height:46px;font-size:14px;" id="copyBackupBtn" data-i18n="copyBackupBtn">🔐 Copy Encrypted Backup</button>
         </div>
+
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
+
         <div class="form-group">
-          <label class="form-label" data-i18n="restoreDataLabel">2. Restore Data</label>
-          <textarea class="form-textarea" id="backupImportText" rows="4" placeholder="Paste your saved backup JSON here..."></textarea>
-          <button class="send-cta" style="width:100%;margin:8px 0 0;height:44px;font-size:14px;background:var(--emerald);color:#fff;" id="restoreBackupBtn" data-i18n="restoreDataBtn">Restore Data</button>
+          <label class="form-label">2. Paste Encrypted Backup & Decrypt</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input
+              type="text"
+              class="form-input"
+              id="backupSmallInput"
+              placeholder="Encrypted text will paste here..."
+              style="flex:1;min-width:0;padding:10px 12px;font-size:13px;"
+            />
+            <button
+              type="button"
+              class="pill-btn pill-add"
+              id="pasteEncryptedBtn"
+              style="padding:10px 14px;font-size:12.5px;flex-shrink:0;"
+            >
+              Paste
+            </button>
+            <button
+              type="button"
+              class="pill-btn"
+              id="decryptedJsonBtn"
+              style="display:none;padding:10px 14px;font-size:12.5px;flex-shrink:0;background:var(--blue);color:#fff;"
+            >
+              JSON
+            </button>
+          </div>
+
+          <div id="decryptedPreviewBox" style="display:none;margin-top:10px;">
+            <label class="form-label" style="margin-bottom:4px;">Decrypted JSON Preview</label>
+            <textarea
+              class="form-textarea"
+              id="decryptedJsonArea"
+              rows="4"
+              readonly
+              style="font-size:11.5px;font-family:monospace;"
+            ></textarea>
+          </div>
+
+          <button
+            type="button"
+            class="send-cta"
+            style="width:100%;margin:10px 0 0;height:46px;font-size:14px;background:var(--emerald);color:#fff;"
+            id="restoreBackupBtn"
+          >
+            🔓 Backup Restore
+          </button>
         </div>
+
         <hr style="border:none;border-top:1px solid var(--border-color);margin:16px 0;" />
-        <div class="form-group">
+
+        <div class="form-group" style="margin-bottom:0;">
           <label class="form-label" style="color:var(--danger);" data-i18n="dangerZone">Danger Zone</label>
-          <button class="send-cta" style="width:100%;height:44px;font-size:14px;background:var(--danger-bg);color:var(--danger);" id="resetWalletBtn" data-i18n="resetWalletBtn">⚠️ Reset All Wallet Data</button>
+          <button class="reset-wallet-cta" id="resetWalletBtn" data-i18n="resetWalletBtn">♻️ Reset All Balances to 0</button>
         </div>
       </div>
     </div>
@@ -2070,6 +2216,10 @@
         tabAppearance: 'Themes & Lang',
         tabSecurity: 'PIN Lock',
         tabBackup: 'Backup',
+        changeCardDesignTitle: 'Change Card Design',
+        updateDesignBtn: 'Update Design',
+        designBtnLabel: '🎨 Design',
+        removeBtnLabel: 'Remove',
         pinLockTitle: '4-Digit App PIN',
         pinEnabledStatus: 'Enabled — PIN required on launch',
         pinDisabledStatus: 'Disabled — Open without PIN',
@@ -2099,12 +2249,10 @@
         chooseTheme: 'Choose App Theme',
         chooseLang: 'Choose Language',
         appearanceTitle: 'Theme & Language',
-        copyBackupLabel: '1. Copy Backup Text',
-        copyBackupBtn: 'Copy Backup Text',
-        restoreDataLabel: '2. Restore Data',
-        restoreDataBtn: 'Restore Data',
+        copyBackupLabel: '1. Encrypted Backup',
+        copyBackupBtn: '🔐 Copy Encrypted Backup',
         dangerZone: 'Danger Zone',
-        resetWalletBtn: '⚠️ Reset All Wallet Data',
+        resetWalletBtn: '♻️ Reset All Balances to 0',
         selectCatFirst: 'Please select a category from the top bar first!',
         validAmountErr: 'Please enter a valid amount greater than 0',
         insufficientBal: 'Insufficient balance!',
@@ -2156,6 +2304,10 @@
         tabAppearance: 'Temi e Lingua',
         tabSecurity: 'Blocco PIN',
         tabBackup: 'Backup',
+        changeCardDesignTitle: 'Cambia Design Carta',
+        updateDesignBtn: 'Aggiorna Design',
+        designBtnLabel: '🎨 Design',
+        removeBtnLabel: 'Rimuovi',
         pinLockTitle: 'PIN App a 4 Cifre',
         pinEnabledStatus: 'Attivo — PIN richiesto all’avvio',
         pinDisabledStatus: 'Disattivato',
@@ -2185,12 +2337,10 @@
         chooseTheme: 'Scegli Tema App',
         chooseLang: 'Scegli Lingua',
         appearanceTitle: 'Tema e Lingua',
-        copyBackupLabel: '1. Copia Testo Backup',
-        copyBackupBtn: 'Copia Backup',
-        restoreDataLabel: '2. Ripristina Dati',
-        restoreDataBtn: 'Ripristina Dati',
+        copyBackupLabel: '1. Backup Criptato',
+        copyBackupBtn: '🔐 Copia Backup Criptato',
         dangerZone: 'Zona Pericolosa',
-        resetWalletBtn: '⚠️ Ripristina Tutti i Dati',
+        resetWalletBtn: '♻️ Azzera Tutti i Saldi a 0',
         selectCatFirst: 'Seleziona prima una categoria in alto!',
         validAmountErr: 'Inserisci un importo valido maggiore di 0',
         insufficientBal: 'Saldo insufficiente!',
@@ -2242,6 +2392,10 @@
         tabAppearance: 'Temas e Idioma',
         tabSecurity: 'PIN',
         tabBackup: 'Copia',
+        changeCardDesignTitle: 'Cambiar Diseño de Tarjeta',
+        updateDesignBtn: 'Actualizar Diseño',
+        designBtnLabel: '🎨 Diseño',
+        removeBtnLabel: 'Quitar',
         pinLockTitle: 'PIN de 4 Dígitos',
         pinEnabledStatus: 'Activado — PIN al abrir',
         pinDisabledStatus: 'Desactivado',
@@ -2271,12 +2425,10 @@
         chooseTheme: 'Elige Tema de la App',
         chooseLang: 'Elige Idioma',
         appearanceTitle: 'Tema e Idioma',
-        copyBackupLabel: '1. Copiar Texto de Respaldo',
-        copyBackupBtn: 'Copiar Respaldo',
-        restoreDataLabel: '2. Restaurar Datos',
-        restoreDataBtn: 'Restaurar Datos',
+        copyBackupLabel: '1. Respaldo Encriptado',
+        copyBackupBtn: '🔐 Copiar Respaldo Encriptado',
         dangerZone: 'Zona de Peligro',
-        resetWalletBtn: '⚠️ Borrar Todos los Datos',
+        resetWalletBtn: '♻️ Reiniciar Todos los Saldos a 0',
         selectCatFirst: '¡Selecciona una categoría arriba primero!',
         validAmountErr: 'Introduce un monto válido mayor que 0',
         insufficientBal: '¡Saldo insuficiente!',
@@ -2328,6 +2480,10 @@
         tabAppearance: 'থিম ও ভাষা',
         tabSecurity: 'পিন লক',
         tabBackup: 'ব্যাকআপ',
+        changeCardDesignTitle: 'কার্ডের ডিজাইন বদলান',
+        updateDesignBtn: 'ডিজাইন আপডেট করুন',
+        designBtnLabel: '🎨 ডিজাইন',
+        removeBtnLabel: 'মুছুন',
         pinLockTitle: '৪ সংখ্যার অ্যাপ পিন',
         pinEnabledStatus: 'চালু আছে — ওপেন করলে পিন চাইবে',
         pinDisabledStatus: 'বন্ধ আছে',
@@ -2357,12 +2513,10 @@
         chooseTheme: 'অ্যাপের থিম বাছাই করুন',
         chooseLang: 'ভাষা নির্বাচন করুন',
         appearanceTitle: 'থিম ও ভাষা',
-        copyBackupLabel: '১. ব্যাকআপ টেক্সট কপি করুন',
-        copyBackupBtn: 'ব্যাকআপ কপি করুন',
-        restoreDataLabel: '২. ডেটা রিস্টোর করুন',
-        restoreDataBtn: 'রিস্টোর করুন',
+        copyBackupLabel: '১. এনক্রিপ্টেড ব্যাকআপ',
+        copyBackupBtn: '🔐 এনক্রিপ্টেড ব্যাকআপ কপি করুন',
         dangerZone: 'ডেঞ্জার জোন',
-        resetWalletBtn: '⚠️ সব ডেটা রিসেট করুন',
+        resetWalletBtn: '♻️ সব ব্যালেন্স ০ করুন',
         selectCatFirst: 'দয়া করে ওপর থেকে আগে একটি ক্যাটাগরি সিলেক্ট করুন!',
         validAmountErr: 'সঠিক অ্যামাউন্ট লিখুন (০ এর বেশি)',
         insufficientBal: 'কার্ডে পর্যাপ্ত ব্যালেন্স নেই!',
@@ -2434,7 +2588,56 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v11';
+    const STORAGE_KEY = 'pocketflow_wallet_v12';
+    const BACKUP_CIPHER_PREFIX = 'PFENC1:';
+    const BACKUP_KEY_BYTES = [0x50, 0x6f, 0x63, 0x6b, 0x65, 0x74, 0x46, 0x6c, 0x6f, 0x77, 0x32, 0x30, 0x32, 0x36, 0x21, 0x23];
+
+    function encryptBackupPayload(jsonStr) {
+      const encoder = new TextEncoder();
+      const rawBytes = encoder.encode(jsonStr);
+      const salt = Math.floor(Math.random() * 250) + 1;
+      const out = new Uint8Array(rawBytes.length + 1);
+      out[0] = salt;
+      for (let i = 0; i < rawBytes.length; i++) {
+        const k = BACKUP_KEY_BYTES[i % BACKUP_KEY_BYTES.length];
+        out[i + 1] = rawBytes[i] ^ k ^ ((salt + i * 7) & 0xff);
+      }
+      let binary = '';
+      for (let i = 0; i < out.length; i++) {
+        binary += String.fromCharCode(out[i]);
+      }
+      return BACKUP_CIPHER_PREFIX + btoa(binary);
+    }
+
+    function decryptBackupPayload(inputStr) {
+      const trimmed = String(inputStr || '').trim();
+      if (!trimmed) throw new Error('Empty backup');
+
+      if (trimmed.startsWith('{')) {
+        return JSON.parse(trimmed);
+      }
+
+      let b64Part = trimmed.startsWith(BACKUP_CIPHER_PREFIX)
+        ? trimmed.slice(BACKUP_CIPHER_PREFIX.length)
+        : trimmed;
+
+      b64Part = b64Part.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+      const padLen = b64Part.length % 4;
+      if (padLen > 0) {
+        b64Part += '='.repeat(4 - padLen);
+      }
+
+      const binary = atob(b64Part);
+      if (binary.length < 2) throw new Error('Invalid cipher');
+      const salt = binary.charCodeAt(0);
+      const plainBytes = new Uint8Array(binary.length - 1);
+      for (let i = 1; i < binary.length; i++) {
+        const k = BACKUP_KEY_BYTES[(i - 1) % BACKUP_KEY_BYTES.length];
+        plainBytes[i - 1] = binary.charCodeAt(i) ^ k ^ ((salt + (i - 1) * 7) & 0xff);
+      }
+      const decoder = new TextDecoder();
+      return JSON.parse(decoder.decode(plainBytes));
+    }
 
     function hashSecret(val) {
       const str = 'pf_sec_v1:' + String(val || '');
@@ -2482,6 +2685,23 @@
       };
     }
 
+    function getZeroedWalletState() {
+      const zeroedCards = (state.cards && state.cards.length > 0)
+        ? state.cards.map(c => ({ ...c, balance: 0 }))
+        : getDefaultState().cards.map(c => ({ ...c, balance: 0 }));
+
+      return {
+        theme: state.theme || 'light',
+        lang: state.lang || 'en',
+        pinEnabled: Boolean(state.pinEnabled),
+        pinHash: state.pinHash || '',
+        recoveryHash: state.recoveryHash || hashSecret('0000'),
+        cards: zeroedCards,
+        categories: Array.isArray(state.categories) && state.categories.length > 0 ? [...state.categories] : [...DEFAULT_CATEGORIES],
+        transactions: []
+      };
+    }
+
     let state = loadState();
     let activeCardIndex = 0;
     let homeActivityFilter = 'all';
@@ -2493,12 +2713,19 @@
     let selectedCatId = null;
     let selectedGradient = CARD_DESIGNS[0].grad;
     let selectedNetwork = "VISA";
+    let editingDesignCardId = null;
+    let tempDesignGrad = CARD_DESIGNS[0].grad;
+    let tempDesignNetwork = "VISA";
     let selectedNewIcon = ICON_LIBRARY[0];
     let statementCardId = null;
 
+    // Backup Decrypt/Restore Flow State
+    let currentDecryptedJsonString = '';
+    let currentParsedBackupData = null;
+
     // PIN Lock State
     let pinBuffer = '';
-    let pinFlowMode = 'unlock'; // 'unlock' | 'setup_new' | 'setup_confirm'
+    let pinFlowMode = 'unlock';
     let pendingNewPin = '';
 
     function t(key) {
@@ -2510,6 +2737,7 @@
       try {
         const raw =
           localStorage.getItem(STORAGE_KEY) ||
+          localStorage.getItem('pocketflow_wallet_v11') ||
           localStorage.getItem('pocketflow_wallet_v10') ||
           localStorage.getItem('pocketflow_wallet_v9') ||
           localStorage.getItem('pocketflow_wallet_v8');
@@ -2540,6 +2768,46 @@
 
     function triggerHaptic() {
       if (navigator.vibrate) navigator.vibrate(12);
+    }
+
+    function setDecryptedJsonState(parsedObj) {
+      currentParsedBackupData = parsedObj;
+      currentDecryptedJsonString = JSON.stringify(parsedObj, null, 2);
+
+      const jsonBtn = document.getElementById('decryptedJsonBtn');
+      const previewBox = document.getElementById('decryptedPreviewBox');
+      const jsonArea = document.getElementById('decryptedJsonArea');
+
+      if (jsonBtn) jsonBtn.style.display = 'inline-flex';
+      if (previewBox) previewBox.style.display = 'block';
+      if (jsonArea) jsonArea.value = currentDecryptedJsonString;
+    }
+
+    function clearDecryptedJsonState() {
+      currentDecryptedJsonString = '';
+      currentParsedBackupData = null;
+
+      const jsonBtn = document.getElementById('decryptedJsonBtn');
+      const previewBox = document.getElementById('decryptedPreviewBox');
+      const jsonArea = document.getElementById('decryptedJsonArea');
+
+      if (jsonBtn) jsonBtn.style.display = 'none';
+      if (previewBox) previewBox.style.display = 'none';
+      if (jsonArea) jsonArea.value = '';
+    }
+
+    function decryptFromEncryptedInput(rawVal) {
+      const cleaned = String(rawVal || '').trim();
+      if (!cleaned) {
+        clearDecryptedJsonState();
+        return null;
+      }
+      const parsed = decryptBackupPayload(cleaned);
+      if (!parsed || !Array.isArray(parsed.cards) || parsed.cards.length === 0) {
+        throw new Error('Invalid backup payload');
+      }
+      setDecryptedJsonState(parsed);
+      return parsed;
     }
 
     function updatePinDotsVisual(errorState = false) {
@@ -3728,25 +3996,90 @@
       renderSecurityTab();
       const recInput = document.getElementById('recoveryKeyInput');
       if (recInput) recInput.value = '';
-      document.getElementById('backupExportText').value = JSON.stringify(state);
-      document.getElementById('backupImportText').value = '';
+      const smallInput = document.getElementById('backupSmallInput');
+      if (smallInput) smallInput.value = '';
+      clearDecryptedJsonState();
       document.getElementById('settingsBackdrop').classList.add('open');
+    }
+
+    function moveCardOrder(index, delta) {
+      const targetIndex = index + delta;
+      if (targetIndex < 0 || targetIndex >= state.cards.length) return;
+      triggerHaptic();
+
+      const activeCardId = (state.cards[activeCardIndex] || state.cards[0])?.id;
+      const [moved] = state.cards.splice(index, 1);
+      state.cards.splice(targetIndex, 0, moved);
+
+      if (activeCardId) {
+        const newIdx = state.cards.findIndex(c => c.id === activeCardId);
+        if (newIdx !== -1) activeCardIndex = newIdx;
+      }
+
+      saveState();
+      renderSettingsCards();
+      refreshAll(false);
+
+      const carousel = document.getElementById('cardsCarousel');
+      if (carousel && carousel.children[activeCardIndex]) {
+        carousel.children[activeCardIndex].scrollIntoView({ behavior: 'smooth', inline: 'center' });
+      }
+    }
+
+    function openEditCardDesignModal(cardId) {
+      const card = state.cards.find(c => c.id === cardId);
+      if (!card) return;
+      triggerHaptic();
+      editingDesignCardId = card.id;
+      tempDesignGrad = card.gradient || CARD_DESIGNS[0].grad;
+      tempDesignNetwork = card.network || "VISA";
+
+      document.getElementById('editDesignCardLabel').textContent = `${card.name} ••${card.digits}`;
+
+      const box = document.getElementById('editCardDesignSwatches');
+      box.innerHTML = '';
+      CARD_DESIGNS.forEach((design) => {
+        const s = document.createElement('div');
+        s.className = 'swatch' + (design.grad === tempDesignGrad ? ' active' : '');
+        s.style.background = design.grad;
+        s.title = design.name;
+        s.addEventListener('click', () => {
+          triggerHaptic();
+          tempDesignGrad = design.grad;
+          tempDesignNetwork = design.defaultNetwork || "VISA";
+          box.querySelectorAll('.swatch').forEach(el => el.classList.remove('active'));
+          s.classList.add('active');
+        });
+        box.appendChild(s);
+      });
+
+      document.getElementById('editCardDesignBackdrop').classList.add('open');
     }
 
     function renderSettingsCards() {
       const box = document.getElementById('settingsCardsList');
       if (!box) return;
       box.innerHTML = '';
-      state.cards.forEach(card => {
+      state.cards.forEach((card, idx) => {
         const row = document.createElement('div');
-        row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:var(--bg-input);border-radius:14px;';
+        row.className = 'settings-card-row';
         row.innerHTML = `
-          <div>
-            <div style="font-size:14px;font-weight:700;">${card.name} ••${card.digits}</div>
+          <div class="settings-card-info">
+            <div style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${idx + 1}. ${card.name} ••${card.digits}</div>
             <div style="font-size:12px;color:var(--emerald);font-weight:700;">${formatMoney(card.balance, card.currency)} (${card.currency})</div>
           </div>
-          ${state.cards.length > 1 ? `<button class="pill-btn" style="background:var(--danger-bg);color:var(--danger);padding:6px 12px;font-size:12px;" data-del="${card.id}">Remove</button>` : ''}
+          <div class="settings-card-actions">
+            <button class="order-btn" data-up="${idx}" title="Move Up" ${idx === 0 ? 'disabled' : ''}>↑</button>
+            <button class="order-btn" data-down="${idx}" title="Move Down" ${idx === state.cards.length - 1 ? 'disabled' : ''}>↓</button>
+            <button class="design-edit-btn" data-design="${card.id}">${t('designBtnLabel')}</button>
+            ${state.cards.length > 1 ? `<button class="pill-btn" style="background:var(--danger-bg);color:var(--danger);padding:5px 9px;font-size:11.5px;" data-del="${card.id}">${t('removeBtnLabel')}</button>` : ''}
+          </div>
         `;
+
+        row.querySelector('[data-up]')?.addEventListener('click', () => moveCardOrder(idx, -1));
+        row.querySelector('[data-down]')?.addEventListener('click', () => moveCardOrder(idx, 1));
+        row.querySelector('[data-design]')?.addEventListener('click', () => openEditCardDesignModal(card.id));
+
         const delBtn = row.querySelector('[data-del]');
         if (delBtn) {
           delBtn.addEventListener('click', () => {
@@ -3804,6 +4137,32 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Edit Card Design Modal events
+      document.getElementById('closeEditDesignBtn')?.addEventListener('click', () => {
+        editingDesignCardId = null;
+        document.getElementById('editCardDesignBackdrop').classList.remove('open');
+      });
+      document.getElementById('editCardDesignBackdrop')?.addEventListener('click', (e) => {
+        if (e.target.id === 'editCardDesignBackdrop') {
+          editingDesignCardId = null;
+          document.getElementById('editCardDesignBackdrop').classList.remove('open');
+        }
+      });
+      document.getElementById('applyCardDesignBtn')?.addEventListener('click', () => {
+        if (!editingDesignCardId) return;
+        const card = state.cards.find(c => c.id === editingDesignCardId);
+        if (card) {
+          card.gradient = tempDesignGrad;
+          card.network = tempDesignNetwork;
+          saveState();
+          renderSettingsCards();
+          refreshAll(false);
+          showToast(t('completed'));
+        }
+        editingDesignCardId = null;
+        document.getElementById('editCardDesignBackdrop').classList.remove('open');
+      });
+
       // PIN Keypad events
       document.querySelectorAll('#pinKeypad .pin-key[data-digit]').forEach(btn => {
         btn.addEventListener('click', () => handlePinDigit(btn.dataset.digit));
@@ -3814,7 +4173,6 @@
         renderSecurityTab();
       });
 
-      // Recovery Code verification on lock screen (no casual bypass)
       document.getElementById('pinUnlockWithRecoveryBtn')?.addEventListener('click', () => {
         const enteredCode = prompt(t('recoveryPromptMsg'));
         if (enteredCode === null) return;
@@ -3830,7 +4188,6 @@
         }
       });
 
-      // Security tab controls
       document.getElementById('pinToggleCheckbox')?.addEventListener('change', (e) => {
         triggerHaptic();
         if (e.target.checked) {
@@ -4055,44 +4412,135 @@
       });
 
       document.getElementById('resetWalletBtn').addEventListener('click', () => {
-        if (!confirm('Are you sure you want to reset all wallet data?')) return;
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.removeItem('pocketflow_wallet_v10');
-        localStorage.removeItem('pocketflow_wallet_v9');
-        localStorage.removeItem('pocketflow_wallet_v8');
-        state = getDefaultState();
+        if (!confirm('Reset all card balances & transactions to 0?')) return;
+        state = getZeroedWalletState();
         activeCardIndex = 0;
         saveState();
+        renderSettingsCards();
         refreshAll(true);
         document.getElementById('settingsBackdrop').classList.remove('open');
-        showToast('Wallet reset', true);
+        showToast('All balances reset to 0');
       });
 
       document.getElementById('copyBackupBtn').addEventListener('click', async () => {
-        const text = document.getElementById('backupExportText').value;
+        const encryptedText = encryptBackupPayload(JSON.stringify(state));
         try {
-          await navigator.clipboard.writeText(text);
-          showToast('Backup JSON copied!');
+          await navigator.clipboard.writeText(encryptedText);
+          showToast('Encrypted backup copied!');
         } catch (e) {
-          document.getElementById('backupExportText').select();
+          const tempArea = document.createElement('textarea');
+          tempArea.value = encryptedText;
+          document.body.appendChild(tempArea);
+          tempArea.select();
           document.execCommand('copy');
-          showToast('Backup JSON copied!');
+          tempArea.remove();
+          showToast('Encrypted backup copied!');
+        }
+      });
+
+      document.getElementById('pasteEncryptedBtn')?.addEventListener('click', async () => {
+        const inputEl = document.getElementById('backupSmallInput');
+        if (!inputEl) return;
+
+        let pastedText = '';
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            pastedText = await navigator.clipboard.readText();
+          }
+        } catch (err) {
+          pastedText = '';
+        }
+
+        if (!pastedText) {
+          inputEl.focus();
+          try {
+            document.execCommand('paste');
+            pastedText = inputEl.value;
+          } catch (err) {}
+        }
+
+        if (!pastedText) {
+          inputEl.focus();
+          showToast('Input বক্সে চাপ দিয়ে Paste করুন', true);
+          return;
+        }
+
+        inputEl.value = pastedText.trim();
+
+        try {
+          decryptFromEncryptedInput(inputEl.value);
+          showToast('Decrypted! JSON বাটন এসেছে');
+        } catch (e) {
+          clearDecryptedJsonState();
+          showToast('Invalid or corrupted backup data', true);
+        }
+      });
+
+      document.getElementById('backupSmallInput')?.addEventListener('input', (e) => {
+        const val = e.target.value.trim();
+        if (!val) {
+          clearDecryptedJsonState();
+          return;
+        }
+        try {
+          decryptFromEncryptedInput(val);
+        } catch (err) {
+          clearDecryptedJsonState();
+        }
+      });
+
+      document.getElementById('decryptedJsonBtn')?.addEventListener('click', async () => {
+        if (!currentDecryptedJsonString) {
+          const inputVal = document.getElementById('backupSmallInput')?.value || '';
+          try {
+            decryptFromEncryptedInput(inputVal);
+          } catch (e) {
+            return showToast('No decrypted JSON available', true);
+          }
+        }
+
+        if (!currentDecryptedJsonString) return;
+
+        try {
+          await navigator.clipboard.writeText(currentDecryptedJsonString);
+          showToast('Decrypted JSON copied!');
+        } catch (e) {
+          const jsonArea = document.getElementById('decryptedJsonArea');
+          if (jsonArea) {
+            jsonArea.select();
+            document.execCommand('copy');
+          }
+          showToast('Decrypted JSON copied!');
         }
       });
 
       document.getElementById('restoreBackupBtn').addEventListener('click', () => {
-        const raw = document.getElementById('backupImportText').value.trim();
-        if (!raw) return showToast('Paste backup JSON first', true);
         try {
-          const parsed = JSON.parse(raw);
-          if (!parsed.cards || !Array.isArray(parsed.cards)) throw new Error('Invalid format');
-          state = parsed;
+          let dataToRestore = currentParsedBackupData;
+          if (!dataToRestore) {
+            const rawInput = document.getElementById('backupSmallInput')?.value || '';
+            dataToRestore = decryptFromEncryptedInput(rawInput);
+          }
+          if (!dataToRestore || !Array.isArray(dataToRestore.cards) || dataToRestore.cards.length === 0) {
+            throw new Error('Invalid data');
+          }
+
+          state = {
+            ...getDefaultState(),
+            ...dataToRestore,
+            cards: dataToRestore.cards,
+            categories: Array.isArray(dataToRestore.categories) && dataToRestore.categories.length > 0
+              ? dataToRestore.categories
+              : [...DEFAULT_CATEGORIES],
+            transactions: Array.isArray(dataToRestore.transactions) ? dataToRestore.transactions : []
+          };
+          activeCardIndex = 0;
           saveState();
           refreshAll(true);
           document.getElementById('settingsBackdrop').classList.remove('open');
           showToast('Wallet data restored!');
         } catch (e) {
-          showToast('Invalid JSON backup text', true);
+          showToast('Invalid or corrupted backup data', true);
         }
       });
 
