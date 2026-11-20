@@ -223,12 +223,12 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 6px;
     }
 
     .icon-btn {
-      width: 36px;
-      height: 36px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       border: 1px solid var(--border-color);
       background: var(--bg-card);
@@ -237,7 +237,7 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 14px;
       box-shadow: var(--shadow-sm);
       touch-action: manipulation;
       transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), var(--theme-transition);
@@ -249,9 +249,9 @@
 
     .lang-badge-btn {
       width: auto;
-      padding: 0 10px;
+      padding: 0 9px;
       border-radius: 999px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.02em;
     }
@@ -1402,6 +1402,7 @@
           </div>
         </div>
         <div class="header-actions">
+          <button class="icon-btn lang-badge-btn" id="allSummaryPdfBtn" title="All Cards Summary PDF">📄 All</button>
           <button class="icon-btn lang-badge-btn" id="quickLangBtn" title="Switch Language">EN</button>
           <button class="icon-btn" id="quickThemeBtn" title="Switch Theme">🎨</button>
           <button class="icon-btn" id="settingsBtn" title="Wallet Settings" aria-label="Wallet Settings">⚙️</button>
@@ -2966,6 +2967,149 @@
       return new Blob([pdf], { type: 'application/pdf' });
     }
 
+    function buildAllCardsSummaryPdfBlob() {
+      const escPdf = (str) =>
+        String(str || '')
+          .replace(/[^\x20-\x7E]/g, (ch) => {
+            const map = {
+              '€': 'EUR ',
+              '৳': 'BDT ',
+              '£': 'GBP ',
+              '$': 'USD ',
+              '¥': 'JPY ',
+              '•': '-',
+              '➔': '->',
+              '⇄': '<->',
+              '–': '-',
+              '—': '-'
+            };
+            return map[ch] || '';
+          })
+          .replace(/\\/g, '\\\\')
+          .replace(/\(/g, '\\(')
+          .replace(/\)/g, '\\)');
+
+      const cards = state.cards || [];
+      const txs = state.transactions || [];
+
+      const currencyTotals = {};
+      let totalEurEquivalent = 0;
+      let totalBdtDirect = 0;
+
+      cards.forEach((c) => {
+        const curr = c.currency || 'EUR';
+        const bal = Number(c.balance) || 0;
+        currencyTotals[curr] = (currencyTotals[curr] || 0) + bal;
+
+        if (curr === 'BDT') {
+          totalBdtDirect += bal;
+        } else {
+          const rate = (CURRENCY_META[curr] || CURRENCY_META.EUR).rateToEur;
+          totalEurEquivalent += bal * rate;
+        }
+      });
+
+      const lines = [];
+      lines.push('PocketFlow - All Cards Total Summary');
+      lines.push(`Generated: ${escPdf(new Date().toLocaleString('en-GB'))} | Total Cards: ${cards.length}`);
+      lines.push('======================================================================');
+      lines.push(`Combined EUR Equivalent (Non-BDT): EUR ${totalEurEquivalent.toFixed(2)}`);
+      lines.push(`Total BDT Balance: BDT ${totalBdtDirect.toLocaleString('en-US', { maximumFractionDigits: 0 })}`);
+      lines.push('----------------------------------------------------------------------');
+      lines.push('CARDS BREAKDOWN:');
+
+      cards.forEach((c, idx) => {
+        lines.push(
+          `${idx + 1}. ${c.name} (••${c.digits || '0000'}) [${c.currency}] -> Balance: ${formatMoney(c.balance, c.currency)}`
+        );
+      });
+
+      lines.push('----------------------------------------------------------------------');
+      lines.push('CURRENCY TOTALS:');
+      Object.keys(currencyTotals).forEach((curr) => {
+        lines.push(`* ${curr}: ${formatMoney(currencyTotals[curr], curr)}`);
+      });
+
+      lines.push('----------------------------------------------------------------------');
+      lines.push(`RECENT TRANSACTIONS (${Math.min(txs.length, 25)} of ${txs.length}):`);
+
+      if (!txs.length) {
+        lines.push('No transactions recorded yet.');
+      } else {
+        txs.slice(0, 25).forEach((tx, i) => {
+          const card = cards.find((c) => c.id === tx.cardId);
+          const cardLabel = card ? `${card.name} (••${card.digits})` : 'Card';
+          const dStr = new Date(tx.date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+          });
+          const amtStr = formatMoney(tx.sourceAmount || tx.amount, tx.currency || (card ? card.currency : 'EUR'));
+          const notePart = tx.note ? ` | ${tx.note}` : '';
+          lines.push(`${i + 1}. [${dStr}] ${cardLabel} - ${tx.categoryName} (${tx.type}): ${amtStr}${notePart}`);
+        });
+      }
+
+      let streamContent = 'BT\n/F1 11 Tf\n40 795 Td\n14 TL\n';
+      lines.forEach((line, idx) => {
+        const safeLine = escPdf(line).slice(0, 96);
+        if (idx === 0) {
+          streamContent += `/F1 14 Tf\n(${safeLine}) Tj\nT*\n/F1 10 Tf\n`;
+        } else {
+          streamContent += `(${safeLine}) Tj\nT*\n`;
+        }
+      });
+      streamContent += 'ET';
+
+      const objects = [];
+      objects.push('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+      objects.push('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+      objects.push('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n');
+      objects.push(`4 0 obj\n<< /Length ${streamContent.length} >>\nstream\n${streamContent}\nendstream\nendobj\n`);
+      objects.push('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
+
+      let pdf = '%PDF-1.4\n';
+      const offsets = [0];
+      objects.forEach((obj) => {
+        offsets.push(pdf.length);
+        pdf += obj;
+      });
+
+      const xrefStart = pdf.length;
+      pdf += `xref\n0 ${objects.length + 1}\n`;
+      pdf += '0000000000 65535 f \n';
+      for (let i = 1; i <= objects.length; i++) {
+        pdf += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+      }
+      pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefStart}\n%%EOF`;
+
+      return new Blob([pdf], { type: 'application/pdf' });
+    }
+
+    async function exportPdfBlob(blob, fileName, successMsg) {
+      try {
+        const file = new File([blob], fileName, { type: 'application/pdf' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: fileName
+          });
+          showToast(successMsg || 'PDF ready to save!');
+          return;
+        }
+      } catch (err) {}
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 2000);
+      showToast(successMsg || 'Statement PDF downloaded!');
+    }
+
     function openSettingsModal() {
       renderSettingsCards();
       renderSwatches();
@@ -3046,6 +3190,13 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('allSummaryPdfBtn')?.addEventListener('click', async () => {
+        triggerHaptic();
+        const blob = buildAllCardsSummaryPdfBlob();
+        const dateTag = new Date().toISOString().slice(0, 10);
+        await exportPdfBlob(blob, `PocketFlow_All_Cards_Summary_${dateTag}.pdf`, 'All cards summary PDF ready!');
+      });
+
       const openAppearance = () => {
         triggerHaptic();
         renderThemeAndLangGrids();
@@ -3175,28 +3326,7 @@
         const summaryVal = document.getElementById('stmtSummaryVal').textContent;
         const blob = buildStatementPdfBlob(card, filtered, summaryLabel, summaryVal);
         const fileName = `PocketFlow_${card.name.replace(/\s+/g, '_')}_${card.digits}.pdf`;
-
-        try {
-          const file = new File([blob], fileName, { type: 'application/pdf' });
-          if (navigator.canShare && navigator.canShare({ files: [file] })) {
-            await navigator.share({
-              files: [file],
-              title: fileName
-            });
-            showToast('PDF ready to save!');
-            return;
-          }
-        } catch (err) {}
-
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
-        showToast('Statement PDF downloaded!');
+        await exportPdfBlob(blob, fileName, 'Statement PDF ready to save!');
       });
 
       document.getElementById('settingsBtn').addEventListener('click', openSettingsModal);
