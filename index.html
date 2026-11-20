@@ -1643,7 +1643,7 @@
   </style>
 </head>
 <body>
-  <!-- iPhone-style 4-Digit PIN Lock Screen -->
+  <!-- iPhone-style 4-Digit PIN Lock Screen (No Easy Bypass) -->
   <div class="pin-lock-screen" id="pinLockScreen" aria-live="polite">
     <div class="pin-header">
       <div class="pin-lock-badge" id="pinLockIcon">🔒</div>
@@ -1674,7 +1674,7 @@
 
     <div class="pin-footer-actions">
       <button class="pin-link-btn" id="pinCancelSetupBtn" style="display:none;">Cancel</button>
-      <button class="pin-link-btn" id="pinForgotBtn">Forgot PIN?</button>
+      <button class="pin-link-btn" id="pinUnlockWithRecoveryBtn">🔑 Recovery Key</button>
     </div>
   </div>
 
@@ -1975,6 +1975,14 @@
         </div>
 
         <div id="pinConfiguredControls" style="display:none;">
+          <div class="form-group" style="background:var(--bg-subtle);padding:14px;border-radius:16px;">
+            <label class="form-label" data-i18n="recoveryKeyLabel">Secret Recovery Code (Only if you forget PIN)</label>
+            <div class="form-row">
+              <input type="text" class="form-input" id="recoveryKeyInput" placeholder="e.g. my-secret-99" />
+              <button class="pill-btn pill-add" style="padding:10px 14px;font-size:12px;" id="saveRecoveryKeyBtn" data-i18n="saveKeyBtn">Save</button>
+            </div>
+            <div style="font-size:11px;color:var(--text-secondary);margin-top:6px;" data-i18n="recoveryKeyHint">Anyone without this recovery code cannot bypass the PIN lock.</div>
+          </div>
           <button class="action-sheet-btn" id="changePinBtn" data-i18n="changePinBtn">🔑 Change 4-Digit PIN</button>
           <button class="action-sheet-btn" id="lockNowBtn" data-i18n="lockNowBtn">🔒 Lock App Now</button>
         </div>
@@ -2065,6 +2073,12 @@
         pinLockTitle: '4-Digit App PIN',
         pinEnabledStatus: 'Enabled — PIN required on launch',
         pinDisabledStatus: 'Disabled — Open without PIN',
+        recoveryKeyLabel: 'Secret Recovery Code (Only if you forget PIN)',
+        saveKeyBtn: 'Save',
+        recoveryKeyHint: 'Anyone without this recovery code cannot bypass the PIN lock.',
+        recoverySavedMsg: 'Recovery code updated!',
+        recoveryPromptMsg: 'Enter your secret Recovery Code to unlock & disable PIN:',
+        recoveryWrongMsg: 'Wrong recovery code! Access denied.',
         changePinBtn: '🔑 Change 4-Digit PIN',
         lockNowBtn: '🔒 Lock App Now',
         pinEnterTitle: 'Enter Passcode',
@@ -2077,7 +2091,7 @@
         pinWrong: 'Incorrect PIN. Try again',
         pinSetSuccess: '4-digit PIN lock enabled!',
         pinOffSuccess: 'PIN lock disabled',
-        pinForgotBtn: 'Forgot PIN?',
+        pinUnlockWithRecoveryBtn: '🔑 Recovery Key',
         pinCancelBtn: 'Cancel',
         addNewCardTitle: '+ Add New Card',
         pickDesign: 'Pick Premium Material Design',
@@ -2145,6 +2159,12 @@
         pinLockTitle: 'PIN App a 4 Cifre',
         pinEnabledStatus: 'Attivo — PIN richiesto all’avvio',
         pinDisabledStatus: 'Disattivato',
+        recoveryKeyLabel: 'Codice Segreto di Recupero (se dimentichi il PIN)',
+        saveKeyBtn: 'Salva',
+        recoveryKeyHint: 'Senza questo codice nessuno può sbloccare o disattivare il PIN.',
+        recoverySavedMsg: 'Codice di recupero salvato!',
+        recoveryPromptMsg: 'Inserisci il Codice di Recupero per sbloccare e disattivare il PIN:',
+        recoveryWrongMsg: 'Codice di recupero errato!',
         changePinBtn: '🔑 Cambia PIN a 4 Cifre',
         lockNowBtn: '🔒 Blocca Ora',
         pinEnterTitle: 'Inserisci Codice',
@@ -2157,7 +2177,7 @@
         pinWrong: 'PIN errato. Riprova',
         pinSetSuccess: 'Blocco PIN a 4 cifre attivato!',
         pinOffSuccess: 'Blocco PIN disattivato',
-        pinForgotBtn: 'PIN dimenticato?',
+        pinUnlockWithRecoveryBtn: '🔑 Chiave Recupero',
         pinCancelBtn: 'Annulla',
         addNewCardTitle: '+ Aggiungi Nuova Carta',
         pickDesign: 'Scegli Design Carta',
@@ -2225,6 +2245,12 @@
         pinLockTitle: 'PIN de 4 Dígitos',
         pinEnabledStatus: 'Activado — PIN al abrir',
         pinDisabledStatus: 'Desactivado',
+        recoveryKeyLabel: 'Código Secreto de Recuperación (si olvidas el PIN)',
+        saveKeyBtn: 'Guardar',
+        recoveryKeyHint: 'Sin este código nadie puede desactivar el bloqueo por PIN.',
+        recoverySavedMsg: '¡Código de recuperación guardado!',
+        recoveryPromptMsg: 'Introduce tu Código de Recuperación para desbloquear y desactivar el PIN:',
+        recoveryWrongMsg: '¡Código de recuperación incorrecto!',
         changePinBtn: '🔑 Cambiar PIN de 4 Dígitos',
         lockNowBtn: '🔒 Bloquear Ahora',
         pinEnterTitle: 'Introduce el Código',
@@ -2237,7 +2263,7 @@
         pinWrong: 'PIN incorrecto. Inténtalo de nuevo',
         pinSetSuccess: '¡Bloqueo por PIN activado!',
         pinOffSuccess: 'Bloqueo por PIN desactivado',
-        pinForgotBtn: '¿Olvidaste el PIN?',
+        pinUnlockWithRecoveryBtn: '🔑 Clave Recuperación',
         pinCancelBtn: 'Cancelar',
         addNewCardTitle: '+ Añadir Nueva Tarjeta',
         pickDesign: 'Elige Diseño de Tarjeta',
@@ -2305,6 +2331,12 @@
         pinLockTitle: '৪ সংখ্যার অ্যাপ পিন',
         pinEnabledStatus: 'চালু আছে — ওপেন করলে পিন চাইবে',
         pinDisabledStatus: 'বন্ধ আছে',
+        recoveryKeyLabel: 'গোপন রিকভারি কোড (শুধু পিন ভুলে গেলে)',
+        saveKeyBtn: 'সেভ',
+        recoveryKeyHint: 'এই গোপন রিকভারি কোড ছাড়া কেউ পিন বাইপাস বা বন্ধ করতে পারবে না।',
+        recoverySavedMsg: 'রিকভারি কোড সেভ হয়েছে!',
+        recoveryPromptMsg: 'পিন আনলক ও বন্ধ করতে আপনার গোপন রিকভারি কোড লিখুন:',
+        recoveryWrongMsg: 'ভুল রিকভারি কোড! আনলক করা যাবে না।',
         changePinBtn: '🔑 ৪ সংখ্যার পিন বদলান',
         lockNowBtn: '🔒 এখনই লক করুন',
         pinEnterTitle: 'পিন দিন',
@@ -2317,7 +2349,7 @@
         pinWrong: 'ভুল পিন। আবার চেষ্টা করুন',
         pinSetSuccess: '৪ সংখ্যার পিন লক চালু হয়েছে!',
         pinOffSuccess: 'পিন লক বন্ধ করা হয়েছে',
-        pinForgotBtn: 'পিন ভুলে গেছেন?',
+        pinUnlockWithRecoveryBtn: '🔑 রিকভারি কোড',
         pinCancelBtn: 'বাতিল',
         addNewCardTitle: '+ নতুন কার্ড যোগ করুন',
         pickDesign: 'কার্ডের ডিজাইন বাছাই করুন',
@@ -2402,14 +2434,29 @@
       { id: 'salary', name: 'Salary', icon: '💰' }
     ];
 
-    const STORAGE_KEY = 'pocketflow_wallet_v10';
+    const STORAGE_KEY = 'pocketflow_wallet_v11';
+
+    function hashSecret(val) {
+      const str = 'pf_sec_v1:' + String(val || '');
+      let h1 = 0x811c9dc5;
+      let h2 = 0x01000193;
+      for (let i = 0; i < str.length; i++) {
+        const ch = str.charCodeAt(i);
+        h1 ^= ch;
+        h1 = Math.imul(h1, 0x01000193);
+        h2 ^= ch;
+        h2 = Math.imul(h2, 0x85ebca6b);
+      }
+      return (h1 >>> 0).toString(16) + '-' + (h2 >>> 0).toString(16);
+    }
 
     function getDefaultState() {
       return {
         theme: 'light',
         lang: 'en',
         pinEnabled: false,
-        pinCode: '',
+        pinHash: '',
+        recoveryHash: hashSecret('0000'),
         cards: [
           {
             id: 'card_1',
@@ -2461,14 +2508,23 @@
 
     function loadState() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('pocketflow_wallet_v9') || localStorage.getItem('pocketflow_wallet_v8');
+        const raw =
+          localStorage.getItem(STORAGE_KEY) ||
+          localStorage.getItem('pocketflow_wallet_v10') ||
+          localStorage.getItem('pocketflow_wallet_v9') ||
+          localStorage.getItem('pocketflow_wallet_v8');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && Array.isArray(parsed.cards) && parsed.cards.length > 0) {
             if (!parsed.theme) parsed.theme = parsed.darkMode ? 'dark' : 'light';
             if (!parsed.lang) parsed.lang = 'en';
-            parsed.pinEnabled = Boolean(parsed.pinEnabled && typeof parsed.pinCode === 'string' && parsed.pinCode.length === 4);
-            parsed.pinCode = typeof parsed.pinCode === 'string' ? parsed.pinCode : '';
+            const migratedHash =
+              parsed.pinHash ||
+              (typeof parsed.pinCode === 'string' && parsed.pinCode.length === 4 ? hashSecret(parsed.pinCode) : '');
+            parsed.pinHash = migratedHash;
+            parsed.pinEnabled = Boolean(parsed.pinEnabled && parsed.pinHash);
+            parsed.recoveryHash = parsed.recoveryHash || hashSecret('0000');
+            delete parsed.pinCode;
             return parsed;
           }
         }
@@ -2505,7 +2561,7 @@
       const subEl = document.getElementById('pinScreenSub');
       const iconEl = document.getElementById('pinLockIcon');
       const cancelBtn = document.getElementById('pinCancelSetupBtn');
-      const forgotBtn = document.getElementById('pinForgotBtn');
+      const recoveryBtn = document.getElementById('pinUnlockWithRecoveryBtn');
 
       subEl.classList.remove('error');
       updatePinDotsVisual(false);
@@ -2515,19 +2571,19 @@
         titleEl.textContent = t('pinEnterTitle');
         subEl.textContent = customSubText || t('pinEnterSub');
         cancelBtn.style.display = 'none';
-        forgotBtn.style.display = 'inline-block';
+        recoveryBtn.style.display = 'inline-block';
       } else if (mode === 'setup_new') {
         iconEl.textContent = '🔑';
         titleEl.textContent = t('pinCreateTitle');
         subEl.textContent = customSubText || t('pinCreateSub');
         cancelBtn.style.display = 'inline-block';
-        forgotBtn.style.display = 'none';
+        recoveryBtn.style.display = 'none';
       } else if (mode === 'setup_confirm') {
         iconEl.textContent = '✅';
         titleEl.textContent = t('pinConfirmTitle');
         subEl.textContent = customSubText || t('pinConfirmSub');
         cancelBtn.style.display = 'inline-block';
-        forgotBtn.style.display = 'none';
+        recoveryBtn.style.display = 'none';
       }
 
       document.body.classList.add('app-locked');
@@ -2571,7 +2627,7 @@
 
     function handlePinComplete() {
       if (pinFlowMode === 'unlock') {
-        if (pinBuffer === state.pinCode) {
+        if (hashSecret(pinBuffer) === state.pinHash) {
           triggerHaptic();
           hidePinOverlay();
         } else {
@@ -2583,7 +2639,7 @@
         showPinOverlay('setup_confirm');
       } else if (pinFlowMode === 'setup_confirm') {
         if (pinBuffer === pendingNewPin) {
-          state.pinCode = pinBuffer;
+          state.pinHash = hashSecret(pinBuffer);
           state.pinEnabled = true;
           saveState();
           renderSecurityTab();
@@ -2622,7 +2678,7 @@
       const controlsEl = document.getElementById('pinConfiguredControls');
       if (!toggle || !statusEl || !controlsEl) return;
 
-      const active = Boolean(state.pinEnabled && state.pinCode && state.pinCode.length === 4);
+      const active = Boolean(state.pinEnabled && state.pinHash);
       toggle.checked = active;
       statusEl.textContent = active ? t('pinEnabledStatus') : t('pinDisabledStatus');
       controlsEl.style.display = active ? 'block' : 'none';
@@ -3670,6 +3726,8 @@
       renderSwatches();
       renderThemeAndLangGrids();
       renderSecurityTab();
+      const recInput = document.getElementById('recoveryKeyInput');
+      if (recInput) recInput.value = '';
       document.getElementById('backupExportText').value = JSON.stringify(state);
       document.getElementById('backupImportText').value = '';
       document.getElementById('settingsBackdrop').classList.add('open');
@@ -3755,14 +3813,20 @@
         hidePinOverlay();
         renderSecurityTab();
       });
-      document.getElementById('pinForgotBtn')?.addEventListener('click', () => {
-        if (confirm('Reset PIN lock? You can set a new 4-digit PIN in Settings afterward.')) {
+
+      // Recovery Code verification on lock screen (no casual bypass)
+      document.getElementById('pinUnlockWithRecoveryBtn')?.addEventListener('click', () => {
+        const enteredCode = prompt(t('recoveryPromptMsg'));
+        if (enteredCode === null) return;
+        if (hashSecret(enteredCode.trim()) === state.recoveryHash) {
           state.pinEnabled = false;
-          state.pinCode = '';
+          state.pinHash = '';
           saveState();
           renderSecurityTab();
           hidePinOverlay();
           showToast(t('pinOffSuccess'));
+        } else {
+          flashPinError(t('recoveryWrongMsg'));
         }
       });
 
@@ -3773,12 +3837,31 @@
           e.target.checked = false;
           showPinOverlay('setup_new');
         } else {
-          state.pinEnabled = false;
-          state.pinCode = '';
-          saveState();
-          renderSecurityTab();
-          showToast(t('pinOffSuccess'));
+          const enteredCode = prompt(t('recoveryPromptMsg'));
+          if (enteredCode !== null && hashSecret(enteredCode.trim()) === state.recoveryHash) {
+            state.pinEnabled = false;
+            state.pinHash = '';
+            saveState();
+            renderSecurityTab();
+            showToast(t('pinOffSuccess'));
+          } else {
+            e.target.checked = true;
+            showToast(t('recoveryWrongMsg'), true);
+          }
         }
+      });
+
+      document.getElementById('saveRecoveryKeyBtn')?.addEventListener('click', () => {
+        const input = document.getElementById('recoveryKeyInput');
+        const val = input ? input.value.trim() : '';
+        if (val.length < 4) {
+          showToast('Enter at least 4 characters', true);
+          return;
+        }
+        state.recoveryHash = hashSecret(val);
+        saveState();
+        input.value = '';
+        showToast(t('recoverySavedMsg'));
       });
 
       document.getElementById('changePinBtn')?.addEventListener('click', () => {
@@ -3974,6 +4057,7 @@
       document.getElementById('resetWalletBtn').addEventListener('click', () => {
         if (!confirm('Are you sure you want to reset all wallet data?')) return;
         localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem('pocketflow_wallet_v10');
         localStorage.removeItem('pocketflow_wallet_v9');
         localStorage.removeItem('pocketflow_wallet_v8');
         state = getDefaultState();
@@ -4014,7 +4098,7 @@
 
       refreshAll(true);
 
-      if (state.pinEnabled && state.pinCode && state.pinCode.length === 4) {
+      if (state.pinEnabled && state.pinHash) {
         showPinOverlay('unlock');
       }
     });
